@@ -5,6 +5,7 @@
   "refmap": "reutilities.refmap.json",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+    "ReBlockEntityTypeMixin",
     "ReBoatItemMixin",
     "ReItemStackMixin"
   ],

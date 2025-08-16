@@ -10,9 +10,11 @@ import net.minecraft.client.model.BoatModel;
 import net.minecraft.client.model.ChestBoatModel;
 import net.minecraft.client.renderer.blockentity.HangingSignRenderer;
 import net.minecraft.client.renderer.blockentity.SignRenderer;
+import net.minecraft.world.level.block.Block;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
+import net.neoforged.neoforge.event.BlockEntityTypeAddBlocksEvent;
 
 @EventBusSubscriber(modid = Reutilities.MOD_ID, bus = EventBusSubscriber.Bus.MOD)
 public class ReEvents {
@@ -33,5 +35,11 @@ public class ReEvents {
         // Entity Renderers
         event.registerEntityRenderer(ReEntities.BOAT.get(), context -> new ReBoatRenderer(context, false));
         event.registerEntityRenderer(ReEntities.CHEST_BOAT.get(), context -> new ReBoatRenderer(context, true));
+    }
+
+    @SubscribeEvent
+    public static void addSignBlocks(BlockEntityTypeAddBlocksEvent event) {
+        event.modify(ReBlockEntities.SIGN.get(), Reconstants.SIGNS.toArray(new Block[0]));
+        event.modify(ReBlockEntities.HANGING_SIGN.get(), Reconstants.HANGING_SIGNS.toArray(new Block[0]));
     }
 }
