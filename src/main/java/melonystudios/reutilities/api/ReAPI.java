@@ -2,10 +2,11 @@ package melonystudios.reutilities.api;
 
 import melonystudios.reutilities.util.Reconstants;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.ItemLike;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 
 import java.util.List;
+import java.util.function.Supplier;
 
 /// <i>Reutilities</i>' API class, used for some of my mods to register mainly boats and signs.
 public class ReAPI {
@@ -19,7 +20,7 @@ public class ReAPI {
     /// @param boat The boat item.
     /// @param chestBoat The boat with chest item.
     /// @param woodType A resource location of the boat's wood type, like <code>minecraft:oak</code>.
-    public static void addBoat(ItemLike boat, ItemLike chestBoat, ResourceLocation woodType) {
+    public static void addBoat(Supplier<Item> boat, Supplier<Item> chestBoat, ResourceLocation woodType) {
         Reconstants.BOATS.put(woodType.toString(), new BoatType(boat, chestBoat, woodType));
     }
 

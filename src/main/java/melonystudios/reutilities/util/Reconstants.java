@@ -17,7 +17,7 @@ public class Reconstants {
     public static final List<Block> HANGING_SIGNS = new ArrayList<>();
     public static final Map<String, BoatType> BOATS = new HashMap<>();
     /// Represents the default "<code>OAK</code>" boat type, for when there are no registered boat types.
-    public static final BoatType OAK = new BoatType(Items.OAK_BOAT, Items.OAK_CHEST_BOAT, ResourceLocation.withDefaultNamespace("oak"));
+    public static final BoatType OAK = new BoatType(() -> Items.OAK_BOAT, () -> Items.OAK_CHEST_BOAT, ResourceLocation.withDefaultNamespace("oak"));
 
     /// Gets a {@linkplain BoatType boat type} from a string.
     /// @param woodType A string containing the wood type to get, usually a resource location.

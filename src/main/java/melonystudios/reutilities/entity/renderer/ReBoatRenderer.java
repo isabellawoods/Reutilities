@@ -3,8 +3,7 @@ package melonystudios.reutilities.entity.renderer;
 import com.google.common.collect.ImmutableMap;
 import com.mojang.datafixers.util.Pair;
 import melonystudios.reutilities.api.BoatType;
-import melonystudios.reutilities.entity.custom.ReBoatEntity;
-import melonystudios.reutilities.entity.custom.ReChestBoatEntity;
+import melonystudios.reutilities.entity.custom.BoatVariant;
 import melonystudios.reutilities.util.Reconstants;
 import net.minecraft.client.model.BoatModel;
 import net.minecraft.client.model.ChestBoatModel;
@@ -34,8 +33,13 @@ public class ReBoatRenderer extends BoatRenderer {
 
     private ListModel<Boat> createBoatModel(EntityRendererProvider.Context context, BoatType type, boolean isChestBoat) {
         ModelLayerLocation layerLocation = isChestBoat ? ReBoatRenderer.createChestBoatModelName(type) : ReBoatRenderer.createBoatModelName(type);
-        ModelPart part = context.bakeLayer(layerLocation);
-        return isChestBoat ? new ChestBoatModel(part) : new BoatModel(part);
+        try {
+            ModelPart part = context.bakeLayer(layerLocation);
+            return isChestBoat ? new ChestBoatModel(part) : new BoatModel(part);
+        } catch (IllegalArgumentException exception) {
+            ModelPart part = isChestBoat ? ChestBoatModel.createBodyModel().bakeRoot() : BoatModel.createBodyModel().bakeRoot();
+            return isChestBoat ? new ChestBoatModel(part) : new BoatModel(part);
+        }
     }
 
     public static ModelLayerLocation createBoatModelName(BoatType type) {
@@ -53,10 +57,8 @@ public class ReBoatRenderer extends BoatRenderer {
     @Override
     @NotNull
     public Pair<ResourceLocation, ListModel<Boat>> getModelWithLocation(Boat boat) {
-        if (boat instanceof ReBoatEntity reBoat) {
-            return this.boatResources.get(reBoat.getBoatType());
-        } else if (boat instanceof ReChestBoatEntity reChestBoat) {
-            return this.boatResources.get(reChestBoat.getBoatType());
+        if (boat instanceof BoatVariant getter) {
+            return this.boatResources.get(getter.getBoatType());
         } else {
             return null;
         }

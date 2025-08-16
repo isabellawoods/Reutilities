@@ -1,6 +1,7 @@
 package melonystudios.reutilities.entity.custom;
 
 import melonystudios.reutilities.api.BoatType;
+import melonystudios.reutilities.component.ReDataComponents;
 import melonystudios.reutilities.entity.ReEntities;
 import melonystudios.reutilities.util.Reconstants;
 import net.minecraft.nbt.CompoundTag;
@@ -17,7 +18,7 @@ import net.minecraft.world.phys.HitResult;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class ReBoatEntity extends Boat implements BoatTypeGetter {
+public class ReBoatEntity extends Boat implements BoatVariant {
     private static final EntityDataAccessor<String> WOOD_TYPE = SynchedEntityData.defineId(ReBoatEntity.class, EntityDataSerializers.STRING);
 
     public ReBoatEntity(EntityType<? extends Boat> boat, Level world) {
@@ -63,12 +64,15 @@ public class ReBoatEntity extends Boat implements BoatTypeGetter {
     @Override
     @NotNull
     public Item getDropItem() {
-        return this.getBoatType().boat().asItem();
+        return this.getBoatType().boat().get();
     }
 
     @Override
     @Nullable
     public ItemStack getPickedResult(HitResult target) {
-        return new ItemStack(this.getBoatType().boat());
+        BoatType type = this.getBoatType();
+        ItemStack boatStack = new ItemStack(type.boat().get());
+        boatStack.set(ReDataComponents.WOOD_TYPE, type.woodType());
+        return boatStack;
     }
 }
