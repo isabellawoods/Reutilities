@@ -1,4 +1,4 @@
-package melonystudios.reutilities.mixin;
+package melonystudios.reutilities.mixin.item;
 
 import melonystudios.reutilities.component.ReDataComponents;
 import melonystudios.reutilities.entity.custom.BoatVariant;

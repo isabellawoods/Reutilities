@@ -1,4 +1,4 @@
-package melonystudios.reutilities.mixin;
+package melonystudios.reutilities.mixin.blockentity;
 
 import melonystudios.reutilities.util.Reconstants;
 import net.minecraft.world.level.block.Block;
@@ -18,7 +18,7 @@ public abstract class ReBlockEntityTypeMixin {
     @Shadow
     public abstract Set<Block> getValidBlocks();
 
-    // neoforge event doesn't seem to work to jank code it is ~isa 16-8-25
+    // neoforge event doesn't seem to work so jank code it is ~isa 16-8-25
     @Inject(method = "isValid", at = @At("HEAD"), cancellable = true)
     public void isValid(BlockState state, CallbackInfoReturnable<Boolean> callback) {
         Set<Block> validBlocks = this.getValidBlocks();

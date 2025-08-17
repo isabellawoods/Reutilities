@@ -5,9 +5,19 @@
   "refmap": "reutilities.refmap.json",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
-    "ReBlockEntityTypeMixin",
-    "ReBoatItemMixin",
-    "ReItemStackMixin"
+    "blockentity.ReBlockEntityTypeMixin",
+    "item.ReBoatItemMixin",
+    "item.ReItemMixin",
+    "item.ReItemStackMixin"
+  ],
+  "client": [
+    "renderer.PlayerSlimAccessor",
+    "renderer.ReHumanoidArmorLayerMixin",
+    "renderer.ReItemFrameRendererMixin",
+    "renderer.ReItemInHandRendererMixin",
+    "renderer.ReItemRendererMixin",
+    "renderer.RePlayerModelMixin",
+    "renderer.RePlayerRendererMixin"
   ],
   "injectors": {
     "defaultRequire": 1

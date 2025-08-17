@@ -1,4 +1,4 @@
-package melonystudios.reutilities.data;
+package melonystudios.reutilities.data.model;
 
 import melonystudios.reutilities.Reutilities;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -22,19 +22,6 @@ import static melonystudios.reutilities.util.Reconstants.*;
 
 public abstract class ReItemModelProvider extends ItemModelProvider {
     public static LinkedHashMap<ResourceKey<TrimMaterial>, Float> TRIM_MATERIALS = new LinkedHashMap<>();
-    static {
-        TRIM_MATERIALS.put(TrimMaterials.QUARTZ, 0.1F);
-        TRIM_MATERIALS.put(TrimMaterials.IRON, 0.2F);
-        TRIM_MATERIALS.put(TrimMaterials.NETHERITE, 0.3F);
-        TRIM_MATERIALS.put(TrimMaterials.REDSTONE, 0.4F);
-        TRIM_MATERIALS.put(TrimMaterials.COPPER, 0.5F);
-        TRIM_MATERIALS.put(TrimMaterials.GOLD, 0.6F);
-        TRIM_MATERIALS.put(TrimMaterials.EMERALD, 0.7F);
-        TRIM_MATERIALS.put(TrimMaterials.DIAMOND, 0.8F);
-        TRIM_MATERIALS.put(TrimMaterials.LAPIS, 0.9F);
-        TRIM_MATERIALS.put(TrimMaterials.AMETHYST, 1F);
-    }
-
     protected final ModelFile generated = this.getExistingFile(this.mcLoc("item/generated"));
     protected final ModelFile handheld = this.getExistingFile(this.mcLoc("item/handheld"));
     protected final ModelFile handheld32x = this.getExistingFile(Reutilities.reutilities("item/handheld_32x"));
@@ -100,6 +87,26 @@ public abstract class ReItemModelProvider extends ItemModelProvider {
                 .perspective(ItemDisplayContext.GUI, this.nested().parent(this.getExistingFile(this.modLoc("item/" + name + "_inventory"))))
                 .perspective(ItemDisplayContext.GROUND, this.nested().parent(this.getExistingFile(this.modLoc("item/" + name + "_inventory"))))
                 .perspective(ItemDisplayContext.FIXED, this.nested().parent(this.getExistingFile(this.modLoc("item/" + name + "_inventory")))).end();
+    }
+
+    public void transDualWieldedSword(ModelFile parent, ModelFile parent32x, String name, int prideMonth) {
+        this.getBuilder(name + "_inventory").parent(parent).texture("layer0", this.modLoc("item/" + name + "_inventory"));
+        this.getBuilder(name + "_in_hand").parent(parent32x).texture("layer0", this.modLoc("item/" + name));
+        this.getBuilder(name + "_trans_inventory").parent(parent).texture("layer0", this.modLoc("item/" + name + "_trans_inventory"));
+        this.getBuilder(name + "_trans_in_hand").parent(parent32x).texture("layer0", this.modLoc("item/" + name + "_trans"));
+
+        this.withExistingParent(name + "_trans", parent.getLocation()).customLoader(SeparateTransformsModelBuilder::begin)
+                .base(this.nested().parent(this.getExistingFile(this.modLoc("item/" + name + "_trans_in_hand"))))
+                .perspective(ItemDisplayContext.GUI, this.nested().parent(this.getExistingFile(this.modLoc("item/" + name + "_trans_inventory"))))
+                .perspective(ItemDisplayContext.GROUND, this.nested().parent(this.getExistingFile(this.modLoc("item/" + name + "_trans_inventory"))))
+                .perspective(ItemDisplayContext.FIXED, this.nested().parent(this.getExistingFile(this.modLoc("item/" + name + "_trans_inventory")))).end();
+
+        this.withExistingParent(name, parent.getLocation()).customLoader(SeparateTransformsModelBuilder::begin)
+                .base(this.nested().parent(this.getExistingFile(this.modLoc("item/" + name + "_in_hand"))))
+                .perspective(ItemDisplayContext.GUI, this.nested().parent(this.getExistingFile(this.modLoc("item/" + name + "_inventory"))))
+                .perspective(ItemDisplayContext.GROUND, this.nested().parent(this.getExistingFile(this.modLoc("item/" + name + "_inventory"))))
+                .perspective(ItemDisplayContext.FIXED, this.nested().parent(this.getExistingFile(this.modLoc("item/" + name + "_inventory")))).end()
+                .override().predicate(monthCheck(), prideMonth).model(this.getExistingFile(this.modLoc("item/" + name + "_trans")));
     }
 
     public void bow(String name) {
@@ -184,5 +191,18 @@ public abstract class ReItemModelProvider extends ItemModelProvider {
                         .texture("layer0", this.modLoc("item/" + BuiltInRegistries.ITEM.getKey(item).getPath()));
             });
         }
+    }
+
+    static {
+        TRIM_MATERIALS.put(TrimMaterials.QUARTZ, 0.1F);
+        TRIM_MATERIALS.put(TrimMaterials.IRON, 0.2F);
+        TRIM_MATERIALS.put(TrimMaterials.NETHERITE, 0.3F);
+        TRIM_MATERIALS.put(TrimMaterials.REDSTONE, 0.4F);
+        TRIM_MATERIALS.put(TrimMaterials.COPPER, 0.5F);
+        TRIM_MATERIALS.put(TrimMaterials.GOLD, 0.6F);
+        TRIM_MATERIALS.put(TrimMaterials.EMERALD, 0.7F);
+        TRIM_MATERIALS.put(TrimMaterials.DIAMOND, 0.8F);
+        TRIM_MATERIALS.put(TrimMaterials.LAPIS, 0.9F);
+        TRIM_MATERIALS.put(TrimMaterials.AMETHYST, 1F);
     }
 }

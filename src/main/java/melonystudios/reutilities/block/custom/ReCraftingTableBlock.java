@@ -2,7 +2,7 @@ package melonystudios.reutilities.block.custom;
 
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import melonystudios.reutilities.container.ReCraftingMenu;
+import melonystudios.reutilities.container.custom.ReCraftingMenu;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentSerialization;

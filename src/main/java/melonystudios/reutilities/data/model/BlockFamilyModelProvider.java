@@ -1,6 +1,5 @@
-package melonystudios.reutilities.data.family;
+package melonystudios.reutilities.data.model;
 
-import melonystudios.reutilities.data.ReBlockStateProvider;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.*;
@@ -13,12 +12,12 @@ import java.util.Map;
 import static net.minecraft.data.models.model.TextureMapping.getBlockTexture;
 
 public class BlockFamilyModelProvider {
-    /// Map of block types (strings) to {@linkplain BlockFamilyEntry block family entries}, used to create all the base block models.
-    protected static final Map<String, BlockFamilyEntry> PROVIDERS = new LinkedHashMap<>();
+    /// Map of block types (strings) to {@linkplain FamilyModelEntry family model entries}, used to create all the base block models.
+    protected static final Map<String, FamilyModelEntry> PROVIDERS = new LinkedHashMap<>();
     /// Map of all blocks that should be generated, paired with their respective types.
     protected static final Map<String, Block> BLOCK_TYPES = new LinkedHashMap<>();
     /// Map of extra properties for a specified block. This is used in case of the method requiring another parameter that can't be filled by this class,
-    /// like the <code>orientable</code> parameter in {@link net.neoforged.neoforge.client.model.generators.BlockStateProvider#trapdoorBlock(TrapDoorBlock, ResourceLocation, boolean) trapdoorBlock()} method.
+    /// like the `orientable` parameter in {@link net.neoforged.neoforge.client.model.generators.BlockStateProvider#trapdoorBlock(TrapDoorBlock, ResourceLocation, boolean) trapdoorBlock()} method.
     protected static final Map<String, List<Object>> EXTRA_PROPERTIES = new LinkedHashMap<>();
     private final ReBlockStateProvider stateProvider;
     private final String modID;
@@ -26,10 +25,10 @@ public class BlockFamilyModelProvider {
     private final ResourceLocation texture;
 
     /// Helper data generator class for generating whole families of blocks.
-    /// @param stateProvider {@linkplain  ReBlockStateProvider <i>Reutilities</i>' block state provider}, used as a base for generating the models.
+    /// @param stateProvider {@linkplain ReBlockStateProvider *Reutilities*' block state provider}, used as a base for generating the models.
     /// @param modID The current mod using this provider.
-    /// @param materialName The name of the material being generated, like "<code>oak</code>" or "<code>aljanstone</code>".
-    /// @param texture A resource location of the default material texture, like "<code>minecraft:block/oak_planks</code>.
+    /// @param materialName The name of the material being generated, like "`oak`" or "`aljanstone`".
+    /// @param texture A resource location of the default material texture, like "`minecraft:block/oak_planks`.
     public BlockFamilyModelProvider(ReBlockStateProvider stateProvider, String modID, String materialName, ResourceLocation texture) {
         this.stateProvider = stateProvider;
         this.modID = modID;
@@ -72,13 +71,29 @@ public class BlockFamilyModelProvider {
         return this;
     }
 
-    public BlockFamilyModelProvider ladder(Block ladder) {
-        BLOCK_TYPES.put("ladder", ladder);
+    public BlockFamilyModelProvider leaves(Block block) {
+        BLOCK_TYPES.put("leaves", block);
+        return this;
+    }
+
+    public BlockFamilyModelProvider plant(Block plant) {
+        BLOCK_TYPES.put("plant", plant);
+        return this;
+    }
+
+    public BlockFamilyModelProvider plant(Block plant, Block pottedPlant) {
+        BLOCK_TYPES.put("plant", plant);
+        BLOCK_TYPES.put("potted_plant", pottedPlant);
         return this;
     }
 
     public BlockFamilyModelProvider fullBlock(Block block) {
         BLOCK_TYPES.put("full_block", block);
+        return this;
+    }
+
+    public BlockFamilyModelProvider planks(Block block) {
+        BLOCK_TYPES.put("planks", block);
         return this;
     }
 
@@ -134,6 +149,11 @@ public class BlockFamilyModelProvider {
         return this;
     }
 
+    public BlockFamilyModelProvider bookshelf(Block bookshelf) {
+        BLOCK_TYPES.put("bookshelf", bookshelf);
+        return this;
+    }
+
     public BlockFamilyModelProvider pressurePlate(Block pressurePlate) {
         BLOCK_TYPES.put("pressure_plate", pressurePlate);
         return this;
@@ -158,6 +178,11 @@ public class BlockFamilyModelProvider {
     public BlockFamilyModelProvider hangingSign(Block hangingSign, Block wallHangingSign) {
         BLOCK_TYPES.put("hanging_sign", hangingSign);
         BLOCK_TYPES.put("wall_hanging_sign", wallHangingSign);
+        return this;
+    }
+
+    public BlockFamilyModelProvider ladder(Block ladder) {
+        BLOCK_TYPES.put("ladder", ladder);
         return this;
     }
 
@@ -195,7 +220,7 @@ public class BlockFamilyModelProvider {
         EXTRA_PROPERTIES.clear();
     }
 
-    /// Adds all default {@linkplain BlockFamilyEntry block family entries} to the providers map.
+    /// Adds all default {@linkplain FamilyModelEntry family model entries} to the providers map.
     /// New providers can be added using the {@link #addProviders()} method below.
     protected final void addDefaultProviders() {
         // Common blocks
@@ -215,9 +240,11 @@ public class BlockFamilyModelProvider {
         PROVIDERS.put("pressure_plate", (block, identifier) -> this.stateProvider.pressurePlateBlock((PressurePlateBlock) block, this.texture));
         PROVIDERS.put("weighted_pressure_plate", (block, identifier) -> this.stateProvider.weightedPressurePlateBlock(block, this.texture));
         PROVIDERS.put("button", (block, identifier) -> this.stateProvider.buttonBlock(block, this.texture));
+        PROVIDERS.put("plant", (block, identifier) -> this.stateProvider.simpleBlock(block, this.models().cross(identifier.getPath(), getBlockTexture(block))));
+        PROVIDERS.put("potted_plant", (block, identifier) -> this.stateProvider.simpleBlock(block, this.models().withExistingParent(identifier.getPath(), this.mcLoc("block/flower_pot_cross")).texture("plant", getBlockTexture(BLOCK_TYPES.get("plant")))));
 
         // Wood blocks
-        PROVIDERS.put("log", (block, identifier) -> this.stateProvider.logBlock((RotatedPillarBlock) block));
+        PROVIDERS.put("planks", (block, identifier) -> this.stateProvider.simpleBlock(block));
         PROVIDERS.put("wood", (block, identifier) -> this.stateProvider.axisBlock((RotatedPillarBlock) block,
                 this.mod("block/" + this.materialName + "_log"),
                 this.mod("block/" + this.materialName + "_log")));
@@ -225,16 +252,19 @@ public class BlockFamilyModelProvider {
         PROVIDERS.put("stripped_wood", (block, identifier) -> this.stateProvider.axisBlock((RotatedPillarBlock) block,
                 this.mod("block/stripped_" + this.materialName + "_log"),
                 this.mod("block/stripped_" + this.materialName + "_log")));
+        PROVIDERS.put("leaves", (block, identifier) -> this.stateProvider.simpleBlock(block, this.models().leaves(identifier.getPath(), getBlockTexture(block))));
+        PROVIDERS.put("log", (block, identifier) -> this.stateProvider.logBlock((RotatedPillarBlock) block));
         PROVIDERS.put("ladder", (block, identifier) -> this.stateProvider.ladder(block));
         PROVIDERS.put("crafting_table", (block, identifier) -> this.stateProvider.craftingTable(block, this.materialName));
-        BlockFamilyEntry sign = (block, identifier) -> this.stateProvider.simpleBlock(block, this.models().sign(identifier.getPath(), this.texture));
+        PROVIDERS.put("bookshelf", (block, identifier) -> this.stateProvider.bookshelf(block, this.materialName));
+        FamilyModelEntry sign = (block, identifier) -> this.stateProvider.simpleBlock(block, this.models().sign(identifier.getPath(), this.texture));
         PROVIDERS.put("sign", sign);
         PROVIDERS.put("wall_sign", sign);
         PROVIDERS.put("hanging_sign", sign);
         PROVIDERS.put("wall_hanging_sign", sign);
 
         // Colored blocks
-        BlockFamilyEntry fromTexture = (block, identifier) -> this.fromTexture(block);
+        FamilyModelEntry fromTexture = (block, identifier) -> this.fromTexture(block);
         PROVIDERS.put("concrete", fromTexture);
         PROVIDERS.put("concrete_powder", fromTexture);
         PROVIDERS.put("terracotta", fromTexture);
@@ -271,7 +301,7 @@ public class BlockFamilyModelProvider {
         return ResourceLocation.fromNamespaceAndPath(this.modID, name);
     }
 
-    /// Makes a resource location using the default "<code>minecraft</code>" namespace. Copied from {@link net.neoforged.neoforge.client.model.generators.BlockStateProvider#mcLoc(String) BlockStateProvider.mcLoc()}.
+    /// Makes a resource location using the default "`minecraft`" namespace. Copied from {@link net.neoforged.neoforge.client.model.generators.BlockStateProvider#mcLoc(String) BlockStateProvider.mcLoc()}.
     /// @param name The resource location path.
     protected ResourceLocation mcLoc(String name) {
         return ResourceLocation.withDefaultNamespace(name);

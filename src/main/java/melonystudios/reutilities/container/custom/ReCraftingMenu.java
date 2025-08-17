@@ -1,4 +1,4 @@
-package melonystudios.reutilities.container;
+package melonystudios.reutilities.container.custom;
 
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -8,6 +8,10 @@ import net.neoforged.neoforge.common.Tags;
 
 public class ReCraftingMenu extends CraftingMenu {
     private final ContainerLevelAccess access;
+
+    public ReCraftingMenu(int containerID, Inventory playerInventory) {
+        this(containerID, playerInventory, ContainerLevelAccess.NULL);
+    }
 
     public ReCraftingMenu(int containerID, Inventory playerInventory, ContainerLevelAccess access) {
         super(containerID, playerInventory, access);

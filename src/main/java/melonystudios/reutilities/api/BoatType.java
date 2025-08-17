@@ -10,10 +10,10 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Supplier;
 
-/// Represents a single boat type, used by <i>Reutilities</i>' boats to save and render the correct wood type.
+/// Represents a single boat type, used by *Reutilities*' boats to save and render the correct wood type.
 /// @param boat The boat item.
 /// @param chestBoat The boat with chest item.
-/// @param woodType A resource location of the boat's wood type, like <code>minecraft:oak</code>.
+/// @param woodType A resource location of the boat's wood type, like `minecraft:oak`.
 public record BoatType(Supplier<Item> boat, Supplier<Item> chestBoat, ResourceLocation woodType) {
     public static final Codec<BoatType> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             BuiltInRegistries.ITEM.byNameCodec().optionalFieldOf("boat", Items.OAK_BOAT).forGetter(type -> type.boat().get()),

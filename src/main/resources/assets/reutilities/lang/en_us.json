@@ -1,4 +1,12 @@
 {
   "entity.reutilities.boat": "Boat",
-  "entity.reutilities.chest_boat": "Boat with Chest"
+  "entity.reutilities.chest_boat": "Boat with Chest",
+
+  "tag.item.c.dual_wielded": "Dual Wielded",
+  "tag.item.c.emissive_lighting": "Emissive Lighting",
+  "tag.trim_material.c.emissive_lighting": "Emissive Lighting",
+
+  "tooltip.reutilities.hold_alt": "Hold <%s> for components",
+  "tooltip.reutilities.components": "Components: %s",
+  "logger.reutilities.outfit_definition.wrong_equipment_slot": "Tried finding the outfit slot for non-armor slot '%s'"
 }

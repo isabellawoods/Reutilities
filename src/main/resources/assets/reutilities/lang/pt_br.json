@@ -1,4 +1,12 @@
 {
   "entity.reutilities.boat": "Bote",
-  "entity.reutilities.chest_boat": "Bote com Baú"
+  "entity.reutilities.chest_boat": "Bote com Baú",
+
+  "tag.item.c.dual_wielded": "Empunhadura Dupla",
+  "tag.item.c.emissive_lighting": "Iluminação Emissiva",
+  "tag.trim_material.c.emissive_lighting": "Iluminação Emissiva",
+
+  "tooltip.reutilities.hold_alt": "Segure <%s> para ver componentes",
+  "tooltip.reutilities.components": "Componentes: %s",
+  "logger.reutilities.outfit_definition.wrong_equipment_slot": "Tentou achar o slot de roupa de um slot que não é armadura '%s'"
 }

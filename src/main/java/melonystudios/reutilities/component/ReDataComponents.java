@@ -1,6 +1,8 @@
 package melonystudios.reutilities.component;
 
 import melonystudios.reutilities.Reutilities;
+import melonystudios.reutilities.entity.outfit.OutfitDefinition;
+import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.codec.ByteBufCodecs;
@@ -8,6 +10,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.ExtraCodecs;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
+
+import java.util.List;
 
 public class ReDataComponents {
     public static final DeferredRegister.DataComponents COMPONENTS = DeferredRegister.createDataComponents(Registries.DATA_COMPONENT_TYPE, Reutilities.MOD_ID);
@@ -18,4 +22,10 @@ public class ReDataComponents {
             builder -> builder.persistent(ExtraCodecs.intRange(0, 16777215)).networkSynchronized(ByteBufCodecs.VAR_INT));
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> STORED_EXPERIENCE = COMPONENTS.registerComponentType("stored_experience",
             builder -> builder.persistent(ExtraCodecs.NON_NEGATIVE_INT).networkSynchronized(ByteBufCodecs.VAR_INT));
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<List<ResourceLocation>>> HIDE_COMPONENTS = COMPONENTS.registerComponentType("hide_components",
+            builder -> builder.persistent(ResourceLocation.CODEC.listOf()).cacheEncoding());
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Holder<OutfitDefinition>>> OUTFIT = COMPONENTS.registerComponentType("outfit",
+            builder -> builder.persistent(OutfitDefinition.CODEC).networkSynchronized(OutfitDefinition.STREAM_CODEC).cacheEncoding());
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> LIGHT_EMISSION = COMPONENTS.registerComponentType("light_emission",
+            builder -> builder.persistent(ExtraCodecs.intRange(0, 15)).networkSynchronized(ByteBufCodecs.VAR_INT));
 }

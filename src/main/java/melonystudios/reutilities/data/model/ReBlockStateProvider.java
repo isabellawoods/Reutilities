@@ -1,7 +1,6 @@
-package melonystudios.reutilities.data;
+package melonystudios.reutilities.data.model;
 
 import melonystudios.reutilities.Reutilities;
-import melonystudios.reutilities.data.family.BlockFamilyModelProvider;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
@@ -21,6 +20,9 @@ public abstract class ReBlockStateProvider extends BlockStateProvider {
         this.modID = modID;
     }
 
+    /// Creates a new instance of the {@linkplain BlockFamilyModelProvider block family model provider}.
+    /// @param texture A resource location of the default material texture, like "`minecraft:block/oak_planks`.
+    /// @param materialName The name of the material being generated, like "`oak`" or "`aljanstone`".
     public BlockFamilyModelProvider blockFamily(ResourceLocation texture, String materialName) {
         return new BlockFamilyModelProvider(this, this.modID, materialName, texture);
     }
@@ -91,11 +93,19 @@ public abstract class ReBlockStateProvider extends BlockStateProvider {
     }
 
     public void craftingTable(Block block, String type) {
-        this.craftingTable(block, this.modLoc("block/" + type + "_crafting_table_side"), this.modLoc("block/" + type + "_planks"), this.modLoc("block/" + type + "_crafting_table_top"));
+        this.craftingTable(block, this.modLoc("block/" + type + "_crafting_table_front"), this.modLoc("block/" + type + "_crafting_table_side"), this.modLoc("block/" + type + "_planks"), this.modLoc("block/" + type + "_crafting_table_top"));
     }
 
-    public void craftingTable(Block block, ResourceLocation sideTexture, ResourceLocation bottomTexture, ResourceLocation topTexture) {
-        this.simpleBlock(block, this.models().cubeBottomTop(BuiltInRegistries.BLOCK.getKey(block).getPath(), sideTexture, bottomTexture, topTexture));
+    public void craftingTable(Block block, ResourceLocation frontTexture, ResourceLocation sideTexture, ResourceLocation bottomTexture, ResourceLocation topTexture) {
+        this.simpleBlock(block, this.models().cube(BuiltInRegistries.BLOCK.getKey(block).getPath(), bottomTexture, topTexture, frontTexture, sideTexture, frontTexture, sideTexture));
+    }
+
+    public void bookshelf(Block block, String type) {
+        this.bookshelf(block, this.modLoc("block/" + type + "_bookshelf"), this.modLoc("block/" + type + "_planks"));
+    }
+
+    public void bookshelf(Block block, ResourceLocation sideTexture, ResourceLocation endTexture) {
+        this.simpleBlock(block, this.models().cubeColumn(BuiltInRegistries.BLOCK.getKey(block).getPath(), sideTexture, endTexture));
     }
 
     public void chain(Block chain) {
