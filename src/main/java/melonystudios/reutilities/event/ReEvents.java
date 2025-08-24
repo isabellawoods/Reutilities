@@ -4,14 +4,17 @@ import melonystudios.reutilities.Reutilities;
 import melonystudios.reutilities.api.BoatType;
 import melonystudios.reutilities.blockentity.ReBlockEntities;
 import melonystudios.reutilities.entity.ReEntities;
-import melonystudios.reutilities.entity.layer.OutfitLayer;
+import melonystudios.reutilities.entity.outfit.OutfitLayer;
 import melonystudios.reutilities.entity.outfit.OutfitDefinition;
+import melonystudios.reutilities.entity.outfit.OutfitModel;
 import melonystudios.reutilities.entity.renderer.ReBoatRenderer;
 import melonystudios.reutilities.mixin.renderer.PlayerSlimAccessor;
 import melonystudios.reutilities.util.ReRegistries;
 import melonystudios.reutilities.util.Reconstants;
 import net.minecraft.client.model.BoatModel;
 import net.minecraft.client.model.ChestBoatModel;
+import net.minecraft.client.model.geom.builders.CubeDeformation;
+import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.renderer.blockentity.HangingSignRenderer;
 import net.minecraft.client.renderer.blockentity.SignRenderer;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
@@ -29,13 +32,17 @@ public class ReEvents {
     public static void registerLayers(EntityRenderersEvent.AddLayers event) {
         for (PlayerSkin.Model model : event.getSkins()) {
             if (event.getSkin(model) instanceof PlayerRenderer renderer) {
-                renderer.addLayer(new OutfitLayer<>(renderer, ((PlayerSlimAccessor) renderer.getModel()).reutilities$slimArms()));
+                boolean slimArms = ((PlayerSlimAccessor) renderer.getModel()).reutilities$slimArms();
+                renderer.addLayer(new OutfitLayer<>(renderer, new OutfitModel<>(event.getContext().bakeLayer(slimArms ? OutfitModel.SLIM : OutfitModel.CLASSIC), slimArms)));
             }
         }
     }
 
     @SubscribeEvent
     public static void registerModelLayers(EntityRenderersEvent.RegisterLayerDefinitions event) {
+        event.registerLayerDefinition(OutfitModel.CLASSIC, () -> LayerDefinition.create(OutfitModel.createBodyLayer(CubeDeformation.NONE, false), 64, 64));
+        event.registerLayerDefinition(OutfitModel.SLIM, () -> LayerDefinition.create(OutfitModel.createBodyLayer(CubeDeformation.NONE, true), 64, 64));
+
         for (BoatType type : Reconstants.BOATS.values()) {
             event.registerLayerDefinition(ReBoatRenderer.createBoatModelName(type), BoatModel::createBodyModel);
             event.registerLayerDefinition(ReBoatRenderer.createChestBoatModelName(type), ChestBoatModel::createBodyModel);

@@ -3,6 +3,7 @@ package melonystudios.reutilities.entity.outfit;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import melonystudios.reutilities.component.ReDataComponents;
+import melonystudios.reutilities.component.custom.ComponentOutfit;
 import melonystudios.reutilities.util.ReRegistries;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
@@ -45,6 +46,7 @@ public record OutfitDefinition(Optional<OutfitSlot> headSlot, Optional<OutfitSlo
     );
     public static final Codec<Holder<OutfitDefinition>> CODEC = RegistryFileCodec.create(ReRegistries.OUTFIT_DEFINITION, DIRECT_CODEC);
     public static final StreamCodec<RegistryFriendlyByteBuf, Holder<OutfitDefinition>> STREAM_CODEC = ByteBufCodecs.holder(ReRegistries.OUTFIT_DEFINITION, DIRECT_STREAM_CODEC);
+    public static final int DEFAULT_OUTFIT_COLOR = 0xFFFFFF;
 
     /// Gets the outfit definitions registry.
     /// @param world The world.
@@ -58,16 +60,17 @@ public record OutfitDefinition(Optional<OutfitSlot> headSlot, Optional<OutfitSlo
     /// @param stack The item stack.
     @Nullable
     public static OutfitDefinition getDefinition(Level world, ItemStack stack) {
-        Holder<OutfitDefinition> definitionName = stack.get(ReDataComponents.OUTFIT);
-        if (definitionName != null && definitionName.getRegisteredName().equals("[unregistered]")) return null;
-        return definitions(world).get(ResourceLocation.parse(definitionName.getRegisteredName()));
+        ComponentOutfit definitionName = stack.get(ReDataComponents.OUTFIT);
+        if (definitionName == null) return null;
+        return definitionName.definition().unwrap(definitions(world)).orElse(null);
     }
 
     /// Gets an outfit slot from a definition based on an equipment slot.
     /// @param definition The outfit definition to get the slots from.
     /// @param slotType An equipment slot to get the slot.
     /// @throws IllegalArgumentException If the equipment slot is not one of {@link EquipmentSlot#HEAD HEAD}, {@link EquipmentSlot#CHEST CHEST}, {@link EquipmentSlot#LEGS LEGS} or {@link EquipmentSlot#FEET FEET}.
-    public static Optional<OutfitSlot> byEquipmentSlot(OutfitDefinition definition, EquipmentSlot slotType) {
+    public static Optional<OutfitSlot> byEquipmentSlot(@Nullable OutfitDefinition definition, EquipmentSlot slotType) {
+        if (definition == null) return Optional.empty();
         return switch (slotType) {
             case HEAD -> definition.headSlot;
             case CHEST -> definition.chestSlot;
@@ -92,7 +95,7 @@ public record OutfitDefinition(Optional<OutfitSlot> headSlot, Optional<OutfitSlo
     /// @param stack An optional item stack to check for colors.
     /// @param slotType The slot being checked for the colors.
     public static int getOutfitColors(OutfitDefinition definition, @Nullable ItemStack stack, EquipmentSlot slotType) {
-        if (definition == null) return 0xFFFFFF;
+        if (definition == null) return DEFAULT_OUTFIT_COLOR;
         Optional<OutfitSlot> slot = byEquipmentSlot(definition, slotType);
         if (slot.isPresent() && slot.get().color().isPresent()) {
             return slot.get().color().get();
@@ -100,7 +103,7 @@ public record OutfitDefinition(Optional<OutfitSlot> headSlot, Optional<OutfitSlo
             DyedItemColor dyedColor = stack.get(DataComponents.DYED_COLOR);
             if (dyedColor != null) return dyedColor.rgb();
         }
-        return 0xFFFFFF;
+        return DEFAULT_OUTFIT_COLOR;
     }
 
     /// Gets the default outfit texture for an entity.

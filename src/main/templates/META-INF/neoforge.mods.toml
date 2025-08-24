@@ -26,7 +26,7 @@ license="${mod_license}"
     # A URL for the "homepage" for this mod, displayed in the mod UI
     #displayURL="https://github.com/isabellawoods/Example-Mod/tree/neoforge-1.21.1" #optional
     # A file name (in the root of the mod JAR) containing a logo for display
-    #logoFile="${mod_id}.png" #optional
+    logoFile="${mod_id}.png" #optional
     # A text field displayed in the mod UI
     #credits="The friends we've made along the way" #optional
     # A text field displayed in the mod UI

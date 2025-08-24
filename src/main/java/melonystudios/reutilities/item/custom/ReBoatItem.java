@@ -86,7 +86,7 @@ public class ReBoatItem extends BoatItem {
     }
 
     /// Gets the {@linkplain BoatType boat type} for placing down the boat.
-    /// @param boatStack The boat item stack, used for getting the "{@link ReDataComponents#WOOD_TYPE reutilities:wood_type}" component.
+    /// @param boatStack The boat item stack, used for getting the {@link ReDataComponents#WOOD_TYPE reutilities:wood_type} component.
     /// @param type The default wood type, for when the boat doesn't have component.
     public static BoatType getBoatType(ItemStack boatStack, BoatType type) {
         return boatStack.has(ReDataComponents.WOOD_TYPE) ? Reconstants.byWoodType(boatStack.get(ReDataComponents.WOOD_TYPE).toString(), type) : type;
@@ -95,7 +95,7 @@ public class ReBoatItem extends BoatItem {
     /// Gets the boat entity for placing down the boat.
     /// @param world The world.
     /// @param result Where the boat is going to be placed.
-    /// @param stack The boat item stack, used to get the "{@link net.minecraft.core.component.DataComponents#ENTITY_DATA minecraft:entity_data}" component.
+    /// @param stack The boat item stack, used to get the {@link net.minecraft.core.component.DataComponents#ENTITY_DATA minecraft:entity_data} component.
     /// @param player The player placing the boat.
     public Boat getBoat(Level world, HitResult result, ItemStack stack, Player player) {
         Vec3 location = result.getLocation();

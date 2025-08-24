@@ -1,8 +1,8 @@
 package melonystudios.reutilities.entity.outfit;
 
-/// Interface containing methods related to the "<code>outfit</code>" string tag on entities.
-public interface OutfitWearer {
-    /// Gets a string for an {@link OutfitDefinition outfit definition} for this entity. Used to render the full-body outfit.
+/// Interface containing methods related to the `outfit` string tag on entities.
+public interface FullBodyOutfit {
+    /// Gets a string for an {@linkplain OutfitDefinition outfit definition} for this entity. Used to render the full-body outfit.
     String getOutfitDefinition();
 
     /// Sets the entity's outfit to the specified outfit definition.

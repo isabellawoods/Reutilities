@@ -2,14 +2,21 @@ package melonystudios.reutilities.api;
 
 import melonystudios.reutilities.ReConfigs;
 import melonystudios.reutilities.component.ReDataComponents;
+import melonystudios.reutilities.component.custom.ComponentOutfit;
+import melonystudios.reutilities.component.custom.TooltipStyle;
+import melonystudios.reutilities.entity.outfit.OutfitDefinition;
 import melonystudios.reutilities.util.Reconstants;
 import melonystudios.reutilities.util.tag.ReItemTags;
+import net.minecraft.Util;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.component.ChargedProjectiles;
+import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -17,7 +24,6 @@ import net.minecraft.world.level.block.FireBlock;
 
 import java.time.LocalDate;
 import java.time.Month;
-import java.time.temporal.ChronoField;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
@@ -28,13 +34,13 @@ import static net.minecraft.client.renderer.item.ItemProperties.register;
 
 /// ***Reutilities'*** **API** class, used by my mods to add new boats and signs, register item overrides, get light emission values, etc.
 public class ReAPI {
-    /// Adds a boat and chest boat to *Reutilities*' boat map.
+    /// Adds a boat and chest boat to *Reutilities'* boat map.
     /// @param type The boat type to add.
     public static void addBoat(BoatType type) {
         Reconstants.BOATS.put(type.woodType().toString(), type);
     }
 
-    /// Adds a boat and chest boat to *Reutilities*' boat map.
+    /// Adds a boat and chest boat to *Reutilities'* boat map.
     /// @param boat The boat item.
     /// @param chestBoat The boat with chest item.
     /// @param woodType A resource location of the boat's wood type, like `minecraft:oak`.
@@ -61,6 +67,15 @@ public class ReAPI {
     public static void flammable(Block block, int encouragement, int flammability) {
         FireBlock fire = (FireBlock) Blocks.FIRE;
         fire.setFlammable(block, encouragement, flammability);
+    }
+
+    /// Whether a tooltip can be displayed on an item, or is hidden by the {@link ReDataComponents#HIDE_COMPONENTS reutilities:hide_components} component.
+    /// @param stack The item stack.
+    /// @param name A resource location of the tooltip name, like `reutilities:item_tags`.
+    public static boolean shouldDisplay(ItemStack stack, ResourceLocation name) {
+        List<ResourceLocation> itemTags = stack.get(ReDataComponents.HIDE_COMPONENTS);
+        if (itemTags == null || itemTags.isEmpty()) return true;
+        return !itemTags.contains(name);
     }
 
     /// Gets the brightness that should be applied to an item, based on its presence in the {@link ReItemTags#EMISSIVE_LIGHTING #c:emissive_lighting} item tag,
@@ -100,6 +115,7 @@ public class ReAPI {
     /// @param stack The item stack to get the block item.
     /// @param world *(optional)* The world.
     /// @param pos The location in the world this item is in.
+    @SuppressWarnings("deprecation")
     public static int getBlockLight(ItemStack stack, Level world, BlockPos pos) {
         if (!(stack.getItem() instanceof BlockItem blockItem)) return 0;
 
@@ -112,7 +128,7 @@ public class ReAPI {
 
     /// Adds all the model properties for a regular bow item (`pull` and `pulling`).
     /// @param bow The bow item.
-    public static void addBowProperties(BowItem bow) {
+    public static void addBowProperties(Item bow) {
         register(bow, pullProgress(), (stack, world, livEntity, seed) -> {
             if (livEntity == null) {
                 return 0;
@@ -144,10 +160,34 @@ public class ReAPI {
         register(shield, blocking(), (stack, world, livEntity, seed) -> livEntity != null && livEntity.isUsingItem() && livEntity.getUseItem() == stack ? 1 : 0);
     }
 
-    /// Adds the `reutilities:month_check` property to an item, used by *Back Math*'s carewni sword to check if it's June.
+    /// Adds the `reutilities:month_check/<month>` property to an item, used by *Back Math*'s carewni sword to check if it's June.
     /// @param item The item.
-    public static void addMonthCheckProperty(Item item) {
-        register(item, monthCheck(), (stack, world, livEntity, seed) -> LocalDate.now().get(ChronoField.MONTH_OF_YEAR));
+    /// @param month The month to check for.
+    public static void addMonthCheckProperty(Item item, Month month) {
+        register(item, monthCheck(month), (stack, world, livEntity, seed) -> LocalDate.now().getMonth() == month ? 1 : 0);
+    }
+
+    /// Adds an outfit item to a creative tab, specifying its definition and {@linkplain TooltipStyle tooltip style}.
+    /// @param output The creative tab's item consumer.
+    /// @param definitions A lookup of all registered {@linkplain OutfitDefinition outfit definitions}.
+    /// @param item The item to add.
+    /// @param definition The outfit definition to put into the item.
+    public static void addOutfit(CreativeModeTab.Output output, HolderLookup.RegistryLookup<OutfitDefinition> definitions, ItemLike item, ResourceKey<OutfitDefinition> definition) {
+        addOutfit(output, definitions, item, definition, TooltipStyle.OUTFIT);
+    }
+
+    /// Adds an outfit item to a creative tab, specifying its definition and {@linkplain TooltipStyle tooltip style}.
+    /// @param output The creative tab's item consumer.
+    /// @param definitions A lookup of all registered {@linkplain OutfitDefinition outfit definitions}.
+    /// @param item The item to add.
+    /// @param definition The outfit definition to put into the item.
+    /// @param style The tooltip style for the tooltip.
+    public static void addOutfit(CreativeModeTab.Output output, HolderLookup.RegistryLookup<OutfitDefinition> definitions, ItemLike item, ResourceKey<OutfitDefinition> definition, TooltipStyle style) {
+        var value = definitions.get(definition);
+        if (value.isPresent()) {
+            ComponentOutfit outfit = new ComponentOutfit(new EitherHolder<>(value.get()), style);
+            output.accept(Util.make(new ItemStack(item), stack -> stack.set(ReDataComponents.OUTFIT, outfit)));
+        }
     }
 
     /// Makes a list of {@linkplain ArmorMaterial.Layer armor layers} with a single entry using the specified name.

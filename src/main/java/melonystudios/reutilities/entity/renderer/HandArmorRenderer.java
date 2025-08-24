@@ -5,7 +5,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import melonystudios.reutilities.ReConfigs;
 import melonystudios.reutilities.component.ReDataComponents;
 import melonystudios.reutilities.entity.outfit.OutfitDefinition;
-import melonystudios.reutilities.mixin.renderer.PlayerSlimAccessor;
+import melonystudios.reutilities.entity.outfit.OutfitModel;
 import melonystudios.reutilities.util.Reconstants;
 import melonystudios.reutilities.util.tag.ReItemTags;
 import melonystudios.reutilities.util.tag.ReTrimMaterialTags;
@@ -37,53 +37,49 @@ import net.neoforged.neoforge.client.ClientHooks;
 import java.util.List;
 
 public class HandArmorRenderer {
-    public static void renderOutfitInArm(AbstractClientPlayer player, HumanoidArm arm, PoseStack stack, MultiBufferSource buffer, int packedLight) {
+    public static void renderOutfitInArm(AbstractClientPlayer player, HumanoidArm side, PoseStack stack, MultiBufferSource buffer, int packedLight) {
         ItemStack chestStack = player.getItemBySlot(EquipmentSlot.CHEST);
         if (ReConfigs.RENDER_OUTFIT_ON_HAND.get() && chestStack.has(ReDataComponents.OUTFIT)) {
-            boolean slim = player.getSkin().model().id().equals("slim");
-            PlayerModel<AbstractClientPlayer> outfitModel = new PlayerModel<>(Minecraft.getInstance().getEntityModels().bakeLayer(slim ? ModelLayers.PLAYER_SLIM : ModelLayers.PLAYER), slim);
-            ModelPart rightArm = outfitModel.rightArm;
-            ModelPart rightSleeve = outfitModel.rightSleeve;
+            boolean slimArms = player.getSkin().model().id().equals("slim");
+            PlayerModel<AbstractClientPlayer> playerModel = new PlayerModel<>(Minecraft.getInstance().getEntityModels().bakeLayer(slimArms ? ModelLayers.PLAYER_SLIM : ModelLayers.PLAYER), slimArms);
+            OutfitModel<AbstractClientPlayer> outfitModel = new OutfitModel<>(Minecraft.getInstance().getEntityModels().bakeLayer(slimArms ? OutfitModel.SLIM : OutfitModel.CLASSIC), slimArms);
+            ModelPart arm = side == HumanoidArm.LEFT ? outfitModel.leftArm : outfitModel.rightArm;
+            ModelPart sleeve = side == HumanoidArm.LEFT ? outfitModel.leftSleeve : outfitModel.rightSleeve;
             Level world = player.level();
 
-            if (arm == HumanoidArm.LEFT) {
-                rightArm = outfitModel.leftArm;
-                rightSleeve = outfitModel.leftSleeve;
-            }
-
             outfitModel.attackTime = 0;
-            outfitModel.crouching = false;
             outfitModel.swimAmount = 0;
+            outfitModel.crouching = false;
+            arm.xRot = 0;
+            sleeve.xRot = 0;
+            outfitModel.copyPropertiesFrom(playerModel);
             outfitModel.setupAnim(player, 0, 0, 0, 0, 0);
             OutfitDefinition definition = OutfitDefinition.getDefinition(world, chestStack);
-            ResourceLocation outfitLocation = OutfitDefinition.getOutfitTexture(EquipmentSlot.CHEST, definition, ((PlayerSlimAccessor) outfitModel).reutilities$slimArms());
-            ResourceLocation emissiveLocation = OutfitDefinition.getEmissiveOutfitTexture(EquipmentSlot.CHEST, definition, ((PlayerSlimAccessor) outfitModel).reutilities$slimArms());
+            ResourceLocation outfitLocation = OutfitDefinition.getOutfitTexture(EquipmentSlot.CHEST, definition, slimArms);
+            ResourceLocation emissiveLocation = OutfitDefinition.getEmissiveOutfitTexture(EquipmentSlot.CHEST, definition, slimArms);
 
             stack.pushPose();
-            stack.scale(1.03F, 1.03F, 1.03F);
+            stack.scale(1.001F, 1.001F, 1.001F);
             if (outfitLocation != null) {
                 VertexConsumer translucentBuffer = buffer.getBuffer(RenderType.entityTranslucent(outfitLocation));
 
-                rightArm.xRot = 0;
-                rightArm.render(stack, translucentBuffer, packedLight, Reconstants.getOverlayCoordinates(0));
-                rightSleeve.xRot = 0;
-                rightSleeve.render(stack, translucentBuffer, packedLight, Reconstants.getOverlayCoordinates(0));
+                arm.render(stack, translucentBuffer, packedLight, Reconstants.getOverlayCoordinates(0));
+                sleeve.render(stack, translucentBuffer, packedLight, Reconstants.getOverlayCoordinates(0));
             }
 
             if (emissiveLocation != null) {
                 VertexConsumer emissiveBuffer = buffer.getBuffer(RenderType.eyes(emissiveLocation));
 
-                rightArm.xRot = 0;
-                rightArm.render(stack, emissiveBuffer, Reconstants.EMISSIVE_LIGHT_VALUE, Reconstants.getOverlayCoordinates(0));
-                rightSleeve.xRot = 0;
-                rightSleeve.render(stack, emissiveBuffer, Reconstants.EMISSIVE_LIGHT_VALUE, Reconstants.getOverlayCoordinates(0));
+                arm.render(stack, emissiveBuffer, Reconstants.EMISSIVE_LIGHT_VALUE, Reconstants.getOverlayCoordinates(0));
+                sleeve.render(stack, emissiveBuffer, Reconstants.EMISSIVE_LIGHT_VALUE, Reconstants.getOverlayCoordinates(0));
+            }
+
+            // Glint
+            if (chestStack.hasFoil()) {
+                arm.render(stack, buffer.getBuffer(RenderType.entityGlint()), packedLight, OverlayTexture.NO_OVERLAY);
+                sleeve.render(stack, buffer.getBuffer(RenderType.entityGlint()), packedLight, OverlayTexture.NO_OVERLAY);
             }
             stack.popPose();
-
-            if (chestStack.hasFoil()) {
-                rightArm.render(stack, buffer.getBuffer(RenderType.armorEntityGlint()), packedLight, OverlayTexture.NO_OVERLAY);
-                rightSleeve.render(stack, buffer.getBuffer(RenderType.armorEntityGlint()), packedLight, OverlayTexture.NO_OVERLAY);
-            }
         }
     }
 
@@ -96,8 +92,8 @@ public class HandArmorRenderer {
             if (arm == HumanoidArm.LEFT) rightArm = armorModel.leftArm;
 
             armorModel.attackTime = 0;
-            armorModel.crouching = false;
             armorModel.swimAmount = 0;
+            armorModel.crouching = false;
             armorModel.setupAnim(player, 0, 0, 0, 0, 0);
             ResourceLocation armorTexture = ClientHooks.getArmorTexture(player, chestStack, layers.getFirst(), false, EquipmentSlot.CHEST);
             VertexConsumer cutoutBuffer = buffer.getBuffer(RenderType.armorCutoutNoCull(armorTexture));

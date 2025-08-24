@@ -16,6 +16,7 @@ import net.neoforged.neoforge.client.model.generators.ModelFile;
 import net.neoforged.neoforge.client.model.generators.loaders.SeparateTransformsModelBuilder;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 
+import java.time.Month;
 import java.util.LinkedHashMap;
 
 import static melonystudios.reutilities.util.Reconstants.*;
@@ -106,7 +107,7 @@ public abstract class ReItemModelProvider extends ItemModelProvider {
                 .perspective(ItemDisplayContext.GUI, this.nested().parent(this.getExistingFile(this.modLoc("item/" + name + "_inventory"))))
                 .perspective(ItemDisplayContext.GROUND, this.nested().parent(this.getExistingFile(this.modLoc("item/" + name + "_inventory"))))
                 .perspective(ItemDisplayContext.FIXED, this.nested().parent(this.getExistingFile(this.modLoc("item/" + name + "_inventory")))).end()
-                .override().predicate(monthCheck(), prideMonth).model(this.getExistingFile(this.modLoc("item/" + name + "_trans")));
+                .override().predicate(monthCheck(Month.of(prideMonth)), prideMonth).model(this.getExistingFile(this.modLoc("item/" + name + "_trans")));
     }
 
     public void bow(String name) {

@@ -34,7 +34,7 @@ public abstract class RePlayerRendererMixin extends LivingEntityRenderer<Abstrac
         if (!ReConfigs.RENDER_OUTFITS.get()) return;
         for (ItemStack stack : player.getArmorSlots()) {
             if (stack.has(ReDataComponents.OUTFIT)) {
-                OutfitDefinition definition = stack.get(ReDataComponents.OUTFIT).value();
+                OutfitDefinition definition = OutfitDefinition.getDefinition(player.clientLevel, stack);
                 Equipable equipable = Equipable.get(stack);
                 if (equipable == null) return;
 

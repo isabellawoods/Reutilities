@@ -1,8 +1,7 @@
 package melonystudios.reutilities.component;
 
 import melonystudios.reutilities.Reutilities;
-import melonystudios.reutilities.entity.outfit.OutfitDefinition;
-import net.minecraft.core.Holder;
+import melonystudios.reutilities.component.custom.ComponentOutfit;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.codec.ByteBufCodecs;
@@ -24,8 +23,8 @@ public class ReDataComponents {
             builder -> builder.persistent(ExtraCodecs.NON_NEGATIVE_INT).networkSynchronized(ByteBufCodecs.VAR_INT));
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<List<ResourceLocation>>> HIDE_COMPONENTS = COMPONENTS.registerComponentType("hide_components",
             builder -> builder.persistent(ResourceLocation.CODEC.listOf()).cacheEncoding());
-    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Holder<OutfitDefinition>>> OUTFIT = COMPONENTS.registerComponentType("outfit",
-            builder -> builder.persistent(OutfitDefinition.CODEC).networkSynchronized(OutfitDefinition.STREAM_CODEC).cacheEncoding());
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<ComponentOutfit>> OUTFIT = COMPONENTS.registerComponentType("outfit",
+            builder -> builder.persistent(ComponentOutfit.CODEC).networkSynchronized(ComponentOutfit.STREAM_CODEC).cacheEncoding());
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> LIGHT_EMISSION = COMPONENTS.registerComponentType("light_emission",
             builder -> builder.persistent(ExtraCodecs.intRange(0, 15)).networkSynchronized(ByteBufCodecs.VAR_INT));
 }

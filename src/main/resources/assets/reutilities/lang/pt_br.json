@@ -2,11 +2,34 @@
   "entity.reutilities.boat": "Bote",
   "entity.reutilities.chest_boat": "Bote com Baú",
 
+  "reutilities.configuration.title": "§6§l[Reutilities]§r Configurações",
+  "reutilities.configuration.section.melonystudios.reutilities.common.toml.title": "§6§l[Reutilities]§r Configurações §6§l>§r Comum",
+  "reutilities.configuration.rendering": "Renderização",
+  "reutilities.configuration.rendering.tooltip": "Configurações relacionadas a renderização de coisas do Reutilities.",
+  "reutilities.configuration.item": "Itens",
+  "reutilities.configuration.item.tooltip": "Configurações relacionadas a itens (ou suas descrições) adicionados ou mudados pelo Reutilities.",
+
+  "config.reutilities.render_outfits": "Renderização de roupas",
+  "config.reutilities.render_outfits.tooltip": "Se roupas devem renderizar no seu jogador e na sua mão em primeira pessoa.\nDesabilitar isso faz com que a renderização volte ao vanilla.",
+  "config.reutilities.render_outfit_on_hand": "Renderizar roupa da mão",
+  "config.reutilities.render_outfit_on_hand.tooltip": "Se roupas no seu slot de peitoral devem renderizar na sua mão em primeira pessoa.",
+  "config.reutilities.render_armor_on_hand": "Renderizar armadura na mão",
+  "config.reutilities.render_armor_on_hand.tooltip": "Se armaduras no seu slot de peitoral devem renderizar na sua mão em primeira pessoa.",
+  "config.reutilities.light_emitting_emissives": "Tornar blocos luminosos em emissivos",
+  "config.reutilities.light_emitting_emissives.tooltip": "Se blocos que emitem luz devem ser emissivos baseados em sua iluminação.",
+  "config.reutilities.show_components_with_alt": "Mostrar componentes com Alt",
+  "config.reutilities.show_components_with_alt.tooltip": "Se deve mostrar os componentes de um item na sua descrição quando segurar Alt.",
+  "config.reutilities.line_breaks_on_components": "Quebra de linha nos componentes",
+  "config.reutilities.line_breaks_on_components.tooltip": "Se os componentes nas descrições de itens devem ter quebras de linha.",
+
   "tag.item.c.dual_wielded": "Empunhadura Dupla",
   "tag.item.c.emissive_lighting": "Iluminação Emissiva",
   "tag.trim_material.c.emissive_lighting": "Iluminação Emissiva",
 
   "tooltip.reutilities.hold_alt": "Segure <%s> para ver componentes",
   "tooltip.reutilities.components": "Componentes: %s",
+  "tooltip.reutilities.outfit": "Roupa: %s",
+  "tooltip.reutilities.character": "Personagem: %s",
+  "tooltip.reutilities.design": "Design da roupa:",
   "logger.reutilities.outfit_definition.wrong_equipment_slot": "Tentou achar o slot de roupa de um slot que não é armadura '%s'"
 }

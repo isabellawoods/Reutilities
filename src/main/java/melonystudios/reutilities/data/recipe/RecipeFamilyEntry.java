@@ -6,13 +6,13 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.ItemLike;
 
-public interface FamilyRecipeEntry {
-    /// Gets the ingredient for the recipe provider, while also providing a workaround for properly using the {@link FamilyRecipeProvider#has(ItemLike) has()} methods,
+public interface RecipeFamilyEntry {
+    /// Gets the ingredient for the recipe provider, while also providing a workaround for properly using the {@link RecipeFamilyProvider#has(ItemLike) has()} methods,
     /// which only support items and item tags.
     Pair<ItemLike, Ingredient> entryGetter();
 
-    /// Represents a single item entry in the {@link FamilyRecipeProvider#RECIPES RECIPES} map.
-    abstract class ItemEntry implements FamilyRecipeEntry {
+    /// Represents a single item entry in the {@link RecipeFamilyProvider#RECIPES RECIPES} map.
+    abstract class ItemEntry implements RecipeFamilyEntry {
         @Override
         public Pair<ItemLike, Ingredient> entryGetter() {
             return new Pair<>(this.entry().getFirst(), Ingredient.of(this.entry().getSecond()));
@@ -22,8 +22,8 @@ public interface FamilyRecipeEntry {
         public abstract Pair<ItemLike, Item> entry();
     }
 
-    /// Represents a single item tag entry in the {@link FamilyRecipeProvider#RECIPES RECIPES} map.
-    abstract class TagEntry implements FamilyRecipeEntry {
+    /// Represents a single item tag entry in the {@link RecipeFamilyProvider#RECIPES RECIPES} map.
+    abstract class TagEntry implements RecipeFamilyEntry {
         @Override
         public Pair<ItemLike, Ingredient> entryGetter() {
             return new Pair<>(this.entry().getFirst(), Ingredient.of(this.entry().getSecond()));

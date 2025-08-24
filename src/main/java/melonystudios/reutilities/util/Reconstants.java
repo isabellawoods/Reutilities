@@ -14,17 +14,16 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.time.Month;
+import java.time.format.TextStyle;
+import java.util.*;
 
 /// Contains various constants, maps and methods used across <i>Reutilities</i>.
 public class Reconstants {
     public static final List<Block> SIGNS = new ArrayList<>();
     public static final List<Block> HANGING_SIGNS = new ArrayList<>();
     public static final Map<String, BoatType> BOATS = new HashMap<>();
-    /// Represents the default "`OAK`" boat type, for when there are no registered boat types.
+    /// Represents the default `OAK` boat type, for when there are no registered boat types.
     public static final BoatType OAK = new BoatType(() -> Items.OAK_BOAT, () -> Items.OAK_CHEST_BOAT, ResourceLocation.withDefaultNamespace("oak"));
     public static final int EMISSIVE_LIGHT_VALUE = LightTexture.pack(15, 15);
 
@@ -54,7 +53,7 @@ public class Reconstants {
         // logging errors makes it spam the logs with "can't access registry: minecraft:enchantment" ~isa 17-8-25
         ItemStack.CODEC.encodeStart(NbtOps.INSTANCE, stack).resultOrPartial(error -> {}).ifPresent(components -> {
             if (components instanceof CompoundTag tag && tag.contains("components", Tag.TAG_COMPOUND)) {
-                String indentation = ReConfigs.LINE_BREAKS_ON_TAGS.get() ? " " : "";
+                String indentation = ReConfigs.LINE_BREAKS_ON_COMPONENTS.get() ? " " : "";
                 tooltip.add(Component.translatable("tooltip.reutilities.components", new TextComponentTagVisitor(indentation).visit(tag.getCompound("components"))).withStyle(ChatFormatting.GRAY));
             }
         });
@@ -93,7 +92,7 @@ public class Reconstants {
         return Reutilities.reutilities("texture_id");
     }
 
-    public static ResourceLocation monthCheck() {
-        return Reutilities.reutilities("month_check");
+    public static ResourceLocation monthCheck(Month month) {
+        return Reutilities.reutilities("month_check/" + month.getDisplayName(TextStyle.FULL_STANDALONE, Locale.ENGLISH).toLowerCase(Locale.ENGLISH));
     }
 }

@@ -2,11 +2,34 @@
   "entity.reutilities.boat": "Boat",
   "entity.reutilities.chest_boat": "Boat with Chest",
 
+  "reutilities.configuration.title": "§6§l[Reutilities]§r Settings",
+  "reutilities.configuration.section.melonystudios.reutilities.common.toml.title": "§6§l[Reutilities]§r Settings §6§l>§r Common",
+  "reutilities.configuration.rendering": "Rendering",
+  "reutilities.configuration.rendering.tooltip": "Settings related to rendering of Reutilities' features.",
+  "reutilities.configuration.item": "Items",
+  "reutilities.configuration.item.tooltip": "Settings related to items (or its tooltips) added or changed by Reutilities.",
+
+  "config.reutilities.render_outfits": "Render Outfits",
+  "config.reutilities.render_outfits.tooltip": "Whether to render outfits on your player model and first-person hand.\nDisabling this makes the rendering fall back to vanilla.",
+  "config.reutilities.render_outfit_on_hand": "Render Outfit on Hand",
+  "config.reutilities.render_outfit_on_hand.tooltip": "Whether to render outfits in the \"chest\" slot in your first-person hand.",
+  "config.reutilities.render_armor_on_hand": "Render Armor on Hand",
+  "config.reutilities.render_armor_on_hand.tooltip": "Whether to render chestplates in your first-person hand.",
+  "config.reutilities.light_emitting_emissives": "Light Emitting Emissives",
+  "config.reutilities.light_emitting_emissives.tooltip": "Whether light-emitting blocks should be emissive based on their light level.",
+  "config.reutilities.show_components_with_alt": "Show Components with Alt",
+  "config.reutilities.show_components_with_alt.tooltip": "Whether to display an item's data components when holding Alt.",
+  "config.reutilities.line_breaks_on_components": "Line Breaks on Components",
+  "config.reutilities.line_breaks_on_components.tooltip": "Whether component display on tooltips should have line breaks.",
+
   "tag.item.c.dual_wielded": "Dual Wielded",
   "tag.item.c.emissive_lighting": "Emissive Lighting",
   "tag.trim_material.c.emissive_lighting": "Emissive Lighting",
 
   "tooltip.reutilities.hold_alt": "Hold <%s> for components",
   "tooltip.reutilities.components": "Components: %s",
+  "tooltip.reutilities.outfit": "Outfit: %s",
+  "tooltip.reutilities.character": "Character: %s",
+  "tooltip.reutilities.design": "Clothing Design:",
   "logger.reutilities.outfit_definition.wrong_equipment_slot": "Tried finding the outfit slot for non-armor slot '%s'"
 }
