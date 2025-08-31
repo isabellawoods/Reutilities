@@ -32,10 +32,15 @@ public abstract class ReItemModelProvider extends ItemModelProvider {
         super(output, modID, fileHelper);
     }
 
+    /// Makes a model for an item.
+    /// @param name The item's registry id, used to locate the texture.
     public void standard(String name) {
         this.standard(this.generated, name);
     }
 
+    /// Makes a model for an item.
+    /// @param parent The location of the parent model, usually `item/generated` or `item/handheld`.
+    /// @param name The item's registry id, used to locate the texture.
     public void standard(ModelFile parent, String name) {
         this.getBuilder(name).parent(parent).texture("layer0", this.modLoc("item/" + name));
     }
@@ -52,10 +57,15 @@ public abstract class ReItemModelProvider extends ItemModelProvider {
         this.getBuilder(name).parent(parent).texture("layer0", this.modLoc("block/" + name + addition));
     }
 
+    /// Makes a model for a block, using the `models/block` folder as the source.
+    /// @param name The block's registry id and model file name.
     public void block(String name) {
         this.withExistingParent(name, this.modLoc("block/" + name));
     }
 
+    /// Makes a model for a block, using the `models/block` folder as the source.
+    /// @param name The block's registry id and model file name.
+    /// @param addition An extra string used to find the model, for when the model name isn't exactly the item's name.
     public void block(String name, String addition) {
         this.withExistingParent(name, this.modLoc("block/" + name + addition));
     }
