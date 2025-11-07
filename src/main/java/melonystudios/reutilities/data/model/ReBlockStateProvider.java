@@ -108,6 +108,41 @@ public abstract class ReBlockStateProvider extends BlockStateProvider {
         this.simpleBlock(block, this.models().cubeColumn(BuiltInRegistries.BLOCK.getKey(block).getPath(), sideTexture, endTexture));
     }
 
+    /// Makes the block states and models for a cauldron with a single layer, like a {@linkplain LavaCauldronBlock lava cauldron block}.
+    /// @param cauldron The cauldron block.
+    /// @param contents The texture of the cauldron's contents.
+    public void singleLayerCauldron(Block cauldron, ResourceLocation contents) {
+        ResourceLocation registry = BuiltInRegistries.BLOCK.getKey(cauldron);
+        this.simpleBlock(cauldron, this.models().withExistingParent(registry.getPath(), this.mcLoc("block/template_cauldron_full"))
+                .texture("content", contents)
+                .texture("side", this.mcLoc("block/cauldron_side"))
+                .texture("inside", this.mcLoc("block/cauldron_inner"))
+                .texture("bottom", this.mcLoc("block/cauldron_bottom"))
+                .texture("top", this.mcLoc("block/cauldron_top"))
+                .texture("particle", this.mcLoc("block/cauldron_side")));
+    }
+
+    /// Makes the block states and models for a {@linkplain net.minecraft.world.level.block.LayeredCauldronBlock layered cauldron block}.
+    /// @param cauldron The cauldron block.
+    /// @param contents The texture of the cauldron's contents.
+    public void layeredCauldron(Block cauldron, ResourceLocation contents) {
+        this.getVariantBuilder(cauldron).forAllStates(state -> {
+            ResourceLocation registry = BuiltInRegistries.BLOCK.getKey(cauldron);
+            int level = state.getValue(BlockStateProperties.LEVEL_CAULDRON);
+            String name = level == 3 ? "full" : (level == 2 ? "level2" : "level1");
+
+            return ConfiguredModel.builder().modelFile(this.models().getBuilder(registry.getPath() + "_" + name)
+                    .parent(this.models().getExistingFile(this.mcLoc("block/template_cauldron_" + name)))
+                    .texture("content", contents)
+                    .texture("side", this.mcLoc("block/cauldron_side"))
+                    .texture("inside", this.mcLoc("block/cauldron_inner"))
+                    .texture("bottom", this.mcLoc("block/cauldron_bottom"))
+                    .texture("top", this.mcLoc("block/cauldron_top"))
+                    .texture("particle", this.mcLoc("block/cauldron_side"))
+            ).build();
+        });
+    }
+
     public void chain(Block chain) {
         this.getVariantBuilder(chain).forAllStatesExcept(state -> {
             Direction.Axis axis = state.getValue(BlockStateProperties.AXIS);
@@ -178,9 +213,21 @@ public abstract class ReBlockStateProvider extends BlockStateProvider {
         });
     }
 
+    public void netherWart(Block block, String texture) {
+        this.getVariantBuilder(block).forAllStates(state -> {
+            int ageIndex = netherWartAgeIndex(state.getValue(BlockStateProperties.AGE_3));
+            return ConfiguredModel.builder().modelFile(this.models().crop(texture + "_stage" + ageIndex, this.modLoc("block/" + texture + "_stage" + ageIndex))).build();
+        });
+    }
+
     public void wildCrop(Block wildCrop) {
         String wildCropPath = BuiltInRegistries.BLOCK.getKey(wildCrop).getPath();
         this.simpleBlock(wildCrop, this.models().withExistingParent(wildCropPath, Reutilities.reutilities("block/template_wild_crop")).texture("crop", this.modLoc("block/" + wildCropPath)));
+    }
+
+    public static int wheatAgeIndex(int age) {
+        if (age > 7) return 0;
+        return age;
     }
 
     public static int potatoAgeIndex(int age) {
@@ -190,9 +237,12 @@ public abstract class ReBlockStateProvider extends BlockStateProvider {
         return 0;
     }
 
-    public static int wheatAgeIndex(int age) {
-        if (age > 7) return 0;
-        return age;
+    public static int netherWartAgeIndex(int age) {
+        return switch (age) {
+            case 1, 2 -> 1;
+            case 3 -> 2;
+            default -> 0;
+        };
     }
 
     public static String moistIndex(int moistLevel) {

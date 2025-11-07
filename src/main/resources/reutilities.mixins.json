@@ -1,16 +1,18 @@
 {
   "required": true,
-  "minVersion": "0.8.4",
+  "minVersion": "0.8.5",
   "package": "melonystudios.reutilities.mixin",
   "refmap": "reutilities.refmap.json",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
     "blockentity.ReBlockEntityTypeMixin",
+    "entity.ReLivingEntityMixin",
     "item.ReBoatItemMixin",
     "item.ReItemMixin",
     "item.ReItemStackMixin"
   ],
   "client": [
+    "client.ReScreenshotMixin",
     "renderer.PlayerSlimAccessor",
     "renderer.ReHumanoidArmorLayerMixin",
     "renderer.ReItemFrameRendererMixin",

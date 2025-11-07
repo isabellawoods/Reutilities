@@ -7,7 +7,6 @@ import melonystudios.reutilities.util.ReRegistries;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceKey;
@@ -18,14 +17,17 @@ import net.minecraft.world.item.component.TooltipProvider;
 
 import java.util.function.Consumer;
 
-/// Represents an outfit definition as a data component.
+/// Represents an outfit definition as a data component. This class' {@link #CODEC} has the following fields:
+/// <li>`definition`: A resource key of an outfit definition;</li>
+/// <li>`tooltip`: <i>(optional)</i> The {@linkplain TooltipStyle tooltip style} to use for this component outfit.</li>
 /// @param definition An {@linkplain EitherHolder either holder} for the definition.
 /// @param style The tooltip style to use for the item's tooltip. Defaults to {@link TooltipStyle#OUTFIT OUTFIT}.
 public record ComponentOutfit(EitherHolder<OutfitDefinition> definition, TooltipStyle style) implements TooltipProvider {
-    public static final Codec<ComponentOutfit> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+    public static final Codec<ComponentOutfit> FULL_CODEC = RecordCodecBuilder.create(instance -> instance.group(
             EitherHolder.codec(ReRegistries.OUTFIT_DEFINITION, OutfitDefinition.CODEC).fieldOf("definition").forGetter(ComponentOutfit::definition),
             TooltipStyle.CODEC.optionalFieldOf("tooltip", TooltipStyle.OUTFIT).forGetter(ComponentOutfit::style)
     ).apply(instance, ComponentOutfit::new));
+    public static final Codec<ComponentOutfit> CODEC = Codec.withAlternative(FULL_CODEC, EitherHolder.codec(ReRegistries.OUTFIT_DEFINITION, OutfitDefinition.CODEC), holder -> new ComponentOutfit(holder, TooltipStyle.OUTFIT));
     public static final StreamCodec<RegistryFriendlyByteBuf, ComponentOutfit> STREAM_CODEC = StreamCodec.composite(
             EitherHolder.streamCodec(ReRegistries.OUTFIT_DEFINITION, OutfitDefinition.STREAM_CODEC),
             ComponentOutfit::definition,
@@ -47,6 +49,8 @@ public record ComponentOutfit(EitherHolder<OutfitDefinition> definition, Tooltip
         return of(definition, TooltipStyle.OUTFIT);
     }
 
+    /// Recreates a `ComponentOutfit` with a specified tooltip style.
+    /// @param style The tooltip style to use.
     public ComponentOutfit withTooltip(TooltipStyle style) {
         return new ComponentOutfit(this.definition(), style);
     }
@@ -57,15 +61,8 @@ public record ComponentOutfit(EitherHolder<OutfitDefinition> definition, Tooltip
         if (registries == null) return;
 
         this.definition().unwrap(registries).ifPresent(definition -> {
-            Component translation = Component.translatable(definition.getKey().location().toLanguageKey("outfit_definition").replace('/', '.')).withStyle(this.style.getStyle());
-            switch (this.style()) {
-                case OUTFIT -> adder.accept(Component.translatable("tooltip.reutilities.outfit", translation).withStyle(ChatFormatting.DARK_GRAY));
-                case CHARACTER -> adder.accept(Component.translatable("tooltip.reutilities.character", translation).withStyle(ChatFormatting.DARK_GRAY));
-                case DESIGN -> {
-                    adder.accept(Component.translatable("tooltip.reutilities.design").withStyle(ChatFormatting.GRAY));
-                    adder.accept(CommonComponents.space().append(translation));
-                }
-            }
+            Component translation = Component.translatable(definition.getKey().location().toLanguageKey("outfit_definition").replace('/', '.')).withStyle(ChatFormatting.GRAY);
+            this.style().getTooltip().accept(translation, adder);
         });
     }
 }

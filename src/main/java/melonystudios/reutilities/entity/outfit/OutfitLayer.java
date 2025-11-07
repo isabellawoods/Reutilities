@@ -3,9 +3,9 @@ package melonystudios.reutilities.entity.outfit;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import melonystudios.reutilities.ReConfigs;
+import melonystudios.reutilities.api.ReAPI;
 import melonystudios.reutilities.component.ReDataComponents;
 import melonystudios.reutilities.util.Reconstants;
-import melonystudios.reutilities.util.tag.ReItemTags;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.PlayerModel;
@@ -13,6 +13,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FastColor;
@@ -68,7 +69,7 @@ public class OutfitLayer<T extends LivingEntity, A extends HumanoidModel<T>> ext
         if (mob instanceof FullBodyOutfit && wearingOutfit) {
             this.renderFullBodyOutfit(stack, buffer, mob, slot, packedLight, OutfitDefinition.definitions(world), slimArms);
         } else if (!armorStack.isEmpty() && armorStack.has(ReDataComponents.OUTFIT)) {
-            this.renderComponentOutfit(stack, buffer, slot, armorStack, world, packedLight, slimArms);
+            this.renderComponentOutfit(stack, buffer, slot, armorStack, world, mob.blockPosition(), packedLight, slimArms);
         }
     }
 
@@ -96,19 +97,19 @@ public class OutfitLayer<T extends LivingEntity, A extends HumanoidModel<T>> ext
     }
 
     /// Renders part of an outfit based on the item stack's {@link ReDataComponents#OUTFIT reutilities:outfit} component, called a "**component outfit**".
-    public void renderComponentOutfit(PoseStack stack, MultiBufferSource buffer, EquipmentSlot slot, ItemStack armorStack, Level world, int packedLight, boolean slimArms) {
+    public void renderComponentOutfit(PoseStack stack, MultiBufferSource buffer, EquipmentSlot slot, ItemStack armorStack, Level world, BlockPos pos, int packedLight, boolean slimArms) {
         OutfitDefinition definition = OutfitDefinition.getDefinition(world, armorStack);
         ResourceLocation outfitLocation = OutfitDefinition.getOutfitTexture(slot, definition, slimArms);
         ResourceLocation emissiveLocation = OutfitDefinition.getEmissiveOutfitTexture(slot, definition, slimArms);
         int outfitColor = OutfitDefinition.getOutfitColors(definition, armorStack, slot);
         int overlayCoordinates = Reconstants.getOverlayCoordinates(0);
 
+        packedLight = ReAPI.getLightOutputFromItem(armorStack, packedLight, world, pos, true);
+
         // Regular texture
         if (outfitLocation != null) {
-            int brightLight = armorStack.is(ReItemTags.EMISSIVE_LIGHTING) ? EMISSIVE_LIGHT_VALUE : packedLight;
-
             VertexConsumer translucentBuffer = buffer.getBuffer(RenderType.entityTranslucent(outfitLocation));
-            this.outfitModel.renderToBuffer(stack, translucentBuffer, brightLight, overlayCoordinates, FastColor.ARGB32.color(255, outfitColor));
+            this.outfitModel.renderToBuffer(stack, translucentBuffer, packedLight, overlayCoordinates, FastColor.ARGB32.color(255, outfitColor));
         }
 
         // Emissive texture

@@ -181,10 +181,10 @@ public abstract class ReItemModelProvider extends ItemModelProvider {
                 };
 
                 String itemPath = armorItem.toString();
-                String trimPath = "trims/items/" + armorType + "_trim_" + material.location().getPath();
                 String currentTrimName = itemPath + "_" + material.location().getPath() + "_trim";
                 ResourceLocation itemLocation = ResourceLocation.parse(itemPath);
-                ResourceLocation trimLocation = ResourceLocation.parse(trimPath); // minecraft namespace
+                // fix custom trim materials having wrong location ~isa 9-9-25
+                ResourceLocation trimLocation = ResourceLocation.fromNamespaceAndPath(material.location().getNamespace(), "trims/items/" + armorType + "_trim_" + material.location().getPath());
                 ResourceLocation currentTrimLocation = ResourceLocation.parse(currentTrimName);
 
                 // This is used for making the existing file helper acknowledge that this texture exist, so this will avoid an IllegalArgumentException.

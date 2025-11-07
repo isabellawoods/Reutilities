@@ -70,7 +70,7 @@ public class ReBoatItem extends BoatItem {
                 if (!world.noCollision(boat, boat.getBoundingBox())) {
                     return InteractionResultHolder.fail(handStack);
                 } else {
-                    if (!world.isClientSide) {
+                    if (!world.isClientSide()) {
                         world.addFreshEntity(boat);
                         world.gameEvent(player, GameEvent.ENTITY_PLACE, result.getLocation());
                         handStack.consume(1, player);

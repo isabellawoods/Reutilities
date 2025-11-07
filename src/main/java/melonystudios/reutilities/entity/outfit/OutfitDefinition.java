@@ -28,7 +28,7 @@ import java.util.Optional;
 /// @param chestSlot Same as `headSlot`.
 /// @param legsSlot Same as `headSlot`.
 /// @param feetSlot Same as `headSlot`.
-/// @see OutfitSlot Outfit Slots
+/// @see OutfitSlot
 /// @author isabellawoods. Copied from [Back Math's documentation on **IMF**](https://github.com/isabellawoods/Informational-Mod-Features/blob/main/Back%20Math/Docs/Outfit%20Definition.md).
 public record OutfitDefinition(Optional<OutfitSlot> headSlot, Optional<OutfitSlot> chestSlot, Optional<OutfitSlot> legsSlot, Optional<OutfitSlot> feetSlot) {
     public static final Codec<OutfitDefinition> DIRECT_CODEC = RecordCodecBuilder.create(instance -> instance.group(

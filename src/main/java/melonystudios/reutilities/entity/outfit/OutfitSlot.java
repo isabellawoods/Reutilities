@@ -15,7 +15,7 @@ import java.util.Optional;
 /// @param emissiveTexture *(optional)* A resource location for the emissive texture used by this outfit slot. Omits the `textures/` prefix and `.png` suffix.
 /// @param hidesSkinLayers *(optional)* Whether this slot hides the {@linkplain net.minecraft.world.entity.player.PlayerModelPart skin layers} associated with this slot.
 /// @param color *(optional)* An integer defining a set color for this outfit slot. When defined, this field overrides the item's default color and the "{@link net.minecraft.core.component.DataComponents#DYED_COLOR minecraft:dyed_color}" component.
-/// @see OutfitDefinition Outfit Definitions
+/// @see OutfitDefinition
 /// @author isabellawoods. Copied from [Back Math's documentation on **IMF**](https://github.com/isabellawoods/Informational-Mod-Features/blob/main/Back%20Math/Docs/Outfit%20Definition.md).
 public record OutfitSlot(ResourceLocation texture, Optional<ResourceLocation> emissiveTexture, boolean hidesSkinLayers, Optional<Integer> color) {
     public static final Codec<OutfitSlot> CODEC = RecordCodecBuilder.create(instance -> instance.group(

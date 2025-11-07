@@ -3,11 +3,11 @@ package melonystudios.reutilities.entity.renderer;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import melonystudios.reutilities.ReConfigs;
+import melonystudios.reutilities.api.ReAPI;
 import melonystudios.reutilities.component.ReDataComponents;
 import melonystudios.reutilities.entity.outfit.OutfitDefinition;
 import melonystudios.reutilities.entity.outfit.OutfitModel;
 import melonystudios.reutilities.util.Reconstants;
-import melonystudios.reutilities.util.tag.ReItemTags;
 import melonystudios.reutilities.util.tag.ReTrimMaterialTags;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
@@ -58,6 +58,8 @@ public class HandArmorRenderer {
             ResourceLocation outfitLocation = OutfitDefinition.getOutfitTexture(EquipmentSlot.CHEST, definition, slimArms);
             ResourceLocation emissiveLocation = OutfitDefinition.getEmissiveOutfitTexture(EquipmentSlot.CHEST, definition, slimArms);
 
+            packedLight = ReAPI.getLightOutputFromItem(chestStack, packedLight, player.level(), player.blockPosition(), true);
+
             stack.pushPose();
             stack.scale(1.001F, 1.001F, 1.001F);
             if (outfitLocation != null) {
@@ -98,7 +100,7 @@ public class HandArmorRenderer {
             ResourceLocation armorTexture = ClientHooks.getArmorTexture(player, chestStack, layers.getFirst(), false, EquipmentSlot.CHEST);
             VertexConsumer cutoutBuffer = buffer.getBuffer(RenderType.armorCutoutNoCull(armorTexture));
 
-            if (chestStack.is(ReItemTags.EMISSIVE_LIGHTING)) packedLight = Reconstants.EMISSIVE_LIGHT_VALUE;
+            packedLight = ReAPI.getLightOutputFromItem(chestStack, packedLight, player.level(), player.blockPosition(), true);
 
             // Base armor model
             DyedItemColor dyedColor = chestStack.get(DataComponents.DYED_COLOR);
@@ -110,7 +112,7 @@ public class HandArmorRenderer {
             if (trim != null) {
                 TextureAtlasSprite trimSprite = Minecraft.getInstance().getModelManager().getAtlas(Sheets.ARMOR_TRIMS_SHEET).getSprite(trim.outerTexture(item.getMaterial()));
                 VertexConsumer trimBuffer = trimSprite.wrap(buffer.getBuffer(Sheets.armorTrimsSheet(trim.pattern().value().decal())));
-                int trimLight = trim.material().is(ReTrimMaterialTags.EMISSIVE_LIGHTING) ? Reconstants.EMISSIVE_LIGHT_VALUE : packedLight;
+                int trimLight = trim.material().is(ReTrimMaterialTags.EMISSIVE_LIGHTING) && ReConfigs.LIGHT_EMITTING_EMISSIVES.get() ? Reconstants.EMISSIVE_LIGHT_VALUE : packedLight;
                 rightArm.render(stack, trimBuffer, trimLight, OverlayTexture.NO_OVERLAY);
             }
 

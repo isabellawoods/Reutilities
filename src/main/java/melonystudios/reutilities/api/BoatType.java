@@ -1,8 +1,11 @@
 package melonystudios.reutilities.api;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import melonystudios.reutilities.util.Reconstants;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
@@ -20,6 +23,8 @@ public record BoatType(Supplier<Item> boat, Supplier<Item> chestBoat, ResourceLo
             BuiltInRegistries.ITEM.byNameCodec().optionalFieldOf("chest_boat", Items.OAK_CHEST_BOAT).forGetter(type -> type.chestBoat().get()),
             ResourceLocation.CODEC.optionalFieldOf("wood_type", ResourceLocation.withDefaultNamespace("oak")).forGetter(BoatType::woodType)
     ).apply(instance, (boat, chestBoat, woodType) -> new BoatType(() -> boat, () -> chestBoat, woodType)));
+    public static final Codec<ResourceLocation> WOOD_TYPE_CODEC = ResourceLocation.CODEC.validate(location -> Reconstants.BOATS.containsKey(location)
+            ? DataResult.success(location) : DataResult.error(() -> Component.translatable("logger.reutilities.wood_type.non_existent", location.toString()).getString()));
 
     @Override
     @NotNull

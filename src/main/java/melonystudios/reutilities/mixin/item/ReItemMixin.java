@@ -1,14 +1,20 @@
 package melonystudios.reutilities.mixin.item;
 
+import melonystudios.behaviorapi.BehaviorAPI;
+import melonystudios.behaviorapi.ItemBehavior;
+import melonystudios.behaviorapi.custom.ApplyEffectsBehavior;
 import melonystudios.reutilities.ReConfigs;
 import melonystudios.reutilities.Reutilities;
 import melonystudios.reutilities.api.ReAPI;
+import melonystudios.reutilities.component.ReDataComponents;
 import melonystudios.reutilities.util.Reconstants;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.alchemy.PotionContents;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -21,10 +27,30 @@ import java.util.List;
 public class ReItemMixin {
     @Inject(method = "appendHoverText", at = @At("HEAD"))
     public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flag, CallbackInfo callback) {
-        List<Component> tags = Reconstants.addItemTagsTooltip(stack, new ArrayList<>());
+        List<Component> tags = Reconstants.addItemTagsTooltip(stack, context.registries(), new ArrayList<>());
         if (flag.isAdvanced() && ReConfigs.SHOW_COMPONENTS_WITH_ALT.get() && ReAPI.shouldDisplay(stack, Reutilities.reutilities("item_components")) && !tags.isEmpty()) {
             tooltip.add(Component.translatable("tooltip.reutilities.hold_alt", Component.keybind("key.keyboard.left.alt").withStyle(flag.hasAltDown() ? ChatFormatting.WHITE : ChatFormatting.GRAY)).withStyle(ChatFormatting.DARK_GRAY));
             if (flag.hasAltDown()) tooltip.addAll(tags);
+        }
+
+        // Item Behaviors
+        if (!stack.has(ReDataComponents.BEHAVIORS)) return;
+        List<ItemBehavior> behaviors = stack.get(ReDataComponents.BEHAVIORS);
+        List<MobEffectInstance> behaviorEffects = new ArrayList<>();
+
+        // Regular behavior tooltips
+        for (ItemBehavior behavior : behaviors) {
+            if (behavior.settings().showInTooltip() && ReAPI.shouldDisplay(stack, BehaviorAPI.behaviorAPI("behaviors"))) {
+                behavior.addToTooltip(context, tooltip::add, flag);
+                if (behavior instanceof ApplyEffectsBehavior applyEffects && applyEffects.applyEffects().effect().isPresent()) {
+                    behaviorEffects.add(applyEffects.applyEffects().effect().get().copyEffect());
+                }
+            }
+        }
+
+        // Effect tooltips (so they display together)
+        if (ReAPI.shouldDisplay(stack, BehaviorAPI.behaviorAPI("behaviors/effects")) && !behaviorEffects.isEmpty()) {
+            PotionContents.addPotionTooltip(behaviorEffects, tooltip::add, 1, context.tickRate());
         }
     }
 }

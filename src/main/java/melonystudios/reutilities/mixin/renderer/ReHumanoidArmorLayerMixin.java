@@ -41,6 +41,6 @@ public abstract class ReHumanoidArmorLayerMixin<T extends LivingEntity, M extend
     @ModifyArg(method = "renderArmorPiece(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/entity/EquipmentSlot;ILnet/minecraft/client/model/HumanoidModel;FFFFFF)V",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/entity/layers/HumanoidArmorLayer;renderTrim(Lnet/minecraft/core/Holder;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;ILnet/minecraft/world/item/armortrim/ArmorTrim;Lnet/minecraft/client/model/Model;Z)V"))
     private int makeTrimEmissive(int packedLight, @Local ArmorTrim material) {
-        return material.material().is(ReTrimMaterialTags.EMISSIVE_LIGHTING) ? Reconstants.EMISSIVE_LIGHT_VALUE : packedLight;
+        return material.material().is(ReTrimMaterialTags.EMISSIVE_LIGHTING) && ReConfigs.LIGHT_EMITTING_EMISSIVES.get() ? Reconstants.EMISSIVE_LIGHT_VALUE : packedLight;
     }
 }

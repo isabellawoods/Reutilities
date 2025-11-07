@@ -4,7 +4,7 @@
 
 ## Features
 ### Outfit Definitions
-<img src="assets/outfit_definition.png" alt="Various mannequins in a plains biome, wearing different outfits added by Back Math. (Mellomedley 1.16.5)">
+<img src="assets/outfit_definition.png" alt="Various mannequins in a plains biome, wearing different outfits added by *Back Math*. (Mellomedley 1.16.5)">
 
 <sup>*Ported from [Back Math](https://github.com/isabellawoods/Back-Math)*</sup>
 
