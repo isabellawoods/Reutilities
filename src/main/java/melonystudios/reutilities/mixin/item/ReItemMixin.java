@@ -3,12 +3,8 @@ package melonystudios.reutilities.mixin.item;
 import melonystudios.behaviorapi.BehaviorAPI;
 import melonystudios.behaviorapi.ItemBehavior;
 import melonystudios.behaviorapi.custom.ApplyEffectsBehavior;
-import melonystudios.reutilities.ReConfigs;
-import melonystudios.reutilities.Reutilities;
 import melonystudios.reutilities.api.ReAPI;
 import melonystudios.reutilities.component.ReDataComponents;
-import melonystudios.reutilities.util.Reconstants;
-import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.item.Item;
@@ -27,12 +23,6 @@ import java.util.List;
 public class ReItemMixin {
     @Inject(method = "appendHoverText", at = @At("HEAD"))
     public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flag, CallbackInfo callback) {
-        List<Component> tags = Reconstants.addItemTagsTooltip(stack, context.registries(), new ArrayList<>());
-        if (flag.isAdvanced() && ReConfigs.SHOW_COMPONENTS_WITH_ALT.get() && ReAPI.shouldDisplay(stack, Reutilities.reutilities("item_components")) && !tags.isEmpty()) {
-            tooltip.add(Component.translatable("tooltip.reutilities.hold_alt", Component.keybind("key.keyboard.left.alt").withStyle(flag.hasAltDown() ? ChatFormatting.WHITE : ChatFormatting.GRAY)).withStyle(ChatFormatting.DARK_GRAY));
-            if (flag.hasAltDown()) tooltip.addAll(tags);
-        }
-
         // Item Behaviors
         if (!stack.has(ReDataComponents.BEHAVIORS)) return;
         List<ItemBehavior> behaviors = stack.get(ReDataComponents.BEHAVIORS);

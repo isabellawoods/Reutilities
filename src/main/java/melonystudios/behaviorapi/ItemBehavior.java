@@ -16,6 +16,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.TooltipProvider;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 
@@ -26,7 +27,7 @@ import java.util.function.Supplier;
 /// An **item behavior** is something that happens when eating an item or attacking an entity with an item.
 ///
 /// New item behaviors can be made by extending this class and registering them with the **item behavior** and **item behavior serializer** registries.
-public abstract class ItemBehavior {
+public abstract class ItemBehavior implements TooltipProvider {
     public static final Supplier<MapCodec<ItemBehavior>> CODEC = () -> BehaviorAPI.ITEM_BEHAVIOR_SERIALIZER.byNameCodec().dispatchMap("id", ItemBehavior::settingsCodec, Function.identity());
     // public static final StreamCodec<RegistryFriendlyByteBuf, List<ItemBehavior>> STREAM_CODEC = ByteBufCodecs.registry(BehaviorAPI.ITEM_BEHAVIOR_KEY).dispatch((Function<? super List<ItemBehavior>, ? extends ItemBehavior>) ItemBehavior::behaviorCodec, IndividualSettings::streamCodec);
     public static final ResourceLocation DEFAULT_BEHAVIOR_ID = BehaviorAPI.behaviorAPI("default");

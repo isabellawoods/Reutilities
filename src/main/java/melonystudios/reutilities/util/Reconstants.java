@@ -3,6 +3,8 @@ package melonystudios.reutilities.util;
 import melonystudios.reutilities.ReConfigs;
 import melonystudios.reutilities.Reutilities;
 import melonystudios.reutilities.api.BoatType;
+import melonystudios.reutilities.api.ReAPI;
+import melonystudios.reutilities.event.AddComponentTooltipsEvent;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.texture.OverlayTexture;
@@ -14,6 +16,9 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.common.extensions.IItemStackExtension;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.time.Month;
 import java.time.format.TextStyle;
@@ -48,16 +53,31 @@ public class Reconstants {
         return OverlayTexture.pack(OverlayTexture.u(u), OverlayTexture.v(false));
     }
 
+    @ApiStatus.Internal
+    public static AddComponentTooltipsEvent addComponentTooltips() {
+        AddComponentTooltipsEvent event = new AddComponentTooltipsEvent();
+        NeoForge.EVENT_BUS.post(event);
+        return event;
+    }
+
     /// Adds all tag entries from an item stack's `components` field to a list.
-    /// @param stack The item stack.
+    /// @param extension The item stack.
     /// @param tooltip A list of {@linkplain Component components} to add the tooltip into. This is usually empty, so when there is something it should display the tag.
-    public static List<Component> addItemTagsTooltip(ItemStack stack, HolderLookup.Provider registries, List<Component> tooltip) {
+    public static <S extends IItemStackExtension> List<Component> addItemTagsTooltip(S extension, HolderLookup.Provider registries, List<Component> tooltip) {
+        if (!(extension instanceof ItemStack stack)) return tooltip;
         var stackTag = stack.save(registries, new CompoundTag());
         if (stackTag instanceof CompoundTag tag && tag.contains("components", Tag.TAG_COMPOUND)) {
             String indentation = ReConfigs.LINE_BREAKS_ON_COMPONENTS.get() ? " " : "";
             tooltip.add(Component.translatable("tooltip.reutilities.components", new TextComponentTagVisitor(indentation).visit(tag.getCompound("components"))).withStyle(ChatFormatting.GRAY));
         }
         return tooltip;
+    }
+
+    /// Whether a tooltip can be displayed on an item, or is hidden by the {@link melonystudios.reutilities.component.ReDataComponents#HIDE_COMPONENTS reutilities:hide_components} component.
+    /// @param extension The item stack.
+    /// @param name A resource location of the tooltip name, like `reutilities:item_components`.
+    public static <S extends IItemStackExtension> boolean shouldDisplay(S extension, ResourceLocation name) {
+        return extension instanceof ItemStack stack && ReAPI.shouldDisplay(stack, name);
     }
 
     public static ResourceLocation pulling() {

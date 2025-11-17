@@ -66,7 +66,7 @@ public class TeleportEntityBehavior extends ItemBehavior {
     @Override
     public void runBehavior(ItemStack stack, Level world, LivingEntity livEntity) {
         Vec3 pos = this.teleportEntity().position();
-        RandomSource rand = world.getRandom();
+        RandomSource rand = livEntity.getRandom();
 
         // spawns particles
         if (!isAllowedToTeleportTarget(livEntity, world)) return;
@@ -90,9 +90,10 @@ public class TeleportEntityBehavior extends ItemBehavior {
                 player.resetCurrentImpulseContext();
                 world.playSound(null, pos.x, pos.y, pos.z, SoundEvents.PLAYER_TELEPORT, SoundSource.PLAYERS);
             } else {
+                SoundEvent teleportSound = livEntity instanceof Fox ? SoundEvents.FOX_TELEPORT : SoundEvents.PLAYER_TELEPORT;
                 livEntity.changeDimension(new DimensionTransition((ServerLevel) world, pos, livEntity.getDeltaMovement(), livEntity.getYRot(), livEntity.getXRot(), DimensionTransition.DO_NOTHING));
                 livEntity.resetFallDistance();
-                world.playSound(null, pos.x, pos.y, pos.z, SoundEvents.PLAYER_TELEPORT, SoundSource.PLAYERS);
+                world.playSound(null, pos.x, pos.y, pos.z, teleportSound, livEntity instanceof Fox ? SoundSource.NEUTRAL : SoundSource.PLAYERS);
             }
         }
     }
@@ -117,7 +118,7 @@ public class TeleportEntityBehavior extends ItemBehavior {
             BehaviorTeleportEvent event = BehaviorAPI.randomTeleportThroughBehavior(stack, world, livEntity, x, y, z, diameter);
             if (event.isCanceled()) return;
 
-            if (!event.isCanceled() && livEntity.randomTeleport(event.getTargetX(), event.getTargetY(), event.getTargetZ(), true)) {
+            if (livEntity.randomTeleport(event.getTargetX(), event.getTargetY(), event.getTargetZ(), true)) {
                 world.gameEvent(GameEvent.TELEPORT, livEntity.position(), GameEvent.Context.of(livEntity));
                 SoundEvent sound = SoundEvents.CHORUS_FRUIT_TELEPORT;
                 SoundSource source = SoundSource.PLAYERS;

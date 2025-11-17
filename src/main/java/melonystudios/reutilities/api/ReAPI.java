@@ -125,7 +125,7 @@ public class ReAPI {
 
     /// Whether a tooltip can be displayed on an item, or is hidden by the {@link ReDataComponents#HIDE_COMPONENTS reutilities:hide_components} component.
     /// @param stack The item stack.
-    /// @param name A resource location of the tooltip name, like `reutilities:item_tags`.
+    /// @param name A resource location of the tooltip name, like `reutilities:item_components`.
     public static boolean shouldDisplay(ItemStack stack, ResourceLocation name) {
         List<ResourceLocation> itemTags = stack.get(ReDataComponents.HIDE_COMPONENTS);
         if (itemTags == null || itemTags.isEmpty()) return true;

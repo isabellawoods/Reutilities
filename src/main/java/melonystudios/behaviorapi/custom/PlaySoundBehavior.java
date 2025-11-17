@@ -61,11 +61,11 @@ public class PlaySoundBehavior extends ItemBehavior {
         double rangeSquared = Mth.square(sound.value().getRange(this.playSound.volume()));
         long seed = world.getRandom().nextLong();
 
-        double x = this.playSound.pos(livEntity).x - livEntity.getX();
-        double y = this.playSound.pos(livEntity).y - livEntity.getY();
-        double z = this.playSound.pos(livEntity).z - livEntity.getZ();
+        double x = this.playSound.position(livEntity).x - livEntity.getX();
+        double y = this.playSound.position(livEntity).y - livEntity.getY();
+        double z = this.playSound.position(livEntity).z - livEntity.getZ();
         double range = x * x + y * y + z * z;
-        Vec3 truePos = this.playSound.pos(livEntity);
+        Vec3 truePos = this.playSound.position(livEntity);
         float trueVolume = this.playSound.volume();
 
         if (range > rangeSquared) {
@@ -84,22 +84,22 @@ public class PlaySoundBehavior extends ItemBehavior {
         }
     }
 
-    public record PlaySound(ResourceLocation sound, SoundSourceCodec source, Optional<Vec3> pos, float volume, float pitch, float minVolume) implements IndividualSettings<PlaySound> {
+    public record PlaySound(ResourceLocation sound, SoundSourceCodec source, Optional<Vec3> position, float volume, float pitch, float minVolume) implements IndividualSettings<PlaySound> {
         public static final MapCodec<PlaySound> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
                 ResourceLocation.CODEC.fieldOf("sound").forGetter(PlaySound::sound),
                 SoundSourceCodec.CODEC.fieldOf("source").forGetter(PlaySound::source),
-                Vec3.CODEC.optionalFieldOf("pos").forGetter(PlaySound::pos),
+                Vec3.CODEC.optionalFieldOf("position").forGetter(PlaySound::position),
                 ReAPI.floatRange(0, Float.MAX_VALUE).optionalFieldOf("volume", 1F).forGetter(PlaySound::volume),
                 ReAPI.floatRange(0, 2).optionalFieldOf("pitch", 1F).forGetter(PlaySound::pitch),
                 ReAPI.floatRange(0, 1).optionalFieldOf("min_volume", 1F).forGetter(PlaySound::minVolume)
         ).apply(instance, PlaySound::new));
 
-        public PlaySound(ResourceLocation sound, SoundSourceCodec source, Vec3 pos) {
-            this(sound, source, Optional.of(pos), 1, 1, 1);
+        public PlaySound(ResourceLocation sound, SoundSourceCodec source, Vec3 position) {
+            this(sound, source, Optional.of(position), 1, 1, 1);
         }
 
-        public Vec3 pos(LivingEntity target) {
-            return this.pos().orElse(target.position());
+        public Vec3 position(LivingEntity target) {
+            return this.position().orElse(target.position());
         }
 
         @Override
@@ -112,7 +112,7 @@ public class PlaySoundBehavior extends ItemBehavior {
             return StreamCodec.composite(
                     ResourceLocation.STREAM_CODEC, PlaySound::sound,
                     SoundSourceCodec.STREAM_CODEC, PlaySound::source,
-                    ByteBufCodecs.optional(ReAPI.VEC3_STREAM_CODEC), PlaySound::pos,
+                    ByteBufCodecs.optional(ReAPI.VEC3_STREAM_CODEC), PlaySound::position,
                     ByteBufCodecs.FLOAT, PlaySound::volume,
                     ByteBufCodecs.FLOAT, PlaySound::pitch,
                     ByteBufCodecs.FLOAT, PlaySound::minVolume,

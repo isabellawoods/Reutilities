@@ -6,6 +6,7 @@
   "compatibilityLevel": "JAVA_21",
   "mixins": [
     "blockentity.ReBlockEntityTypeMixin",
+    "component.ReDyedItemColorMixin",
     "entity.ReLivingEntityMixin",
     "item.ReBoatItemMixin",
     "item.ReItemMixin",

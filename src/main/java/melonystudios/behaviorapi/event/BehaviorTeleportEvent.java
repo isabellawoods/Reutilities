@@ -10,7 +10,7 @@ import net.neoforged.neoforge.event.entity.EntityTeleportEvent;
 ///
 /// This event is {@linkplain ICancellableEvent cancellable}. When cancelled, the entity will not be teleported.
 ///
-/// This event is only fired on the {@link net.neoforged.fml.LogicalSide#SERVER LogicalSide#SERVER} side.
+/// This event is only fired on the {@linkplain net.neoforged.fml.LogicalSide#SERVER logical server side}.
 public class BehaviorTeleportEvent extends EntityTeleportEvent implements ICancellableEvent {
     private final ItemStack stack;
     private final Level world;
@@ -20,7 +20,7 @@ public class BehaviorTeleportEvent extends EntityTeleportEvent implements ICance
     ///
     /// This event is {@linkplain ICancellableEvent cancellable}. When cancelled, the entity will not be teleported.
     ///
-    /// This event is only fired on the {@link net.neoforged.fml.LogicalSide#SERVER LogicalSide#SERVER} side.
+    /// This event is only fired on the {@linkplain net.neoforged.fml.LogicalSide#SERVER logical server side}.
     /// @param stack The item stack with the `reutilities:behaviors` component.
     /// @param world The world.
     /// @param livEntity The entity running the effect.
@@ -34,6 +34,7 @@ public class BehaviorTeleportEvent extends EntityTeleportEvent implements ICance
         this.livEntity = livEntity;
     }
 
+    /// The item stack with the `reutilities:behaviors` component.
     public ItemStack getStack() {
         return this.stack;
     }
@@ -51,7 +52,7 @@ public class BehaviorTeleportEvent extends EntityTeleportEvent implements ICance
     ///
     /// This event is {@linkplain ICancellableEvent cancellable}. When cancelled, the entity will not be teleported.
     ///
-    /// This event is only fired on the {@link net.neoforged.fml.LogicalSide#SERVER LogicalSide#SERVER} side.
+    /// This event is only fired on the {@linkplain net.neoforged.fml.LogicalSide#SERVER logical server side}..
     public static class RandomTeleport extends BehaviorTeleportEvent {
         private final float teleportDiameter;
 
@@ -60,7 +61,7 @@ public class BehaviorTeleportEvent extends EntityTeleportEvent implements ICance
         ///
         /// This event is {@linkplain ICancellableEvent cancellable}. When cancelled, the entity will not be teleported.
         ///
-        /// This event is only fired on the {@link net.neoforged.fml.LogicalSide#SERVER LogicalSide#SERVER} side.
+        /// This event is only fired on the {@linkplain net.neoforged.fml.LogicalSide#SERVER logical server side}..
         /// @param stack The item stack with the `reutilities:behaviors` component.
         /// @param world The world.
         /// @param livEntity The entity running the effect.
@@ -73,6 +74,7 @@ public class BehaviorTeleportEvent extends EntityTeleportEvent implements ICance
             this.teleportDiameter = teleportDiameter;
         }
 
+        /// The diameter that the entity can teleport within.
         public float getTeleportDiameter() {
             return this.teleportDiameter;
         }

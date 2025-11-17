@@ -434,8 +434,8 @@ public record RecipeFamilyProvider(RecipeOutput output, ItemLike material, TagKe
             return this;
         }
 
-        public Builder chestBoat(ItemLike chestBoat) {
-            RECIPES.put("chest_boat", () -> Pair.of(chestBoat, Ingredient.of()));
+        public Builder chestBoat(ItemLike chestBoat, ItemLike boat) {
+            RECIPES.put("chest_boat", () -> Pair.of(chestBoat, Ingredient.of(boat)));
             return this;
         }
 

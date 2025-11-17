@@ -15,16 +15,10 @@ import melonystudios.reutilities.util.Reconstants;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
-import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
-import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.neoforged.neoforge.client.gui.ConfigurationScreen;
-import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import org.slf4j.Logger;
-
-import java.util.function.Supplier;
 
 @Mod(Reutilities.MOD_ID)
 public class Reutilities {
@@ -33,7 +27,6 @@ public class Reutilities {
 
     public Reutilities(IEventBus eventBus, ModContainer container) {
         eventBus.addListener(this::commonSetup);
-        eventBus.addListener(this::clientSetup);
 
         // Reutilities
         ReArmorMaterials.MATERIALS.register(eventBus);
@@ -71,14 +64,5 @@ public class Reutilities {
 
     private void commonSetup(final FMLCommonSetupEvent event) {
         ReAPI.addBoat(Reconstants.OAK);
-    }
-
-    private void clientSetup(final FMLClientSetupEvent event) {
-        // Configs
-        ModContainer container = ModList.get()
-                .getModContainerById(MOD_ID)
-                .orElseThrow(() -> new IllegalStateException("Could not find Reutilities' mod container"));
-        Supplier<IConfigScreenFactory> screenFactory = () -> (minecraft, lastScreen) -> new ConfigurationScreen(container, lastScreen);
-        container.registerExtensionPoint(IConfigScreenFactory.class, screenFactory);
     }
 }

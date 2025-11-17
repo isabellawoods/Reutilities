@@ -68,7 +68,7 @@ public class OutfitLayer<T extends LivingEntity, A extends HumanoidModel<T>> ext
         // Updated outfit rendering ~isa 4-12-24
         if (mob instanceof FullBodyOutfit && wearingOutfit) {
             this.renderFullBodyOutfit(stack, buffer, mob, slot, packedLight, OutfitDefinition.definitions(world), slimArms);
-        } else if (!armorStack.isEmpty() && armorStack.has(ReDataComponents.OUTFIT)) {
+        } else if (!armorStack.isEmpty() && mob.getEquipmentSlotForItem(armorStack) == slot && armorStack.has(ReDataComponents.OUTFIT)) {
             this.renderComponentOutfit(stack, buffer, slot, armorStack, world, mob.blockPosition(), packedLight, slimArms);
         }
     }

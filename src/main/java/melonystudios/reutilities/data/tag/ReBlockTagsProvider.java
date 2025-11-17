@@ -3,6 +3,7 @@ package melonystudios.reutilities.data.tag;
 import melonystudios.reutilities.Reutilities;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
+import net.minecraft.tags.BlockTags;
 import net.neoforged.neoforge.common.data.BlockTagsProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import org.jetbrains.annotations.ApiStatus;
@@ -24,5 +25,8 @@ public class ReBlockTagsProvider extends BlockTagsProvider {
     }
 
     @Override
-    protected void addTags(HolderLookup.Provider provider) {}
+    protected void addTags(HolderLookup.Provider provider) {
+        // Minecraft tags
+        this.tag(BlockTags.MINEABLE_WITH_HOE).addTag(BlockTags.LEAVES);
+    }
 }

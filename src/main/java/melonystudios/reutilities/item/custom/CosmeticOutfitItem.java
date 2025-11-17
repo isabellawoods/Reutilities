@@ -9,6 +9,6 @@ public class CosmeticOutfitItem extends OutfitItem {
     }
 
     public CosmeticOutfitItem(Type slot, Properties properties) {
-        super(slot, properties);
+        super(slot, properties.durability(slot.getDurability(20)));
     }
 }
