@@ -5,7 +5,7 @@ import melonystudios.reutilities.entity.custom.BoatVariant;
 import melonystudios.reutilities.entity.custom.ReBoatEntity;
 import melonystudios.reutilities.entity.custom.ReChestBoatEntity;
 import melonystudios.reutilities.item.custom.ReBoatItem;
-import melonystudios.reutilities.util.Reconstants;
+import melonystudios.reutilities.util.ReBoats;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
@@ -39,7 +39,7 @@ public class ReBoatItemMixin extends Item {
             callback.cancel();
             Vec3 location = result.getLocation();
             Boat boat = this.hasChest ? new ReChestBoatEntity(world, location.x, location.y, location.z) : new ReBoatEntity(world, location.x, location.y, location.z);
-            ((BoatVariant) boat).setBoatType(ReBoatItem.getBoatType(stack, Reconstants.OAK));
+            ((BoatVariant) boat).setBoatType(ReBoatItem.getBoatType(stack, ReBoats.OAK));
             if (world instanceof ServerLevel serverWorld) EntityType.<Boat>createDefaultStackConfig(serverWorld, stack, player).accept(boat);
             callback.setReturnValue(boat);
         }

@@ -4,13 +4,16 @@ import melonystudios.reutilities.ReConfigs;
 import melonystudios.reutilities.Reutilities;
 import melonystudios.reutilities.api.BoatType;
 import melonystudios.reutilities.blockentity.ReBlockEntities;
+import melonystudios.reutilities.component.ReDataComponents;
 import melonystudios.reutilities.entity.ReEntities;
 import melonystudios.reutilities.entity.outfit.OutfitLayer;
 import melonystudios.reutilities.entity.outfit.OutfitModel;
 import melonystudios.reutilities.entity.renderer.HandArmorRenderer;
 import melonystudios.reutilities.entity.renderer.ReBoatRenderer;
+import melonystudios.reutilities.event.custom.AddComponentTooltipsEvent;
 import melonystudios.reutilities.mixin.renderer.PlayerSlimAccessor;
-import melonystudios.reutilities.util.Reconstants;
+import melonystudios.reutilities.util.ReClientConstants;
+import melonystudios.reutilities.util.ReCommonConstants;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
@@ -52,7 +55,7 @@ public class ReClientBusEvents {
         event.registerLayerDefinition(OutfitModel.CLASSIC, () -> LayerDefinition.create(OutfitModel.createBodyLayer(CubeDeformation.NONE, false), 64, 64));
         event.registerLayerDefinition(OutfitModel.SLIM, () -> LayerDefinition.create(OutfitModel.createBodyLayer(CubeDeformation.NONE, true), 64, 64));
 
-        for (BoatType type : Reconstants.BOATS.values()) {
+        for (BoatType type : ReCommonConstants.BOATS.values()) {
             event.registerLayerDefinition(ReBoatRenderer.createBoatModelName(type), BoatModel::createBodyModel);
             event.registerLayerDefinition(ReBoatRenderer.createChestBoatModelName(type), ChestBoatModel::createBodyModel);
         }
@@ -70,6 +73,11 @@ public class ReClientBusEvents {
     }
 
     @SubscribeEvent
+    public static void addComponentTooltips(AddComponentTooltipsEvent event) {
+        event.addComponent(ReDataComponents.OUTFIT.get());
+    }
+
+    @SubscribeEvent
     public static void renderArmorInArm(RenderArmEvent event) {
         if (ReConfigs.RENDER_OUTFITS.get()) HandArmorRenderer.renderOutfitInArm(event.getPlayer(), event.getArm(), event.getPoseStack(), event.getMultiBufferSource(), event.getPackedLight());
         HandArmorRenderer.renderArmorInArm(event.getPlayer(), event.getArm(), event.getPoseStack(), event.getMultiBufferSource(), event.getPackedLight());
@@ -83,9 +91,9 @@ public class ReClientBusEvents {
             event.setCanceled(true);
             // make the folder where the panorama will be saved
             // ".minecraft/panorama/<date>"
-            Reconstants.CURRENT_PANORAMA_OUTPUT_FOLDER = Util.getFilenameFormattedDateTime();
+            ReClientConstants.CURRENT_PANORAMA_OUTPUT_FOLDER = Util.getFilenameFormattedDateTime();
             String panoramaFolder = ReConfigs.PANORAMA_SAVE_FOLDER.get();
-            String fileLocation = panoramaFolder + "/" + Reconstants.CURRENT_PANORAMA_OUTPUT_FOLDER;
+            String fileLocation = panoramaFolder + "/" + ReClientConstants.CURRENT_PANORAMA_OUTPUT_FOLDER;
             File outputFolder = new File(minecraft.gameDirectory, fileLocation);
 
             if (outputFolder.mkdirs()) {

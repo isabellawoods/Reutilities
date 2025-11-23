@@ -9,7 +9,6 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.RegistryFileCodec;
@@ -21,32 +20,38 @@ import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Optional;
+import java.util.*;
 
 /// An **outfit definition** is a set of textures to use for an outfit item or `outfit` tag. Outfit definitions can be defined using JSON files in a data pack at the path `data/<namespace>/reutilities/outfit_definition/`.
-/// @param headSlot *(optional)* The head outfit slot. Used when getting a texture for the entity's head.
-/// @param chestSlot Same as `headSlot`.
-/// @param legsSlot Same as `headSlot`.
-/// @param feetSlot Same as `headSlot`.
+/// @author isabellawoods. Copied from [*Back Math*'s documentation on **IMF**](https://github.com/isabellawoods/Informational-Mod-Features/blob/main/Back%20Math/Docs/Outfit%20Definition.md).
 /// @see OutfitSlot
-/// @author isabellawoods. Copied from [Back Math's documentation on **IMF**](https://github.com/isabellawoods/Informational-Mod-Features/blob/main/Back%20Math/Docs/Outfit%20Definition.md).
-public record OutfitDefinition(Optional<OutfitSlot> headSlot, Optional<OutfitSlot> chestSlot, Optional<OutfitSlot> legsSlot, Optional<OutfitSlot> feetSlot) {
+public class OutfitDefinition {
     public static final Codec<OutfitDefinition> DIRECT_CODEC = RecordCodecBuilder.create(instance -> instance.group(
-            OutfitSlot.CODEC.optionalFieldOf("head").forGetter(OutfitDefinition::headSlot),
-            OutfitSlot.CODEC.optionalFieldOf("chest").forGetter(OutfitDefinition::chestSlot),
-            OutfitSlot.CODEC.optionalFieldOf("legs").forGetter(OutfitDefinition::legsSlot),
-            OutfitSlot.CODEC.optionalFieldOf("feet").forGetter(OutfitDefinition::feetSlot)
+            OutfitSlot.CODEC.listOf().fieldOf("slots").forGetter(OutfitDefinition::slots)
     ).apply(instance, OutfitDefinition::new));
     public static final StreamCodec<RegistryFriendlyByteBuf, OutfitDefinition> DIRECT_STREAM_CODEC = StreamCodec.composite(
-            OutfitSlot.STREAM_CODEC.apply(ByteBufCodecs::optional), OutfitDefinition::headSlot,
-            OutfitSlot.STREAM_CODEC.apply(ByteBufCodecs::optional), OutfitDefinition::chestSlot,
-            OutfitSlot.STREAM_CODEC.apply(ByteBufCodecs::optional), OutfitDefinition::legsSlot,
-            OutfitSlot.STREAM_CODEC.apply(ByteBufCodecs::optional), OutfitDefinition::feetSlot,
+            OutfitSlot.STREAM_CODEC.apply(ByteBufCodecs.list()), OutfitDefinition::slots,
             OutfitDefinition::new
     );
     public static final Codec<Holder<OutfitDefinition>> CODEC = RegistryFileCodec.create(ReRegistries.OUTFIT_DEFINITION, DIRECT_CODEC);
     public static final StreamCodec<RegistryFriendlyByteBuf, Holder<OutfitDefinition>> STREAM_CODEC = ByteBufCodecs.holder(ReRegistries.OUTFIT_DEFINITION, DIRECT_STREAM_CODEC);
     public static final int DEFAULT_OUTFIT_COLOR = 0xFFFFFF;
+    private final List<OutfitSlot> slots;
+    @Nullable
+    private final OutfitSlot handFallbackSlot;
+
+    /// An **outfit definition** is a set of textures to use for an outfit item or `outfit` tag.
+    /// @param slots A list of outfit slot. This defines the properties used for each {@linkplain EquipmentSlot equipment slot}.
+    public OutfitDefinition(List<OutfitSlot> slots) {
+        this.slots = new ArrayList<>(slots);
+        this.handFallbackSlot = this.slots().stream().filter(slot -> slot.slot() == EquipmentSlot.CHEST).findFirst().orElse(null);
+        this.slots().sort(Collections.reverseOrder(Comparator.comparingInt(slot -> slot.slot().ordinal())));
+    }
+
+    /// @return A list of outfit slot. This defines the properties used for each {@linkplain EquipmentSlot equipment slot}.
+    public List<OutfitSlot> slots() {
+        return this.slots;
+    }
 
     /// Gets the outfit definitions registry.
     /// @param world The world.
@@ -68,16 +73,16 @@ public record OutfitDefinition(Optional<OutfitSlot> headSlot, Optional<OutfitSlo
     /// Gets an outfit slot from a definition based on an equipment slot.
     /// @param definition The outfit definition to get the slots from.
     /// @param slotType An equipment slot to get the slot.
-    /// @throws IllegalArgumentException If the equipment slot is not one of {@link EquipmentSlot#HEAD HEAD}, {@link EquipmentSlot#CHEST CHEST}, {@link EquipmentSlot#LEGS LEGS} or {@link EquipmentSlot#FEET FEET}.
     public static Optional<OutfitSlot> byEquipmentSlot(@Nullable OutfitDefinition definition, EquipmentSlot slotType) {
         if (definition == null) return Optional.empty();
-        return switch (slotType) {
-            case HEAD -> definition.headSlot;
-            case CHEST -> definition.chestSlot;
-            case LEGS -> definition.legsSlot;
-            case FEET -> definition.feetSlot;
-            default -> throw new IllegalArgumentException(Component.translatable("logger.reutilities.outfit_definition.wrong_equipment_slot", slotType.getName()).getString());
-        };
+        for (OutfitSlot slot : definition.slots()) {
+            if (slot.slot() == slotType) {
+                return Optional.of(slot);
+            } else if (slot.slot().getType() == EquipmentSlot.Type.HAND) {
+                return definition.slots().stream().filter(slot1 -> slot1.slot() == EquipmentSlot.CHEST).findFirst();
+            }
+        }
+        return Optional.empty();
     }
 
     /// Whether to hide the skin layers for the player or entity when wearing this outfit on this slot.
@@ -115,38 +120,21 @@ public record OutfitDefinition(Optional<OutfitSlot> headSlot, Optional<OutfitSlo
     public static ResourceLocation getOutfitTexture(EquipmentSlot slotType, OutfitDefinition definition, boolean slimArms) {
         if (definition == null) return null;
 
-        ResourceLocation location;
-        switch (slotType) {
-            case HEAD: {
-                if (definition.headSlot().isPresent()) {
-                    location = ResourceLocation.fromNamespaceAndPath(definition.headSlot().get().texture().getNamespace(), "textures/" + definition.headSlot().get().texture().getPath() + ".png");
-                    return location;
+        ResourceLocation location = null;
+        for (OutfitSlot slot : definition.slots()) {
+            if (slot.slot() == slotType) {
+                if (hasSlimVariant(slotType)) {
+                    location = ResourceLocation.fromNamespaceAndPath(slot.texture().getNamespace(), "textures/" + slot.texture().getPath() + (slimArms ? "_slim" : "_classic") + ".png");
+                } else {
+                    location = ResourceLocation.fromNamespaceAndPath(slot.texture().getNamespace(), "textures/" + slot.texture().getPath() + ".png");
                 }
-                break;
-            }
-            case CHEST: {
-                if (definition.chestSlot().isPresent()) {
-                    location = ResourceLocation.fromNamespaceAndPath(definition.chestSlot().get().texture().getNamespace(), "textures/" + definition.chestSlot().get().texture().getPath() + (slimArms ? "_slim" : "_classic") + ".png");
-                    return location;
-                }
-                break;
-            }
-            case LEGS: {
-                if (definition.legsSlot().isPresent()) {
-                    location = ResourceLocation.fromNamespaceAndPath(definition.legsSlot().get().texture().getNamespace(), "textures/" + definition.legsSlot().get().texture().getPath() + ".png");
-                    return location;
-                }
-                break;
-            }
-            case FEET: {
-                if (definition.feetSlot().isPresent()) {
-                    location = ResourceLocation.fromNamespaceAndPath(definition.feetSlot().get().texture().getNamespace(), "textures/" + definition.feetSlot().get().texture().getPath() + ".png");
-                    return location;
-                }
-                break;
+                return location;
+            } else if (slot.slot().getType() == EquipmentSlot.Type.HAND && definition.handFallbackSlot != null) {
+                location = ResourceLocation.fromNamespaceAndPath(definition.handFallbackSlot.texture().getNamespace(), "textures/" + definition.handFallbackSlot.texture().getPath() + (slimArms ? "_slim" : "_classic") + ".png");
+                return location;
             }
         }
-        return null;
+        return location;
     }
 
     /// Gets the emissive outfit texture for an entity.
@@ -159,42 +147,31 @@ public record OutfitDefinition(Optional<OutfitSlot> headSlot, Optional<OutfitSlo
         if (definition == null) return null;
 
         ResourceLocation location;
-        switch (slotType) {
-            case HEAD: {
-                if (definition.headSlot().isPresent() && definition.headSlot().get().emissiveTexture().isPresent()) {
-                    location = ResourceLocation.fromNamespaceAndPath(definition.headSlot().get().emissiveTexture().get().getNamespace(), "textures/" + definition.headSlot().get().emissiveTexture().get().getPath() + ".png");
-                    return location;
+        for (OutfitSlot slot : definition.slots()) {
+            if (slot.emissiveTexture().isEmpty()) continue;
+
+            if (slot.slot() == slotType) {
+                if (hasSlimVariant(slotType)) {
+                    location = ResourceLocation.fromNamespaceAndPath(slot.emissiveTexture().get().getNamespace(), "textures/" + slot.emissiveTexture().get().getPath() + (slimArms ? "_slim" : "_classic") + ".png");
+                } else {
+                    location = ResourceLocation.fromNamespaceAndPath(slot.emissiveTexture().get().getNamespace(), "textures/" + slot.emissiveTexture().get().getPath() + ".png");
                 }
-                break;
-            }
-            case CHEST: {
-                if (definition.chestSlot().isPresent() && definition.chestSlot().get().emissiveTexture().isPresent()) {
-                    location = ResourceLocation.fromNamespaceAndPath(definition.chestSlot().get().emissiveTexture().get().getNamespace(), "textures/" + definition.chestSlot().get().emissiveTexture().get().getPath() + (slimArms ? "_slim" : "_classic") + ".png");
-                    return location;
-                }
-                break;
-            }
-            case LEGS: {
-                if (definition.legsSlot().isPresent() && definition.legsSlot().get().emissiveTexture().isPresent()) {
-                    location = ResourceLocation.fromNamespaceAndPath(definition.legsSlot().get().emissiveTexture().get().getNamespace(), "textures/" + definition.legsSlot().get().emissiveTexture().get().getPath() + ".png");
-                    return location;
-                }
-                break;
-            }
-            case FEET: {
-                if (definition.feetSlot().isPresent() && definition.feetSlot().get().emissiveTexture().isPresent()) {
-                    location = ResourceLocation.fromNamespaceAndPath(definition.feetSlot().get().emissiveTexture().get().getNamespace(), "textures/" + definition.feetSlot().get().emissiveTexture().get().getPath() + ".png");
-                    return location;
-                }
-                break;
+                return location;
+            } else if (slot.slot().getType() == EquipmentSlot.Type.HAND && definition.handFallbackSlot != null && definition.handFallbackSlot.emissiveTexture().isPresent()) {
+                location = ResourceLocation.fromNamespaceAndPath(definition.handFallbackSlot.emissiveTexture().get().getNamespace(), "textures/" + definition.handFallbackSlot.emissiveTexture().get().getPath() + (slimArms ? "_slim" : "_classic") + ".png");
+                return location;
             }
         }
         return null;
     }
 
+    public static boolean hasSlimVariant(EquipmentSlot slotType) {
+        return slotType.getType() == EquipmentSlot.Type.HAND || slotType == EquipmentSlot.CHEST;
+    }
+
     @Override
     @NotNull
     public String toString() {
-        return "OutfitDefinition[head=" + this.headSlot() + ", chest=" + this.chestSlot() + ", legs=" + this.legsSlot() + ", feet=" + this.feetSlot() + "]";
+        return "OutfitDefinition[slots=" + this.slots() + "]";
     }
 }

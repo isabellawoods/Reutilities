@@ -11,7 +11,6 @@ import melonystudios.reutilities.component.ReDataComponents;
 import melonystudios.reutilities.container.ReMenuTypes;
 import melonystudios.reutilities.entity.ReEntities;
 import melonystudios.reutilities.util.ReArmorMaterials;
-import melonystudios.reutilities.util.Reconstants;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
@@ -19,6 +18,8 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import org.slf4j.Logger;
+
+import static melonystudios.reutilities.util.ReBoats.*;
 
 @Mod(Reutilities.MOD_ID)
 public class Reutilities {
@@ -63,6 +64,6 @@ public class Reutilities {
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {
-        ReAPI.addBoat(Reconstants.OAK);
+        ReAPI.addBoats(OAK, SPRUCE, BIRCH, JUNGLE, ACACIA, DARK_OAK, MANGROVE, BAMBOO, CHERRY);
     }
 }

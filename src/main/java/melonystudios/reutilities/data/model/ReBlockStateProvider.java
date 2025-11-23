@@ -22,7 +22,7 @@ public abstract class ReBlockStateProvider extends BlockStateProvider {
 
     /// Creates a new instance of the {@linkplain BlockFamilyModelProvider block family model provider}.
     /// @param texture A resource location of the default material texture, like "`minecraft:block/oak_planks`.
-    /// @param materialName The name of the material being generated, like "`oak`" or "`aljanstone`".
+    /// @param materialName The name of the material being generated, like "`oak`" or "`numisite`".
     public BlockFamilyModelProvider blockFamily(ResourceLocation texture, String materialName) {
         return new BlockFamilyModelProvider(this, this.modID, materialName, texture);
     }
@@ -171,7 +171,7 @@ public abstract class ReBlockStateProvider extends BlockStateProvider {
             String blockPath = BuiltInRegistries.BLOCK.getKey(block).getPath();
             boolean snowy = state.getValue(BlockStateProperties.SNOWY);
 
-            ModelFile grassBlockModel = this.models().withExistingParent(blockPath + (snowy ? "_snowy" : ""), snowy ? this.modLoc("block/cube_bottom_top") : Reutilities.reutilities("block/template_grass_block"))
+            ModelFile grassBlockModel = this.models().withExistingParent(blockPath + (snowy ? "_snowy" : ""), snowy ? this.mcLoc("block/cube_bottom_top") : Reutilities.reutilities("block/template_grass_block"))
                     .texture("bottom", bottomTexture).texture("top", baseTexture + "_top")
                     .texture("side", baseTexture + "_side" + (snowy ? "_snowy" : ""))
                     .texture("overlay", baseTexture + "_side_overlay");

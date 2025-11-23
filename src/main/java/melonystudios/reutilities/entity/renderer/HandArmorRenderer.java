@@ -7,7 +7,7 @@ import melonystudios.reutilities.api.ReAPI;
 import melonystudios.reutilities.component.ReDataComponents;
 import melonystudios.reutilities.entity.outfit.OutfitDefinition;
 import melonystudios.reutilities.entity.outfit.OutfitModel;
-import melonystudios.reutilities.util.Reconstants;
+import melonystudios.reutilities.util.ReClientConstants;
 import melonystudios.reutilities.util.tag.ReTrimMaterialTags;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
@@ -55,8 +55,10 @@ public class HandArmorRenderer {
             outfitModel.copyPropertiesFrom(playerModel);
             outfitModel.setupAnim(player, 0, 0, 0, 0, 0);
             OutfitDefinition definition = OutfitDefinition.getDefinition(world, chestStack);
-            ResourceLocation outfitLocation = OutfitDefinition.getOutfitTexture(EquipmentSlot.CHEST, definition, slimArms);
-            ResourceLocation emissiveLocation = OutfitDefinition.getEmissiveOutfitTexture(EquipmentSlot.CHEST, definition, slimArms);
+            EquipmentSlot slot = side == HumanoidArm.LEFT ? EquipmentSlot.OFFHAND : EquipmentSlot.MAINHAND;
+            ResourceLocation outfitLocation = OutfitDefinition.getOutfitTexture(slot, definition, slimArms);
+            ResourceLocation emissiveLocation = OutfitDefinition.getEmissiveOutfitTexture(slot, definition, slimArms);
+            int color = FastColor.ARGB32.color(255, OutfitDefinition.getOutfitColors(definition, chestStack, slot));
 
             packedLight = ReAPI.getLightOutputFromItem(chestStack, packedLight, player.level(), player.blockPosition(), true);
 
@@ -65,15 +67,15 @@ public class HandArmorRenderer {
             if (outfitLocation != null) {
                 VertexConsumer translucentBuffer = buffer.getBuffer(RenderType.entityTranslucent(outfitLocation));
 
-                arm.render(stack, translucentBuffer, packedLight, Reconstants.getOverlayCoordinates(0));
-                sleeve.render(stack, translucentBuffer, packedLight, Reconstants.getOverlayCoordinates(0));
+                arm.render(stack, translucentBuffer, packedLight, ReClientConstants.getOverlayCoordinates(0), color);
+                sleeve.render(stack, translucentBuffer, packedLight, ReClientConstants.getOverlayCoordinates(0), color);
             }
 
             if (emissiveLocation != null) {
                 VertexConsumer emissiveBuffer = buffer.getBuffer(RenderType.eyes(emissiveLocation));
 
-                arm.render(stack, emissiveBuffer, Reconstants.EMISSIVE_LIGHT_VALUE, Reconstants.getOverlayCoordinates(0));
-                sleeve.render(stack, emissiveBuffer, Reconstants.EMISSIVE_LIGHT_VALUE, Reconstants.getOverlayCoordinates(0));
+                arm.render(stack, emissiveBuffer, ReClientConstants.EMISSIVE_LIGHT_VALUE, ReClientConstants.getOverlayCoordinates(0), color);
+                sleeve.render(stack, emissiveBuffer, ReClientConstants.EMISSIVE_LIGHT_VALUE, ReClientConstants.getOverlayCoordinates(0), color);
             }
 
             // Glint
@@ -112,7 +114,7 @@ public class HandArmorRenderer {
             if (trim != null) {
                 TextureAtlasSprite trimSprite = Minecraft.getInstance().getModelManager().getAtlas(Sheets.ARMOR_TRIMS_SHEET).getSprite(trim.outerTexture(item.getMaterial()));
                 VertexConsumer trimBuffer = trimSprite.wrap(buffer.getBuffer(Sheets.armorTrimsSheet(trim.pattern().value().decal())));
-                int trimLight = trim.material().is(ReTrimMaterialTags.EMISSIVE_LIGHTING) && ReConfigs.LIGHT_EMITTING_EMISSIVES.get() ? Reconstants.EMISSIVE_LIGHT_VALUE : packedLight;
+                int trimLight = trim.material().is(ReTrimMaterialTags.EMISSIVE_LIGHTING) && ReConfigs.LIGHT_EMITTING_EMISSIVES.get() ? ReClientConstants.EMISSIVE_LIGHT_VALUE : packedLight;
                 rightArm.render(stack, trimBuffer, trimLight, OverlayTexture.NO_OVERLAY);
             }
 

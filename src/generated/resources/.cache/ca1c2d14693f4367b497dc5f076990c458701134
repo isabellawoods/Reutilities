@@ -1,2 +1,17 @@
-// 1.21.1	2025-11-11T22:46:04.5137384	Reutilities — Block Tags
+// 1.21.1	2025-11-22T20:59:16.4893272	Reutilities — Block Tags
 a4e8097fff07f9a74259d6b5dd583f3437ff28a2 data/minecraft/tags/block/mineable/hoe.json
+fbfcc7b85bcab538bd3f55fcd9afff05bf9acd24 data/minecraft/tags/block/sniffer_diggable_block.json
+fbfcc7b85bcab538bd3f55fcd9afff05bf9acd24 data/neoforge/tags/block/villager_farmlands.json
+91298092263229c22ed59f780495f30405f23e44 data/reutilities/tags/block/farmland.json
+7aa7a686ddd7884c061eb2f19930cc98f5421d87 data/reutilities/tags/block/farmland_transparent.json
+bb6be1f339d01ca955415058cf2950997002f50d data/reutilities/tags/block/may_place_on/azalea.json
+fbfcc7b85bcab538bd3f55fcd9afff05bf9acd24 data/reutilities/tags/block/may_place_on/crops.json
+5a19a079ac41fc6d4e1adde1bf63ac9709d7a27e data/reutilities/tags/block/may_place_on/fungi.json
+110040194828a0fac26455799a86fd02e3e731a1 data/reutilities/tags/block/may_place_on/lily_pad.json
+bb6be1f339d01ca955415058cf2950997002f50d data/reutilities/tags/block/may_place_on/mangrove_propagule.json
+ce2cef31b4109bc4d85b40440e2f1da2a810bb55 data/reutilities/tags/block/may_place_on/nether_sprouts.json
+b4727e6ebe055c567441285ae565462a8b1e4abc data/reutilities/tags/block/may_place_on/nether_wart.json
+c652d87b2543c9e061aec3a53c9b5838671ccf0a data/reutilities/tags/block/may_place_on/plants.json
+ce2cef31b4109bc4d85b40440e2f1da2a810bb55 data/reutilities/tags/block/may_place_on/roots.json
+039a5b55d1a26ef65ccec28151a85c17afbba83f data/reutilities/tags/block/may_place_on/wither_rose.json
+f0f92c5f0b5c5412980a4ca8436b4cb180919deb data/reutilities/tags/block/seagrass_cannot_place_on.json

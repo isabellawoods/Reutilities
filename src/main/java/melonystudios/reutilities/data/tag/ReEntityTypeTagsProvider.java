@@ -14,7 +14,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.concurrent.CompletableFuture;
 
 @ApiStatus.Internal
-public class ReEntityTypeTagsProvider extends EntityTypeTagsProvider {
+public final class ReEntityTypeTagsProvider extends EntityTypeTagsProvider {
     public ReEntityTypeTagsProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> registries, @Nullable ExistingFileHelper fileHelper) {
         super(output, registries, Reutilities.MOD_ID, fileHelper);
     }

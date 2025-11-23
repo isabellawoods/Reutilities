@@ -1,0 +1,10 @@
+{
+  "remove": [
+    "#c:cobblestones/infested"
+  ],
+  "values": [
+    "#c:cobblestones",
+    "#c:end_stones",
+    "minecraft:blackstone"
+  ]
+}

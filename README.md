@@ -16,7 +16,7 @@
 **Block** and **recipe family providers** are a simple way to make multiple block models or recipes without needing to while multiple lines of code.
 ```java
 // Recipes
-FamilyRecipeProvider.builder(output, ExampleItems.EXAMPLE_PLANKS).woodenStairs(ExampleItems.EXAMPLE_STAIRS).build();
+RecipeFamilyProvider.builder(output, ExampleItems.EXAMPLE_PLANKS).woodenStairs(ExampleItems.EXAMPLE_STAIRS).build();
 
 // Block models (assuming the class extends ReBlockStateProvider)
 this.blockFamily(this.modLoc("block/example_planks"), "example").stairs(ExampleBlocks.EXAMPLE_STAIRS.get()).build();

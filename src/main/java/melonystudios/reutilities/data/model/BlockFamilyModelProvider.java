@@ -27,7 +27,7 @@ public class BlockFamilyModelProvider {
     /// Helper data generator class for generating whole families of blocks.
     /// @param stateProvider {@linkplain ReBlockStateProvider *Reutilities*' block state provider}, used as a base for generating the models.
     /// @param modID The current mod using this provider.
-    /// @param materialName The name of the material being generated, like "`oak`" or "`aljanstone`".
+    /// @param materialName The name of the material being generated, like "`oak`" or "`numisite`".
     /// @param texture A resource location of the default material texture, like "`minecraft:block/oak_planks`.
     public BlockFamilyModelProvider(ReBlockStateProvider stateProvider, String modID, String materialName, ResourceLocation texture) {
         this.stateProvider = stateProvider;

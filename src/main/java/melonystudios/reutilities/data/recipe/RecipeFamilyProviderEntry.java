@@ -8,5 +8,6 @@ public interface RecipeFamilyProviderEntry {
     /// Makes a recipe for an item.
     /// @param item The item being generated.
     /// @param entry An ingredient, be it an item or item tag, used in some recipes when the default `material` doesn't work.
-    void makeRecipe(ItemLike item, RecipeFamilyEntry entry);
+    /// @param stonecuttingRecipes Whether to make stonecutting recipes with the regular crafting recipes.
+    void makeRecipe(ItemLike item, RecipeFamilyEntry entry, boolean stonecuttingRecipes);
 }

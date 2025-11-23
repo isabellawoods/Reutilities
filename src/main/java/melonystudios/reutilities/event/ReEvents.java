@@ -6,13 +6,12 @@ import melonystudios.behaviorapi.settings.GlobalSettings;
 import melonystudios.reutilities.Reutilities;
 import melonystudios.reutilities.api.ReAPI;
 import melonystudios.reutilities.blockentity.ReBlockEntities;
-import melonystudios.reutilities.data.tag.ReBlockTagsProvider;
-import melonystudios.reutilities.data.tag.ReEntityTypeTagsProvider;
-import melonystudios.reutilities.data.tag.ReItemTagsProvider;
-import melonystudios.reutilities.data.tag.ReTrimMaterialTagsProvider;
+import melonystudios.reutilities.command.ReCommands;
+import melonystudios.reutilities.data.recipe.InternalReRecipeProvider;
+import melonystudios.reutilities.data.tag.*;
 import melonystudios.reutilities.entity.outfit.OutfitDefinition;
 import melonystudios.reutilities.util.ReRegistries;
-import melonystudios.reutilities.util.Reconstants;
+import melonystudios.reutilities.util.ReCommonConstants;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
@@ -35,6 +34,7 @@ public class ReEvents {
     @SubscribeEvent
     public static void registerCommands(RegisterCommandsEvent event) {
         ItemBehaviorCommand.register(event.getDispatcher(), event.getBuildContext());
+        ReCommands.register(event.getDispatcher());
     }
 
     @SubscribeEvent
@@ -56,14 +56,18 @@ public class ReEvents {
             generator.addProvider(true, blockTags);
             generator.addProvider(true, new ReItemTagsProvider(output, registries, blockTags.contentsGetter(), fileHelper));
             generator.addProvider(true, new ReEntityTypeTagsProvider(output, registries, fileHelper));
+            generator.addProvider(true, new ReFluidTagsProvider(output, registries, fileHelper));
             generator.addProvider(true, new ReTrimMaterialTagsProvider(output, registries, fileHelper));
+
+            // Miscellaneous
+            generator.addProvider(true, new InternalReRecipeProvider(output, registries));
         }
     }
 
     @SubscribeEvent
     public static void addSignBlocks(BlockEntityTypeAddBlocksEvent event) {
-        event.modify(ReBlockEntities.SIGN.get(), Reconstants.SIGNS.toArray(new Block[0]));
-        event.modify(ReBlockEntities.HANGING_SIGN.get(), Reconstants.HANGING_SIGNS.toArray(new Block[0]));
+        event.modify(ReBlockEntities.SIGN.get(), ReCommonConstants.SIGNS.toArray(new Block[0]));
+        event.modify(ReBlockEntities.HANGING_SIGN.get(), ReCommonConstants.HANGING_SIGNS.toArray(new Block[0]));
     }
 
     @SubscribeEvent

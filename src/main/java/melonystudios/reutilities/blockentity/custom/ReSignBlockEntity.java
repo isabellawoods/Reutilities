@@ -1,7 +1,7 @@
 package melonystudios.reutilities.blockentity.custom;
 
 import melonystudios.reutilities.blockentity.ReBlockEntities;
-import melonystudios.reutilities.util.Reconstants;
+import melonystudios.reutilities.util.ReCommonConstants;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.entity.SignBlockEntity;
@@ -15,7 +15,7 @@ public class ReSignBlockEntity extends SignBlockEntity {
 
     @Override
     public boolean isValidBlockState(BlockState state) {
-        return Reconstants.SIGNS.contains(state.getBlock());
+        return ReCommonConstants.SIGNS.contains(state.getBlock());
     }
 
     @Override

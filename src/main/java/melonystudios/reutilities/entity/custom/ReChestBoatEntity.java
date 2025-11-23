@@ -3,7 +3,7 @@ package melonystudios.reutilities.entity.custom;
 import melonystudios.reutilities.api.BoatType;
 import melonystudios.reutilities.component.ReDataComponents;
 import melonystudios.reutilities.entity.ReEntities;
-import melonystudios.reutilities.util.Reconstants;
+import melonystudios.reutilities.util.ReCommonConstants;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -43,7 +43,7 @@ public class ReChestBoatEntity extends ChestBoat implements BoatVariant {
     @Override
     protected void readAdditionalSaveData(CompoundTag tag) {
         if (tag.contains("Type", Tag.TAG_STRING)) {
-            this.setBoatType(Reconstants.byWoodType(tag.getString("Type")));
+            this.setBoatType(ReCommonConstants.byWoodType(tag.getString("Type")));
         }
     }
 
@@ -59,7 +59,7 @@ public class ReChestBoatEntity extends ChestBoat implements BoatVariant {
 
     @Override
     public BoatType getBoatType() {
-        return Reconstants.byWoodType(this.entityData.get(WOOD_TYPE));
+        return ReCommonConstants.byWoodType(this.entityData.get(WOOD_TYPE));
     }
 
     @Override

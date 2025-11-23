@@ -16,7 +16,7 @@ import java.util.concurrent.CompletableFuture;
 import static melonystudios.reutilities.util.tag.ReTrimMaterialTags.*;
 
 @ApiStatus.Internal
-public class ReTrimMaterialTagsProvider extends TagsProvider<TrimMaterial> {
+public final class ReTrimMaterialTagsProvider extends TagsProvider<TrimMaterial> {
     public ReTrimMaterialTagsProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> registries, @Nullable ExistingFileHelper fileHelper) {
         super(output, Registries.TRIM_MATERIAL, registries, Reutilities.MOD_ID, fileHelper);
     }

@@ -11,9 +11,12 @@ import melonystudios.reutilities.component.ReDataComponents;
 import melonystudios.reutilities.component.custom.ComponentOutfit;
 import melonystudios.reutilities.component.custom.TooltipStyle;
 import melonystudios.reutilities.entity.outfit.OutfitDefinition;
-import melonystudios.reutilities.util.Reconstants;
+import melonystudios.reutilities.util.DebuggingFlags;
+import melonystudios.reutilities.util.ReCommonConstants;
 import melonystudios.reutilities.util.tag.ReItemTags;
 import net.minecraft.Util;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
@@ -23,8 +26,12 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.ByIdMap;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.component.ChargedProjectiles;
 import net.minecraft.world.level.ItemLike;
@@ -34,22 +41,29 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.FireBlock;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import org.jetbrains.annotations.Nullable;
 
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.EnumMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import static melonystudios.reutilities.util.Reconstants.*;
+import static melonystudios.reutilities.util.ReClientConstants.*;
+import static melonystudios.reutilities.util.ReCommonConstants.*;
 import static net.minecraft.client.renderer.item.ItemProperties.register;
 
 /// ***Reutilities'*** **API** class, used by my mods to add new boats and signs, register item overrides, get light emission values, etc.
 @SuppressWarnings("deprecation")
 public class ReAPI {
+    public static final Codec<SoundSource> SOUND_SOURCE_CODEC = Codec.stringResolver(SoundSource::getName, name -> SoundSource.valueOf(name.toUpperCase(Locale.ENGLISH)));
+    public static final StreamCodec<ByteBuf, SoundSource> SOUND_SOURCE_STREAM_CODEC = ByteBufCodecs.idMapper(ByIdMap.continuous(Enum::ordinal, SoundSource.values(), ByIdMap.OutOfBoundsStrategy.ZERO), Enum::ordinal);
+    public static final StreamCodec<ByteBuf, EquipmentSlot> EQUIPMENT_SLOT_STREAM_CODEC = ByteBufCodecs.idMapper(ByIdMap.continuous(Enum::ordinal, EquipmentSlot.values(), ByIdMap.OutOfBoundsStrategy.ZERO), Enum::ordinal);
     public static final StreamCodec<ByteBuf, Vec3> VEC3_STREAM_CODEC = StreamCodec.composite(ByteBufCodecs.DOUBLE, Vec3::x, ByteBufCodecs.DOUBLE, Vec3::y, ByteBufCodecs.DOUBLE, Vec3::z, Vec3::new);
+    public static final Codec<Integer> HEX_INT_CODEC = new HexadecimalIntCodec();
 
     /// Creates a {@linkplain Codec#FLOAT float codec} that has a specified range (usually `0` to `1`).
     /// @param min The minimum bound for this codec.
@@ -70,6 +84,7 @@ public class ReAPI {
     ///
     /// This method should be called during the {@linkplain FMLCommonSetupEvent common setup event}.
     /// @param types The boat types to be added.
+    /// @apiNote This can only be used to make boats with the default model. **Rafts will not work with this system!**
     public static void addBoats(BoatType... types) {
         for (BoatType type : types) addBoat(type);
     }
@@ -78,8 +93,9 @@ public class ReAPI {
     ///
     /// This method should be called during the {@linkplain FMLCommonSetupEvent common setup event}.
     /// @param type The boat type to add.
+    /// @apiNote This can only be used to make boats with the default model. **Rafts will not work with this system!**
     public static void addBoat(BoatType type) {
-        Reconstants.BOATS.put(type.woodType(), type);
+        ReCommonConstants.BOATS.put(type.woodType(), type);
     }
 
     /// Adds a boat and chest boat to *Reutilities'* boat map.
@@ -88,8 +104,9 @@ public class ReAPI {
     /// @param boat A {@linkplain Supplier supplier} the boat item.
     /// @param chestBoat The boat with chest item.
     /// @param woodType A resource location of the boat's wood type, like `minecraft:oak`.
+    /// @apiNote This can only be used to make boats with the default model. **Rafts will not work with this system!**
     public static void addBoat(Supplier<Item> boat, Supplier<Item> chestBoat, ResourceLocation woodType) {
-        Reconstants.BOATS.put(woodType, new BoatType(boat, chestBoat, woodType));
+        ReCommonConstants.BOATS.put(woodType, new BoatType(boat, chestBoat, woodType));
     }
 
     /// Adds signs to the valid list of blocks of the {@link ReBlockEntities#SIGN SIGN} block entity.
@@ -99,7 +116,7 @@ public class ReAPI {
     /// @see ReStandingSignBlock
     /// @see ReWallSignBlock
     public static void addSigns(Block... signs) {
-        Reconstants.SIGNS.addAll(List.of(signs));
+        ReCommonConstants.SIGNS.addAll(List.of(signs));
     }
 
     /// Adds hanging signs to the valid list of blocks of the {@link ReBlockEntities#HANGING_SIGN HANGING_SIGN} block entity.
@@ -109,7 +126,7 @@ public class ReAPI {
     /// @see ReCeilingHangingSignBlock
     /// @see ReWallHangingSignBlock
     public static void addHangingsSigns(Block... hangingSigns) {
-        Reconstants.HANGING_SIGNS.addAll(List.of(hangingSigns));
+        ReCommonConstants.HANGING_SIGNS.addAll(List.of(hangingSigns));
     }
 
     /// Adds a block to the flammability map.
@@ -135,41 +152,55 @@ public class ReAPI {
     /// Gets the brightness that should be applied to an item, based on its presence in the {@link ReItemTags#EMISSIVE_LIGHTING #c:emissive_lighting} item tag,
     /// its {@link ReDataComponents#LIGHT_EMISSION reutilities:light_emission} component, and the block item's brightness.
     ///
-    /// {@linkplain #getSkylight(Level, BlockPos, int) Skylight} is taken into consideration only when the world and position aren't `null`.
+    /// {@linkplain #getSkylight(Level, int) Skylight} is taken into consideration only when the world and position aren't `null`.
     /// @param stack The item stack to make emissive.
     /// @param lightEmission The old light value of this item, usually the `packedLight` parameter.
     /// @param world *(optional)* The world.
     /// @param pos *(optional)* The location in the world this item is in.
     /// @param applySkylight Whether skylight should be considered when calculating the light.
     public static int getLightOutputFromItem(ItemStack stack, int lightEmission, Level world, BlockPos pos, boolean applySkylight) {
-        int skylight = getSkylight(world, pos, lightEmission);
-        int light = applySkylight ? skylight : 15;
-        int blockLight = getBlockLight(stack, world, pos);
+        float skylight = applySkylight ? getSkylight(world, lightEmission) : 15;
+        int emittedBlockLight = getEmittedBlockLight(stack, world, pos);
+        int ambientBlockLight = LightTexture.block(lightEmission);
+
+        if (DebuggingFlags.DEBUG_LIGHT_EMISSION_DISPLAY && world.isClientSide()) {
+            Player player = Minecraft.getInstance().player;
+            if (player != null && ItemStack.isSameItemSameComponents(stack, player.getItemBySlot(EquipmentSlot.MAINHAND))) {
+                player.displayClientMessage(Component.literal(String.format(
+                        "emitted light: %s // light emission (sky/block): %s/%s",
+                        emittedBlockLight,
+                        skylight,
+                        ambientBlockLight)), true);
+            }
+        }
 
         var emissionComponent = stack.get(ReDataComponents.LIGHT_EMISSION);
         if (emissionComponent != null) {
-            return LightTexture.pack(emissionComponent, light);
+            int maxLight = (int) Math.max(ambientBlockLight, Math.max(emissionComponent, skylight));
+            return LightTexture.pack(maxLight, maxLight);
         } else if (stack.is(ReItemTags.EMISSIVE_LIGHTING)) {
-            return LightTexture.pack(15, light);
-        } else if (ReConfigs.LIGHT_EMITTING_EMISSIVES.get() && blockLight > 0) {
-            return LightTexture.pack(blockLight, light);
+            return EMISSIVE_LIGHT_VALUE;
+        } else if (ReConfigs.LIGHT_EMITTING_EMISSIVES.get() && emittedBlockLight > 0) {
+            int maxLight = (int) Math.max(ambientBlockLight, Math.max(emittedBlockLight, skylight));
+            return LightTexture.pack(maxLight, maxLight);
         }
         return lightEmission;
     }
 
     /// Gets the skylight at a given point in the world, or fully lit if the world doesn't exist.
     /// @param world *(optional)* The world.
-    /// @param pos The location in the world this item is in.
     /// @param lightEmission The old light value for this item, usually the `packedLight` parameter.
-    public static int getSkylight(Level world, BlockPos pos, int lightEmission) {
-        return world == null || pos == null ? LightTexture.sky(lightEmission) : world.getRawBrightness(pos, LightTexture.sky(lightEmission));
+    public static float getSkylight(@Nullable Level world, int lightEmission) {
+        float skyLight = LightTexture.sky(lightEmission);
+        if (world != null && world.isClientSide()) skyLight *= ((ClientLevel) world).getSkyDarken(1);
+        return skyLight;
     }
 
-    /// Gets the block light for a given block, using its location in the world for reference if possible.
+    /// Gets the block light emitted from a given block, using its location in the world for reference if possible.
     /// @param stack The item stack to get the block item.
     /// @param world *(optional)* The world.
-    /// @param pos The location in the world this item is in.
-    public static int getBlockLight(ItemStack stack, Level world, BlockPos pos) {
+    /// @param pos *(optional)* The location in the world this item is in.
+    public static int getEmittedBlockLight(ItemStack stack, @Nullable Level world, @Nullable BlockPos pos) {
         if (!(stack.getItem() instanceof BlockItem blockItem)) return 0;
 
         if (world == null || pos == null) {

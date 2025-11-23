@@ -1,6 +1,6 @@
 package melonystudios.reutilities.mixin.blockentity;
 
-import melonystudios.reutilities.util.Reconstants;
+import melonystudios.reutilities.util.ReCommonConstants;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -22,8 +22,8 @@ public abstract class ReBlockEntityTypeMixin {
     @Inject(method = "isValid", at = @At("HEAD"), cancellable = true)
     public void isValid(BlockState state, CallbackInfoReturnable<Boolean> callback) {
         Set<Block> validBlocks = this.getValidBlocks();
-        boolean hasSigns = validBlocks.contains(Blocks.OAK_SIGN) && validBlocks.size() == 1 && Reconstants.SIGNS.contains(state.getBlock());
-        boolean hasHangingSigns = validBlocks.contains(Blocks.OAK_HANGING_SIGN) && validBlocks.size() == 1 && Reconstants.HANGING_SIGNS.contains(state.getBlock());
+        boolean hasSigns = validBlocks.contains(Blocks.OAK_SIGN) && validBlocks.size() == 1 && ReCommonConstants.SIGNS.contains(state.getBlock());
+        boolean hasHangingSigns = validBlocks.contains(Blocks.OAK_HANGING_SIGN) && validBlocks.size() == 1 && ReCommonConstants.HANGING_SIGNS.contains(state.getBlock());
         if (hasSigns || hasHangingSigns) callback.setReturnValue(true);
     }
 }

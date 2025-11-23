@@ -5,7 +5,7 @@ import melonystudios.reutilities.component.ReDataComponents;
 import melonystudios.reutilities.entity.custom.BoatVariant;
 import melonystudios.reutilities.entity.custom.ReBoatEntity;
 import melonystudios.reutilities.entity.custom.ReChestBoatEntity;
-import melonystudios.reutilities.util.Reconstants;
+import melonystudios.reutilities.util.ReCommonConstants;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
@@ -65,7 +65,7 @@ public class ReBoatItem extends BoatItem {
 
             if (result.getType() == HitResult.Type.BLOCK) {
                 Boat boat = this.getBoat(world, result, handStack, player);
-                if (boat instanceof BoatVariant getter) getter.setBoatType(getBoatType(handStack, this.type));
+                if (boat instanceof BoatVariant variant) variant.setBoatType(getBoatType(handStack, this.type));
                 boat.setYRot(player.getYRot());
                 if (!world.noCollision(boat, boat.getBoundingBox())) {
                     return InteractionResultHolder.fail(handStack);
@@ -87,9 +87,9 @@ public class ReBoatItem extends BoatItem {
 
     /// Gets the {@linkplain BoatType boat type} for placing down the boat.
     /// @param boatStack The boat item stack, used for getting the {@link ReDataComponents#WOOD_TYPE reutilities:wood_type} component.
-    /// @param type The default wood type, for when the boat doesn't have component.
-    public static BoatType getBoatType(ItemStack boatStack, BoatType type) {
-        return boatStack.has(ReDataComponents.WOOD_TYPE) ? Reconstants.byWoodType(boatStack.get(ReDataComponents.WOOD_TYPE).toString(), type) : type;
+    /// @param fallback A fallback wood type, in case the boat doesn't have component.
+    public static BoatType getBoatType(ItemStack boatStack, BoatType fallback) {
+        return boatStack.has(ReDataComponents.WOOD_TYPE) ? ReCommonConstants.byWoodType(boatStack.get(ReDataComponents.WOOD_TYPE).toString(), fallback) : fallback;
     }
 
     /// Gets the boat entity for placing down the boat.

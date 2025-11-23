@@ -1,4 +1,4 @@
-package melonystudios.reutilities.event;
+package melonystudios.reutilities.event.custom;
 
 import com.google.common.collect.ImmutableList;
 import net.minecraft.core.component.DataComponentType;

@@ -5,7 +5,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import melonystudios.reutilities.ReConfigs;
 import melonystudios.reutilities.api.ReAPI;
 import melonystudios.reutilities.component.ReDataComponents;
-import melonystudios.reutilities.util.Reconstants;
+import melonystudios.reutilities.util.ReClientConstants;
 import melonystudios.reutilities.util.tag.ReTrimMaterialTags;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -41,6 +41,6 @@ public abstract class ReHumanoidArmorLayerMixin<T extends LivingEntity, M extend
     @ModifyArg(method = "renderArmorPiece(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/entity/EquipmentSlot;ILnet/minecraft/client/model/HumanoidModel;FFFFFF)V",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/entity/layers/HumanoidArmorLayer;renderTrim(Lnet/minecraft/core/Holder;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;ILnet/minecraft/world/item/armortrim/ArmorTrim;Lnet/minecraft/client/model/Model;Z)V"))
     private int makeTrimEmissive(int packedLight, @Local ArmorTrim material) {
-        return material.material().is(ReTrimMaterialTags.EMISSIVE_LIGHTING) && ReConfigs.LIGHT_EMITTING_EMISSIVES.get() ? Reconstants.EMISSIVE_LIGHT_VALUE : packedLight;
+        return material.material().is(ReTrimMaterialTags.EMISSIVE_LIGHTING) && ReConfigs.LIGHT_EMITTING_EMISSIVES.get() ? ReClientConstants.EMISSIVE_LIGHT_VALUE : packedLight;
     }
 }

@@ -5,7 +5,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import melonystudios.reutilities.ReConfigs;
 import melonystudios.reutilities.api.ReAPI;
 import melonystudios.reutilities.component.ReDataComponents;
-import melonystudios.reutilities.util.Reconstants;
+import melonystudios.reutilities.util.ReClientConstants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.PlayerModel;
@@ -25,7 +25,7 @@ import net.minecraft.world.level.Level;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
-import static melonystudios.reutilities.util.Reconstants.EMISSIVE_LIGHT_VALUE;
+import static melonystudios.reutilities.util.ReClientConstants.EMISSIVE_LIGHT_VALUE;
 
 @OnlyIn(Dist.CLIENT)
 public class OutfitLayer<T extends LivingEntity, A extends HumanoidModel<T>> extends RenderLayer<T, A> {
@@ -79,7 +79,7 @@ public class OutfitLayer<T extends LivingEntity, A extends HumanoidModel<T>> ext
         ResourceLocation outfitLocation = OutfitDefinition.getOutfitTexture(slot, definition, slimArms);
         ResourceLocation emissiveLocation = OutfitDefinition.getEmissiveOutfitTexture(slot, definition, slimArms);
         int outfitColor = OutfitDefinition.getOutfitColors(definition, null, slot);
-        int overlayCoordinates = Reconstants.getOverlayCoordinates(0);
+        int overlayCoordinates = ReClientConstants.getOverlayCoordinates(0);
 
         // Regular texture
         if (outfitLocation != null) {
@@ -102,7 +102,7 @@ public class OutfitLayer<T extends LivingEntity, A extends HumanoidModel<T>> ext
         ResourceLocation outfitLocation = OutfitDefinition.getOutfitTexture(slot, definition, slimArms);
         ResourceLocation emissiveLocation = OutfitDefinition.getEmissiveOutfitTexture(slot, definition, slimArms);
         int outfitColor = OutfitDefinition.getOutfitColors(definition, armorStack, slot);
-        int overlayCoordinates = Reconstants.getOverlayCoordinates(0);
+        int overlayCoordinates = ReClientConstants.getOverlayCoordinates(0);
 
         packedLight = ReAPI.getLightOutputFromItem(armorStack, packedLight, world, pos, true);
 

@@ -4,10 +4,8 @@ import com.google.common.collect.ImmutableMap;
 import com.mojang.datafixers.util.Pair;
 import melonystudios.reutilities.api.BoatType;
 import melonystudios.reutilities.entity.custom.BoatVariant;
-import melonystudios.reutilities.util.Reconstants;
-import net.minecraft.client.model.BoatModel;
-import net.minecraft.client.model.ChestBoatModel;
-import net.minecraft.client.model.ListModel;
+import melonystudios.reutilities.util.ReCommonConstants;
+import net.minecraft.client.model.*;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.entity.BoatRenderer;
@@ -23,7 +21,7 @@ public class ReBoatRenderer extends BoatRenderer {
 
     public ReBoatRenderer(EntityRendererProvider.Context context, boolean isChestBoat) {
         super(context, isChestBoat);
-        this.boatResources = Reconstants.BOATS.values().stream().collect(ImmutableMap.toImmutableMap(type -> type,
+        this.boatResources = ReCommonConstants.BOATS.values().stream().collect(ImmutableMap.toImmutableMap(type -> type,
                 type -> Pair.of(getBoatLocation(type, isChestBoat), this.createBoatModel(context, type, isChestBoat))));
     }
 
@@ -35,9 +33,17 @@ public class ReBoatRenderer extends BoatRenderer {
         ModelLayerLocation layerLocation = isChestBoat ? ReBoatRenderer.createChestBoatModelName(type) : ReBoatRenderer.createBoatModelName(type);
         try {
             ModelPart part = context.bakeLayer(layerLocation);
-            return isChestBoat ? new ChestBoatModel(part) : new BoatModel(part);
+            return this.getBoatModel(isChestBoat, type.raft(), part);
         } catch (IllegalArgumentException exception) {
             ModelPart part = isChestBoat ? ChestBoatModel.createBodyModel().bakeRoot() : BoatModel.createBodyModel().bakeRoot();
+            return this.getBoatModel(isChestBoat, type.raft(), part);
+        }
+    }
+
+    public ListModel<Boat> getBoatModel(boolean isChestBoat, boolean isRaft, ModelPart part) {
+        if (isRaft) {
+            return isChestBoat ? new ChestRaftModel(part) : new RaftModel(part);
+        } else {
             return isChestBoat ? new ChestBoatModel(part) : new BoatModel(part);
         }
     }
@@ -57,8 +63,8 @@ public class ReBoatRenderer extends BoatRenderer {
     @Override
     @NotNull
     public Pair<ResourceLocation, ListModel<Boat>> getModelWithLocation(Boat boat) {
-        if (boat instanceof BoatVariant getter) {
-            return this.boatResources.get(getter.getBoatType());
+        if (boat instanceof BoatVariant variant) {
+            return this.boatResources.get(variant.getBoatType());
         } else {
             return null;
         }

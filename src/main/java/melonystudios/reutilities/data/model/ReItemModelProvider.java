@@ -19,7 +19,7 @@ import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import java.time.Month;
 import java.util.LinkedHashMap;
 
-import static melonystudios.reutilities.util.Reconstants.*;
+import static melonystudios.reutilities.util.ReCommonConstants.*;
 
 public abstract class ReItemModelProvider extends ItemModelProvider {
     public static LinkedHashMap<ResourceKey<TrimMaterial>, Float> TRIM_MATERIALS = new LinkedHashMap<>();

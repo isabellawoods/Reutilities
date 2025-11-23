@@ -7,10 +7,9 @@ import net.minecraft.advancements.Criterion;
 import net.minecraft.advancements.critereon.EnterBlockTrigger;
 import net.minecraft.advancements.critereon.InventoryChangeTrigger;
 import net.minecraft.advancements.critereon.ItemPredicate;
-import net.minecraft.data.recipes.RecipeCategory;
-import net.minecraft.data.recipes.RecipeOutput;
-import net.minecraft.data.recipes.ShapedRecipeBuilder;
-import net.minecraft.data.recipes.ShapelessRecipeBuilder;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.data.recipes.*;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
@@ -25,14 +24,14 @@ import net.neoforged.neoforge.common.crafting.DifferenceIngredient;
 import java.util.*;
 
 /// Helper data generator class for generating whole families of recipes.
-/// @param output The default {@linkplain RecipeOutput output} for recipes, used for saving.
-/// @param material An item that's used as the base material for all recipes, like planks or cobblestone.
-/// @param rods An item tag that's used as the default "stick" item for recipes, used for fences and fence gates.
-public record RecipeFamilyProvider(RecipeOutput output, ItemLike material, TagKey<Item> rods) {
+public class RecipeFamilyProvider {
     /// Map of item types (strings) to {@linkplain RecipeFamilyProviderEntry recipe family provider entries}, used to create all the base recipes.
     private static final Map<String, RecipeFamilyProviderEntry> PROVIDERS = new LinkedHashMap<>();
     /// Map of all items that should be generated, paired with their respective types.
     private static final Map<String, RecipeFamilyEntry> RECIPES = new LinkedHashMap<>();
+    private final RecipeOutput output;
+    private final ItemLike material;
+    private final TagKey<Item> rods;
 
     /// Helper data generator class for generating whole families of recipes.
     /// @param output The default {@linkplain RecipeOutput output} for recipes, used for saving.
@@ -71,196 +70,256 @@ public record RecipeFamilyProvider(RecipeOutput output, ItemLike material, TagKe
     /// New providers can be added using the {@link #addProviders()} method below.
     private void addDefaultProviders() {
         // Common blocks
-        PROVIDERS.put("stairs", (item, ingredient) ->
-                ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, item, 6).define('#', this.material)
-                        .pattern("#  ").pattern("## ").pattern("###").unlockedBy("has_material", has(this.material))
-                        .save(this.output)
-        );
-        PROVIDERS.put("slab", (item, ingredient) ->
-                ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, item, 6).define('#', this.material)
-                        .pattern("###").unlockedBy("has_material", has(this.material))
-                        .save(this.output)
-        );
-        PROVIDERS.put("wall", (item, ingredient) ->
-                ShapedRecipeBuilder.shaped(RecipeCategory.MISC, item, 6).define('#', this.material)
-                        .pattern("###").pattern("###").unlockedBy("has_material", has(this.material))
-                        .save(this.output)
-        );
+        PROVIDERS.put("stairs", (item, ingredient, stonecuttingRecipes) -> {
+            ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, item, 6).define('#', this.material)
+                    .pattern("#  ").pattern("## ").pattern("###").unlockedBy(hasItem(this.material), has(this.material))
+                    .save(this.output);
+            if (stonecuttingRecipes) SingleItemRecipeBuilder.stonecutting(Ingredient.of(this.material), RecipeCategory.BUILDING_BLOCKS, item)
+                    .unlockedBy(hasItem(this.material), has(this.material))
+                    .save(this.output, saveLocation(this.material, "stonecutting"));
+        });
+        PROVIDERS.put("slab", (item, ingredient, stonecuttingRecipes) -> {
+            ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, item, 6).define('#', this.material)
+                    .pattern("###").unlockedBy(hasItem(this.material), has(this.material))
+                    .save(this.output);
+            if (stonecuttingRecipes) SingleItemRecipeBuilder.stonecutting(Ingredient.of(this.material), RecipeCategory.BUILDING_BLOCKS, item, 2)
+                    .unlockedBy(hasItem(this.material), has(this.material))
+                    .save(this.output, saveLocation(this.material, "stonecutting"));
+        });
+        PROVIDERS.put("wall", (item, ingredient, stonecuttingRecipes) -> {
+            ShapedRecipeBuilder.shaped(RecipeCategory.MISC, item, 6).define('#', this.material)
+                    .pattern("###").pattern("###").unlockedBy(hasItem(this.material), has(this.material))
+                    .save(this.output);
+            if (stonecuttingRecipes) SingleItemRecipeBuilder.stonecutting(Ingredient.of(this.material), RecipeCategory.BUILDING_BLOCKS, item)
+                    .unlockedBy(hasItem(this.material), has(this.material))
+                    .save(this.output, saveLocation(this.material, "stonecutting"));
+        });
+        PROVIDERS.put("pressure_plate", (item, ingredient, stonecuttingRecipes) -> {
+            ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, item).define('#', this.material)
+                    .pattern("##").unlockedBy(hasItem(this.material), has(this.material))
+                    .save(this.output);
+            if (stonecuttingRecipes) SingleItemRecipeBuilder.stonecutting(Ingredient.of(this.material), RecipeCategory.REDSTONE, item)
+                    .unlockedBy(hasItem(this.material), has(this.material))
+                    .save(this.output, saveLocation(this.material, "stonecutting"));
+        });
+        PROVIDERS.put("button", (item, ingredient, stonecuttingRecipes) -> {
+            ShapelessRecipeBuilder.shapeless(RecipeCategory.REDSTONE, item).requires(this.material)
+                    .unlockedBy(hasItem(this.material), has(this.material))
+                    .save(this.output);
+            if (stonecuttingRecipes) SingleItemRecipeBuilder.stonecutting(Ingredient.of(this.material), RecipeCategory.REDSTONE, item)
+                    .unlockedBy(hasItem(this.material), has(this.material))
+                    .save(this.output, saveLocation(this.material, "stonecutting"));
+        });
 
         // Wood blocks
-        PROVIDERS.put("sapling", (item, ingredient) ->
+        PROVIDERS.put("sapling", (item, ingredient, stonecuttingRecipes) ->
                 ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, item).define('#', ingredient.entryGetter().getSecond()).define('S', this.rods)
                         .pattern("#").pattern("S").unlockedBy("has_leaves", has(ingredient))
                         .group("sapling").save(this.output)
         );
-        PROVIDERS.put("wood", (item, ingredient) ->
+        PROVIDERS.put("wood", (item, ingredient, stonecuttingRecipes) ->
                 ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, item, 3).define('#', ingredient.entryGetter().getSecond())
                         .pattern("##").pattern("##").unlockedBy("has_logs", has(ingredient))
                         .group("bark").save(this.output)
         );
-        PROVIDERS.put("stripped_wood", (item, ingredient) ->
+        PROVIDERS.put("stripped_wood", (item, ingredient, stonecuttingRecipes) ->
                 ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, item, 3).define('#', ingredient.entryGetter().getSecond())
                         .pattern("##").pattern("##").unlockedBy("has_logs", has(ingredient))
                         .group("bark").save(this.output)
         );
-        PROVIDERS.put("planks", (item, ingredient) ->
+        PROVIDERS.put("planks", (item, ingredient, stonecuttingRecipes) ->
                 ShapelessRecipeBuilder.shapeless(RecipeCategory.BUILDING_BLOCKS, this.material, 4).requires(ingredient.entryGetter().getSecond())
                         .unlockedBy("has_logs", has(ingredient))
                         .group("planks").save(this.output)
         );
-        PROVIDERS.put("wooden_stairs", (item, ingredient) ->
+        PROVIDERS.put("wooden_stairs", (item, ingredient, stonecuttingRecipes) ->
                 ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, item, 6).define('#', this.material)
                         .pattern("#  ").pattern("## ").pattern("###").unlockedBy("has_planks", has(this.material))
                         .group("wooden_stairs").save(this.output)
         );
-        PROVIDERS.put("wooden_slab", (item, ingredient) ->
+        PROVIDERS.put("wooden_slab", (item, ingredient, stonecuttingRecipes) ->
                 ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, item, 6).define('#', this.material)
                         .pattern("###").unlockedBy("has_planks", has(this.material))
                         .group("wooden_slab").save(this.output)
         );
-        PROVIDERS.put("wooden_fence", (item, ingredient) ->
+        PROVIDERS.put("wooden_fence", (item, ingredient, stonecuttingRecipes) ->
                 ShapedRecipeBuilder.shaped(RecipeCategory.MISC, item, 3).define('#', this.material).define('S', this.rods)
                         .pattern("#S#").pattern("#S#").unlockedBy("has_planks", has(this.material))
                         .group("wooden_fence").save(this.output)
         );
-        PROVIDERS.put("wooden_fence_gate", (item, ingredient) ->
+        PROVIDERS.put("wooden_fence_gate", (item, ingredient, stonecuttingRecipes) ->
                 ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, item).define('#', this.material).define('S', this.rods)
                         .pattern("S#S").pattern("S#S").unlockedBy("has_planks", has(this.material))
                         .group("wooden_fence_gate").save(this.output)
         );
-        PROVIDERS.put("wooden_door", (item, ingredient) ->
+        PROVIDERS.put("wooden_door", (item, ingredient, stonecuttingRecipes) ->
                 ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, item, 3).define('#', this.material)
                         .pattern("##").pattern("##").pattern("##").unlockedBy("has_planks", has(this.material))
                         .group("wooden_door").save(this.output)
         );
-        PROVIDERS.put("wooden_trapdoor", (item, ingredient) ->
+        PROVIDERS.put("wooden_trapdoor", (item, ingredient, stonecuttingRecipes) ->
                 ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, item, 2).define('#', this.material)
                         .pattern("###").pattern("###").unlockedBy("has_planks", has(this.material))
                         .group("wooden_trapdoor").save(this.output)
         );
-        PROVIDERS.put("wooden_pressure_plate", (item, ingredient) ->
+        PROVIDERS.put("wooden_pressure_plate", (item, ingredient, stonecuttingRecipes) ->
                 ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, item).define('#', this.material)
                         .pattern("##").unlockedBy("has_planks", has(this.material))
                         .group("wooden_pressure_plate").save(this.output)
         );
-        PROVIDERS.put("wooden_button", (item, ingredient) ->
+        PROVIDERS.put("wooden_button", (item, ingredient, stonecuttingRecipes) ->
                 ShapelessRecipeBuilder.shapeless(RecipeCategory.REDSTONE, item).requires(this.material)
                         .unlockedBy("has_planks", has(this.material))
                         .group("wooden_button").save(this.output)
         );
-        PROVIDERS.put("sign", (item, ingredient) ->
+        PROVIDERS.put("sign", (item, ingredient, stonecuttingRecipes) ->
                 ShapedRecipeBuilder.shaped(RecipeCategory.MISC, item, 3).define('#', this.material).define('S', this.rods)
                         .pattern("###").pattern("###").pattern(" S ").unlockedBy("has_planks", has(this.material))
                         .group("wooden_sign").save(this.output)
         );
-        PROVIDERS.put("hanging_sign", (item, ingredient) ->
+        PROVIDERS.put("hanging_sign", (item, ingredient, stonecuttingRecipes) ->
                 ShapedRecipeBuilder.shaped(RecipeCategory.MISC, item, 6).define('#', ingredient.entryGetter().getSecond()).define('S', Tags.Items.CHAINS)
                         .pattern("S S").pattern("###").pattern("###").unlockedBy("has_stripped_logs", has(ingredient))
                         .group("hanging_sign").save(this.output)
         );
-        PROVIDERS.put("crafting_table", (item, ingredient) ->
+        PROVIDERS.put("crafting_table", (item, ingredient, stonecuttingRecipes) ->
                 ShapedRecipeBuilder.shaped(RecipeCategory.MISC, item).define('#', this.material)
                         .pattern("##").pattern("##").unlockedBy("has_planks", has(this.material))
                         .group("crafting_tables").save(this.output)
         );
-        PROVIDERS.put("bookshelf", (item, ingredient) ->
+        PROVIDERS.put("bookshelf", (item, ingredient, stonecuttingRecipes) ->
                 ShapedRecipeBuilder.shaped(RecipeCategory.MISC, item).define('#', this.material).define('B', ItemTags.BOOKSHELF_BOOKS)
                         .pattern("###").pattern("BBB").pattern("###").unlockedBy("has_books", has(ItemTags.BOOKSHELF_BOOKS))
                         .group("bookshelves").save(this.output)
         );
-        PROVIDERS.put("chest", (item, ingredient) ->
+        PROVIDERS.put("chest", (item, ingredient, stonecuttingRecipes) ->
                 ShapedRecipeBuilder.shaped(RecipeCategory.MISC, item).define('#', this.material)
                         .pattern("###").pattern("# #").pattern("###").unlockedBy("has_planks", has(this.material))
                         .group("chests").save(this.output)
         );
-        PROVIDERS.put("barrel", (item, ingredient) ->
+        PROVIDERS.put("barrel", (item, ingredient, stonecuttingRecipes) ->
                 ShapedRecipeBuilder.shaped(RecipeCategory.MISC, item).define('#', this.material).define('S', ingredient.entryGetter().getSecond())
                         .pattern("#S#").pattern("# #").pattern("#S#").unlockedBy("has_planks", has(this.material)).unlockedBy("has_slabs", has(ingredient))
                         .group("barrels").save(this.output)
         );
 
         // Wood items
-        PROVIDERS.put("stick", (item, ingredient) ->
+        PROVIDERS.put("stick", (item, ingredient, stonecuttingRecipes) ->
                 ShapedRecipeBuilder.shaped(RecipeCategory.MISC, item).define('#', this.material)
                         .pattern("#").pattern("#").unlockedBy("has_planks", has(this.material))
                         .group("sticks").save(this.output)
         );
-        PROVIDERS.put("boat", (item, ingredient) ->
+        PROVIDERS.put("boat", (item, ingredient, stonecuttingRecipes) ->
                 ShapedRecipeBuilder.shaped(RecipeCategory.TRANSPORTATION, item).define('#', this.material)
                         .pattern("# #").pattern("###").unlockedBy("in_water", insideOf(Blocks.WATER))
                         .group("boat").save(this.output)
         );
-        PROVIDERS.put("chest_boat", (item, ingredient) ->
+        PROVIDERS.put("chest_boat", (item, ingredient, stonecuttingRecipes) ->
                 ShapelessRecipeBuilder.shapeless(RecipeCategory.TRANSPORTATION, item).requires(DifferenceIngredient.of(Ingredient.of(Tags.Items.CHESTS_WOODEN), Ingredient.of(Tags.Items.CHESTS_TRAPPED))).requires(ingredient.entryGetter().getSecond())
                         .unlockedBy("has_boat", has(ItemTags.BOATS))
                         .group("chest_boat").save(this.output)
         );
-        PROVIDERS.put("sword", (item, ingredient) ->
+        PROVIDERS.put("sword", (item, ingredient, stonecuttingRecipes) ->
                 ShapedRecipeBuilder.shaped(RecipeCategory.MISC, item).define('#', this.material).define('S', this.rods)
-                        .pattern("#").pattern("#").pattern("S").unlockedBy("has_material", has(this.material))
+                        .pattern("#").pattern("#").pattern("S").unlockedBy(hasItem(this.material), has(this.material))
                         .save(this.output)
         );
-        PROVIDERS.put("pickaxe", (item, ingredient) ->
+        PROVIDERS.put("pickaxe", (item, ingredient, stonecuttingRecipes) ->
                 ShapedRecipeBuilder.shaped(RecipeCategory.MISC, item).define('#', this.material).define('S', this.rods)
-                        .pattern("###").pattern(" S ").pattern(" S ").unlockedBy("has_material", has(this.material))
+                        .pattern("###").pattern(" S ").pattern(" S ").unlockedBy(hasItem(this.material), has(this.material))
                         .save(this.output)
         );
-        PROVIDERS.put("shovel", (item, ingredient) ->
+        PROVIDERS.put("shovel", (item, ingredient, stonecuttingRecipes) ->
                 ShapedRecipeBuilder.shaped(RecipeCategory.MISC, item).define('#', this.material).define('S', this.rods)
-                        .pattern("#").pattern("S").pattern("S").unlockedBy("has_material", has(this.material))
+                        .pattern("#").pattern("S").pattern("S").unlockedBy(hasItem(this.material), has(this.material))
                         .save(this.output)
         );
-        PROVIDERS.put("axe", (item, ingredient) ->
+        PROVIDERS.put("axe", (item, ingredient, stonecuttingRecipes) ->
                 ShapedRecipeBuilder.shaped(RecipeCategory.MISC, item).define('#', this.material).define('S', this.rods)
-                        .pattern("##").pattern("#S").pattern(" S").unlockedBy("has_material", has(this.material))
+                        .pattern("##").pattern("#S").pattern(" S").unlockedBy(hasItem(this.material), has(this.material))
                         .save(this.output)
         );
-        PROVIDERS.put("hoe", (item, ingredient) ->
+        PROVIDERS.put("hoe", (item, ingredient, stonecuttingRecipes) ->
                 ShapedRecipeBuilder.shaped(RecipeCategory.MISC, item).define('#', this.material).define('S', this.rods)
-                        .pattern("##").pattern(" S").pattern(" S").unlockedBy("has_material", has(this.material))
+                        .pattern("##").pattern(" S").pattern(" S").unlockedBy(hasItem(this.material), has(this.material))
                         .save(this.output)
         );
 
         // Modded items
-        PROVIDERS.put("stackedgoods/hammer", (item, ingredient) ->
-                ShapedRecipeBuilder.shaped(RecipeCategory.MISC, item).define('#', this.material).define('S', this.rods)
-                        .pattern(" ##").pattern(" S#").pattern("S  ").unlockedBy("has_material", has(this.material))
+        PROVIDERS.put("stancements/shelf", (item, ingredient, stonecuttingRecipes) ->
+                ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, item).define('#', this.material).define('S', this.rods)
+                        .pattern("###").pattern("S S").unlockedBy(hasItem(this.material), has(this.material))
                         .save(this.output)
         );
-        PROVIDERS.put("stackedgoods/scraper", (item, ingredient) ->
+        PROVIDERS.put("stackedgoods/hammer", (item, ingredient, stonecuttingRecipes) ->
                 ShapedRecipeBuilder.shaped(RecipeCategory.MISC, item).define('#', this.material).define('S', this.rods)
-                        .pattern("#").pattern("#").pattern("S").unlockedBy("has_material", has(this.material))
+                        .pattern(" ##").pattern(" S#").pattern("S  ").unlockedBy(hasItem(this.material), has(this.material))
                         .save(this.output)
         );
-        PROVIDERS.put("stackedgoods/gem_cutter", (item, ingredient) ->
+        PROVIDERS.put("stackedgoods/scraper", (item, ingredient, stonecuttingRecipes) ->
                 ShapedRecipeBuilder.shaped(RecipeCategory.MISC, item).define('#', this.material).define('S', this.rods)
-                        .pattern("#").pattern("S").unlockedBy("has_material", has(this.material))
+                        .pattern("#").pattern("#").pattern("S").unlockedBy(hasItem(this.material), has(this.material))
                         .save(this.output)
         );
-        PROVIDERS.put("backmath/mortar_and_pestle", (item, ingredient) ->
+        PROVIDERS.put("stackedgoods/gem_cutter", (item, ingredient, stonecuttingRecipes) ->
+                ShapedRecipeBuilder.shaped(RecipeCategory.MISC, item).define('#', this.material).define('S', this.rods)
+                        .pattern("#").pattern("S").unlockedBy(hasItem(this.material), has(this.material))
+                        .save(this.output)
+        );
+        PROVIDERS.put("backmath/mortar_and_pestle", (item, ingredient, stonecuttingRecipes) ->
                 ShapedRecipeBuilder.shaped(RecipeCategory.MISC, item).define('#', this.material).define('S', this.rods).define('F', ReItemTags.FLINT)
-                        .pattern("  S").pattern("#F#").pattern(" # ").unlockedBy("has_material", has(this.material))
+                        .pattern("  S").pattern("#F#").pattern(" # ").unlockedBy(hasItem(this.material), has(this.material))
                         .save(this.output)
         );
-        PROVIDERS.put("backmath/knife", (item, ingredient) ->
+        PROVIDERS.put("backmath/knife", (item, ingredient, stonecuttingRecipes) ->
                 ShapedRecipeBuilder.shaped(RecipeCategory.MISC, item).define('#', this.material).define('S', this.rods)
-                        .pattern("S ").pattern(" #").unlockedBy("has_material", has(this.material))
+                        .pattern("S ").pattern(" #").unlockedBy(hasItem(this.material), has(this.material))
                         .save(this.output)
         );
 
         this.addProviders();
     }
 
-    /// Adds custom providers to the provider entries map. This is usually paired with the `add()` methods in the {@linkplain Builder builder} below.
-    public void addProviders() {
+    /// Makes the save location of a recipe: `namespace:folder/recipe.json`.
+    public static ResourceLocation saveLocation(ItemLike material, String folder) {
+        ResourceLocation location = BuiltInRegistries.ITEM.getKey(material.asItem());
+        return ResourceLocation.fromNamespaceAndPath(location.getNamespace(), folder + "/" + location.getPath());
     }
 
+    /// Makes the advancement condition name for the recipe: `has_<item_name>`.
+    /// @param material The material used in the recipe.
+    public static String hasItem(ItemLike material) {
+        return "has_" + BuiltInRegistries.ITEM.getKey(material.asItem()).getPath();
+    }
+
+    /// Adds custom providers to the provider entries map. This is usually paired with the `add()` methods in the {@linkplain Builder builder} below.
+    public void addProviders() {}
+
     /// A builder for all the recipes. This is where entries can be added to the {@link #RECIPES} map.
-    /// @param output The default {@linkplain RecipeOutput output} for recipes, used for saving.
-    /// @param material An item that's used as the base material for all recipes, like planks or cobblestone.
-    /// @param rods An item tag that's used as the default "stick" item for recipes, used for fences and fence gates.
     // stuff's looking weird with the TagEntry/ItemEntry code down there, but I'll fix it in post, don't have time for this ~isa 17-8-25
-    public record Builder(RecipeOutput output, ItemLike material, TagKey<Item> rods) {
+    public static class Builder {
+        private final RecipeOutput output;
+        private final ItemLike material;
+        private final TagKey<Item> rods;
+        private boolean stonecuttingRecipes = false;
+
+        /// A builder for all the recipes. This is where entries can be added to the {@link #RECIPES} map.
+        /// @param output The default {@linkplain RecipeOutput output} for recipes, used for saving.
+        /// @param material An item that's used as the base material for all recipes, like planks or cobblestone.
+        /// @param rods An item tag that's used as the default "stick" item for recipes, used for fences and fence gates.
+        public Builder(RecipeOutput output, ItemLike material, TagKey<Item> rods) {
+            this.output = output;
+            this.material = material;
+            this.rods = rods;
+        }
+
+        /// Makes the recipe builder generate stonecutting recipes for the following recipes:
+        /// `stairs`, `slab`, `wall`, `pressure_plate` and `button`.
+        public Builder withStonecuttingRecipes() {
+            this.stonecuttingRecipes = true;
+            return this;
+        }
+
         public Builder add(String type, ItemLike item) {
             RECIPES.put(type, () -> Pair.of(item, Ingredient.of()));
             return this;
@@ -284,6 +343,16 @@ public record RecipeFamilyProvider(RecipeOutput output, ItemLike material, TagKe
 
         public Builder wall(ItemLike wall) {
             RECIPES.put("wall", () -> Pair.of(wall, Ingredient.of()));
+            return this;
+        }
+
+        public Builder pressurePlate(ItemLike pressurePlate) {
+            RECIPES.put("pressure_plate", () -> Pair.of(pressurePlate, Ingredient.of()));
+            return this;
+        }
+
+        public Builder button(ItemLike button) {
+            RECIPES.put("button", () -> Pair.of(button, Ingredient.of()));
             return this;
         }
 
@@ -464,6 +533,11 @@ public record RecipeFamilyProvider(RecipeOutput output, ItemLike material, TagKe
             return this;
         }
 
+        public Builder shelf(ItemLike shelf) {
+            RECIPES.put("stancements/shelf", () -> Pair.of(shelf, Ingredient.of()));
+            return this;
+        }
+
         // Modded items
         public Builder hammer(ItemLike hammer) {
             RECIPES.put("stackedgoods/hammer", () -> Pair.of(hammer, Ingredient.of()));
@@ -494,7 +568,7 @@ public record RecipeFamilyProvider(RecipeOutput output, ItemLike material, TagKe
             RecipeFamilyProvider provider = new RecipeFamilyProvider(this.output, this.material, this.rods);
             for (String entry : RECIPES.keySet()) {
                 RecipeFamilyEntry recipeEntry = RECIPES.get(entry);
-                PROVIDERS.get(entry).makeRecipe(recipeEntry.entryGetter().getFirst(), recipeEntry);
+                PROVIDERS.get(entry).makeRecipe(recipeEntry.entryGetter().getFirst(), recipeEntry, this.stonecuttingRecipes);
             }
             PROVIDERS.clear();
             RECIPES.clear();
