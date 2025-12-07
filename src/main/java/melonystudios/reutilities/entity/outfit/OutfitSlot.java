@@ -57,7 +57,7 @@ public record OutfitSlot(ResourceLocation texture, Optional<ResourceLocation> em
         private final ResourceLocation texture;
         private ResourceLocation emissiveTexture;
         private ResourceLocation overlayTexture;
-        private boolean hidesSkinLayers;
+        private boolean hidesSkinLayers = true;
         private Integer color;
 
         /// Creates an instance of the **outfit slot builder**.
@@ -82,7 +82,7 @@ public record OutfitSlot(ResourceLocation texture, Optional<ResourceLocation> em
 
         /// Makes this outfit slot show the {@linkplain net.minecraft.world.entity.player.PlayerModelPart skin layers} associated with this slot.
         public Builder showSkinLayers() {
-            this.hidesSkinLayers = true;
+            this.hidesSkinLayers = false;
             return this;
         }
 
