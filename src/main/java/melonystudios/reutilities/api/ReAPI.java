@@ -1,8 +1,5 @@
 package melonystudios.reutilities.api;
 
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.DataResult;
-import io.netty.buffer.ByteBuf;
 import melonystudios.behaviorapi.ItemBehavior;
 import melonystudios.reutilities.ReConfigs;
 import melonystudios.reutilities.block.custom.*;
@@ -12,7 +9,6 @@ import melonystudios.reutilities.component.custom.ComponentOutfit;
 import melonystudios.reutilities.component.custom.TooltipStyle;
 import melonystudios.reutilities.entity.outfit.OutfitDefinition;
 import melonystudios.reutilities.util.DebuggingFlags;
-import melonystudios.reutilities.util.ReCommonConstants;
 import melonystudios.reutilities.util.tag.ReItemTags;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
@@ -22,12 +18,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.util.ByIdMap;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
@@ -39,7 +31,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.FireBlock;
-import net.minecraft.world.phys.Vec3;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import org.jetbrains.annotations.Nullable;
 
@@ -47,10 +38,7 @@ import java.time.LocalDate;
 import java.time.Month;
 import java.util.EnumMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Supplier;
 
 import static melonystudios.reutilities.util.ReClientConstants.*;
 import static melonystudios.reutilities.util.ReCommonConstants.*;
@@ -59,32 +47,10 @@ import static net.minecraft.client.renderer.item.ItemProperties.register;
 /// ***Reutilities'*** **API** class, used by my mods to add new boats and signs, register item overrides, get light emission values, etc.
 @SuppressWarnings("deprecation")
 public class ReAPI {
-    public static final Codec<SoundSource> SOUND_SOURCE_CODEC = Codec.stringResolver(SoundSource::getName, name -> SoundSource.valueOf(name.toUpperCase(Locale.ENGLISH)));
-    public static final StreamCodec<ByteBuf, SoundSource> SOUND_SOURCE_STREAM_CODEC = ByteBufCodecs.idMapper(ByIdMap.continuous(Enum::ordinal, SoundSource.values(), ByIdMap.OutOfBoundsStrategy.ZERO), Enum::ordinal);
-    public static final StreamCodec<ByteBuf, EquipmentSlot> EQUIPMENT_SLOT_STREAM_CODEC = ByteBufCodecs.idMapper(ByIdMap.continuous(Enum::ordinal, EquipmentSlot.values(), ByIdMap.OutOfBoundsStrategy.ZERO), Enum::ordinal);
-    public static final StreamCodec<ByteBuf, Vec3> VEC3_STREAM_CODEC = StreamCodec.composite(ByteBufCodecs.DOUBLE, Vec3::x, ByteBufCodecs.DOUBLE, Vec3::y, ByteBufCodecs.DOUBLE, Vec3::z, Vec3::new);
-    public static final Codec<Integer> HEX_INT_CODEC = new HexadecimalIntCodec();
-
-    /// Creates a {@linkplain Codec#FLOAT float codec} that has a specified range (usually `0` to `1`).
-    /// @param min The minimum bound for this codec.
-    /// @param max The maximum bound for this codec.
-    public static Codec<Float> floatRange(float min, float max) {
-        return floatRange(min, max, value -> Component.translatable("logger.reutilities.outside_bounds", min, max, value).getString());
-    }
-
-    /// Creates a {@linkplain Codec#FLOAT float codec} that has a specified range (usually `0` to `1`).
-    /// @param min The minimum bound for this codec.
-    /// @param max The maximum bound for this codec.
-    /// @param errorMessage A function to get the error message for when the codec gets a value outside its bounds.
-    public static Codec<Float> floatRange(float min, float max, Function<Float, String> errorMessage) {
-        return Codec.FLOAT.validate(value -> value.compareTo(min) >= 0 && value.compareTo(max) <= 0 ? DataResult.success(value) : DataResult.error(() -> errorMessage.apply(value)));
-    }
-
     /// Adds various boat types to *Reutilities'* boat map.
     ///
     /// This method should be called during the {@linkplain FMLCommonSetupEvent common setup event}.
     /// @param types The boat types to be added.
-    /// @apiNote This can only be used to make boats with the default model. **Rafts will not work with this system!**
     public static void addBoats(BoatType... types) {
         for (BoatType type : types) addBoat(type);
     }
@@ -93,20 +59,16 @@ public class ReAPI {
     ///
     /// This method should be called during the {@linkplain FMLCommonSetupEvent common setup event}.
     /// @param type The boat type to add.
-    /// @apiNote This can only be used to make boats with the default model. **Rafts will not work with this system!**
     public static void addBoat(BoatType type) {
-        ReCommonConstants.BOATS.put(type.woodType(), type);
+        BOATS.put(type.woodType(), type);
     }
 
-    /// Adds a boat and chest boat to *Reutilities'* boat map.
+    /// Adds various recolors to (*Reutilities* color) to the mod's colors map.
     ///
     /// This method should be called during the {@linkplain FMLCommonSetupEvent common setup event}.
-    /// @param boat A {@linkplain Supplier supplier} the boat item.
-    /// @param chestBoat The boat with chest item.
-    /// @param woodType A resource location of the boat's wood type, like `minecraft:oak`.
-    /// @apiNote This can only be used to make boats with the default model. **Rafts will not work with this system!**
-    public static void addBoat(Supplier<Item> boat, Supplier<Item> chestBoat, ResourceLocation woodType) {
-        ReCommonConstants.BOATS.put(woodType, new BoatType(boat, chestBoat, woodType));
+    /// @param colors The recolors to be added.
+    public static void addRecolors(Recolor... colors) {
+        for (Recolor color : colors) COLORS.put(color.colorLocation(), color);
     }
 
     /// Adds signs to the valid list of blocks of the {@link ReBlockEntities#SIGN SIGN} block entity.
@@ -116,7 +78,7 @@ public class ReAPI {
     /// @see ReStandingSignBlock
     /// @see ReWallSignBlock
     public static void addSigns(Block... signs) {
-        ReCommonConstants.SIGNS.addAll(List.of(signs));
+        SIGNS.addAll(List.of(signs));
     }
 
     /// Adds hanging signs to the valid list of blocks of the {@link ReBlockEntities#HANGING_SIGN HANGING_SIGN} block entity.
@@ -126,7 +88,7 @@ public class ReAPI {
     /// @see ReCeilingHangingSignBlock
     /// @see ReWallHangingSignBlock
     public static void addHangingsSigns(Block... hangingSigns) {
-        ReCommonConstants.HANGING_SIGNS.addAll(List.of(hangingSigns));
+        HANGING_SIGNS.addAll(List.of(hangingSigns));
     }
 
     /// Adds a block to the flammability map.
@@ -158,7 +120,7 @@ public class ReAPI {
     /// @param world *(optional)* The world.
     /// @param pos *(optional)* The location in the world this item is in.
     /// @param applySkylight Whether skylight should be considered when calculating the light.
-    public static int getLightOutputFromItem(ItemStack stack, int lightEmission, Level world, BlockPos pos, boolean applySkylight) {
+    public static int getItemBrightness(ItemStack stack, int lightEmission, Level world, BlockPos pos, boolean applySkylight) {
         float skylight = applySkylight ? getSkylight(world, lightEmission) : 15;
         int emittedBlockLight = getEmittedBlockLight(stack, world, pos);
         int ambientBlockLight = LightTexture.block(lightEmission);

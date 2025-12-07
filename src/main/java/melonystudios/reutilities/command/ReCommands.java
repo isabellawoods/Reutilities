@@ -29,7 +29,7 @@ public class ReCommands {
         // /melonystudios reutilities:dump_<locations> <alphabetical_sort>
         dispatcher.register(Commands.literal("melonystudios")
                 .then(Commands.literal(Reutilities.reutilities("dump_boat_types").toString())
-                        .requires(stack -> DebuggingFlags.DEBUG_DUMP_COMMANDS)
+                        .requires(stack -> stack.hasPermission(Commands.LEVEL_OWNERS) && DebuggingFlags.DEBUG_DUMP_COMMANDS)
                         .executes(context -> dumpLocations(
                                 context,
                                 false,
@@ -47,7 +47,7 @@ public class ReCommands {
                         )
                 ))
                 .then(Commands.literal(Reutilities.reutilities("dump_recolors").toString())
-                        .requires(stack -> DebuggingFlags.DEBUG_DUMP_COMMANDS)
+                        .requires(stack -> stack.hasPermission(Commands.LEVEL_OWNERS) && DebuggingFlags.DEBUG_DUMP_COMMANDS)
                         .executes(context -> dumpLocations(
                                 context,
                                 false,

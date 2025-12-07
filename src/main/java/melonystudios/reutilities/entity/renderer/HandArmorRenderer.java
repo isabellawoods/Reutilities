@@ -3,6 +3,7 @@ package melonystudios.reutilities.entity.renderer;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import melonystudios.reutilities.ReConfigs;
+import melonystudios.reutilities.Reutilities;
 import melonystudios.reutilities.api.ReAPI;
 import melonystudios.reutilities.component.ReDataComponents;
 import melonystudios.reutilities.entity.outfit.OutfitDefinition;
@@ -40,9 +41,12 @@ public class HandArmorRenderer {
     public static void renderOutfitInArm(AbstractClientPlayer player, HumanoidArm side, PoseStack stack, MultiBufferSource buffer, int packedLight) {
         ItemStack chestStack = player.getItemBySlot(EquipmentSlot.CHEST);
         if (ReConfigs.RENDER_OUTFIT_ON_HAND.get() && chestStack.has(ReDataComponents.OUTFIT)) {
+            Minecraft minecraft = Minecraft.getInstance();
+            minecraft.getProfiler().push(Reutilities.reutilities("hand_outfit_rendering").toString());
+
             boolean slimArms = player.getSkin().model().id().equals("slim");
-            PlayerModel<AbstractClientPlayer> playerModel = new PlayerModel<>(Minecraft.getInstance().getEntityModels().bakeLayer(slimArms ? ModelLayers.PLAYER_SLIM : ModelLayers.PLAYER), slimArms);
-            OutfitModel<AbstractClientPlayer> outfitModel = new OutfitModel<>(Minecraft.getInstance().getEntityModels().bakeLayer(slimArms ? OutfitModel.SLIM : OutfitModel.CLASSIC), slimArms);
+            PlayerModel<AbstractClientPlayer> playerModel = new PlayerModel<>(minecraft.getEntityModels().bakeLayer(slimArms ? ModelLayers.PLAYER_SLIM : ModelLayers.PLAYER), slimArms);
+            OutfitModel<AbstractClientPlayer> outfitModel = new OutfitModel<>(minecraft.getEntityModels().bakeLayer(slimArms ? OutfitModel.SLIM : OutfitModel.CLASSIC), slimArms);
             ModelPart arm = side == HumanoidArm.LEFT ? outfitModel.leftArm : outfitModel.rightArm;
             ModelPart sleeve = side == HumanoidArm.LEFT ? outfitModel.leftSleeve : outfitModel.rightSleeve;
             Level world = player.level();
@@ -56,14 +60,16 @@ public class HandArmorRenderer {
             outfitModel.setupAnim(player, 0, 0, 0, 0, 0);
             OutfitDefinition definition = OutfitDefinition.getDefinition(world, chestStack);
             EquipmentSlot slot = side == HumanoidArm.LEFT ? EquipmentSlot.OFFHAND : EquipmentSlot.MAINHAND;
-            ResourceLocation outfitLocation = OutfitDefinition.getOutfitTexture(slot, definition, slimArms);
-            ResourceLocation emissiveLocation = OutfitDefinition.getEmissiveOutfitTexture(slot, definition, slimArms);
             int color = FastColor.ARGB32.color(255, OutfitDefinition.getOutfitColors(definition, chestStack, slot));
 
-            packedLight = ReAPI.getLightOutputFromItem(chestStack, packedLight, player.level(), player.blockPosition(), true);
+            packedLight = ReAPI.getItemBrightness(chestStack, packedLight, player.level(), player.blockPosition(), true);
 
             stack.pushPose();
-            stack.scale(1.001F, 1.001F, 1.001F);
+            stack.scale(1.002F, 1.002F, 1.002F);
+            stack.translate(side == HumanoidArm.LEFT ? -0.0005F : 0.0005F, 0, 0);
+
+            // Regular texture
+            ResourceLocation outfitLocation = OutfitDefinition.getOutfitTexture(slot, definition, slimArms);
             if (outfitLocation != null) {
                 VertexConsumer translucentBuffer = buffer.getBuffer(RenderType.entityTranslucent(outfitLocation));
 
@@ -71,11 +77,23 @@ public class HandArmorRenderer {
                 sleeve.render(stack, translucentBuffer, packedLight, ReClientConstants.getOverlayCoordinates(0), color);
             }
 
+            // Overlay texture
+            ResourceLocation overlayLocation = OutfitDefinition.getOverlayOutfitTexture(slot, definition, slimArms);
+            if (overlayLocation != null) {
+                VertexConsumer translucentBuffer = buffer.getBuffer(RenderType.entityTranslucent(overlayLocation));
+
+                arm.render(stack, translucentBuffer, packedLight, ReClientConstants.getOverlayCoordinates(0));
+                sleeve.render(stack, translucentBuffer, packedLight, ReClientConstants.getOverlayCoordinates(0));
+            }
+
+            // Emissive texture
+            ResourceLocation emissiveLocation = OutfitDefinition.getEmissiveOutfitTexture(slot, definition, slimArms);
             if (emissiveLocation != null) {
                 VertexConsumer emissiveBuffer = buffer.getBuffer(RenderType.eyes(emissiveLocation));
+                int emissiveColor = ReConfigs.COLOR_EMISSIVE_OUTFIT_PARTS.get() ? color : -1;
 
-                arm.render(stack, emissiveBuffer, ReClientConstants.EMISSIVE_LIGHT_VALUE, ReClientConstants.getOverlayCoordinates(0), color);
-                sleeve.render(stack, emissiveBuffer, ReClientConstants.EMISSIVE_LIGHT_VALUE, ReClientConstants.getOverlayCoordinates(0), color);
+                arm.render(stack, emissiveBuffer, ReClientConstants.EMISSIVE_LIGHT_VALUE, ReClientConstants.getOverlayCoordinates(0), emissiveColor);
+                sleeve.render(stack, emissiveBuffer, ReClientConstants.EMISSIVE_LIGHT_VALUE, ReClientConstants.getOverlayCoordinates(0), emissiveColor);
             }
 
             // Glint
@@ -84,13 +102,16 @@ public class HandArmorRenderer {
                 sleeve.render(stack, buffer.getBuffer(RenderType.entityGlint()), packedLight, OverlayTexture.NO_OVERLAY);
             }
             stack.popPose();
+            minecraft.getProfiler().pop();
         }
     }
 
     public static void renderArmorInArm(AbstractClientPlayer player, HumanoidArm arm, PoseStack stack, MultiBufferSource buffer, int packedLight) {
         ItemStack chestStack = player.getItemBySlot(EquipmentSlot.CHEST);
         if (ReConfigs.RENDER_ARMOR_ON_HAND.get() && chestStack.getItem() instanceof ArmorItem item && !chestStack.has(ReDataComponents.OUTFIT)) {
-            HumanoidModel<AbstractClientPlayer> armorModel = new HumanoidModel<>(Minecraft.getInstance().getEntityModels().bakeLayer(ModelLayers.PLAYER_OUTER_ARMOR));
+            Minecraft minecraft = Minecraft.getInstance();
+            minecraft.getProfiler().push(Reutilities.reutilities("hand_armor_rendering").toString());
+            HumanoidModel<AbstractClientPlayer> armorModel = new HumanoidModel<>(minecraft.getEntityModels().bakeLayer(ModelLayers.PLAYER_OUTER_ARMOR));
             List<ArmorMaterial.Layer> layers = item.getMaterial().value().layers();
             ModelPart rightArm = armorModel.rightArm;
             if (arm == HumanoidArm.LEFT) rightArm = armorModel.leftArm;
@@ -102,7 +123,7 @@ public class HandArmorRenderer {
             ResourceLocation armorTexture = ClientHooks.getArmorTexture(player, chestStack, layers.getFirst(), false, EquipmentSlot.CHEST);
             VertexConsumer cutoutBuffer = buffer.getBuffer(RenderType.armorCutoutNoCull(armorTexture));
 
-            packedLight = ReAPI.getLightOutputFromItem(chestStack, packedLight, player.level(), player.blockPosition(), true);
+            packedLight = ReAPI.getItemBrightness(chestStack, packedLight, player.level(), player.blockPosition(), true);
 
             // Base armor model
             DyedItemColor dyedColor = chestStack.get(DataComponents.DYED_COLOR);
@@ -122,6 +143,7 @@ public class HandArmorRenderer {
             if (chestStack.hasFoil()) {
                 rightArm.render(stack, buffer.getBuffer(RenderType.armorEntityGlint()), packedLight, OverlayTexture.NO_OVERLAY);
             }
+            minecraft.getProfiler().pop();
         }
     }
 }

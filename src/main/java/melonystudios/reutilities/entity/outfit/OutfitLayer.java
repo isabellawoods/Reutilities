@@ -3,6 +3,7 @@ package melonystudios.reutilities.entity.outfit;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import melonystudios.reutilities.ReConfigs;
+import melonystudios.reutilities.Reutilities;
 import melonystudios.reutilities.api.ReAPI;
 import melonystudios.reutilities.component.ReDataComponents;
 import melonystudios.reutilities.util.ReClientConstants;
@@ -40,7 +41,7 @@ public class OutfitLayer<T extends LivingEntity, A extends HumanoidModel<T>> ext
     public void render(PoseStack stack, MultiBufferSource buffer, int packedLight, T mob, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float headYaw, float headPitch) {
         if (!ReConfigs.RENDER_OUTFITS.get()) return;
         Minecraft minecraft = Minecraft.getInstance();
-        minecraft.getProfiler().push("outfitRendering");
+        minecraft.getProfiler().push(Reutilities.reutilities("outfit_rendering").toString());
         boolean slimArms = this.outfitModel.slimArms();
 
         this.outfitModel.setAllVisible(true);
@@ -75,13 +76,14 @@ public class OutfitLayer<T extends LivingEntity, A extends HumanoidModel<T>> ext
 
     /// Renders part of an outfit based on the {@linkplain FullBodyOutfit entity's built-in `outfit` tag}, called a "**full-body outfit**".
     public void renderFullBodyOutfit(PoseStack stack, MultiBufferSource buffer, T mob, EquipmentSlot slot, int packedLight, Registry<OutfitDefinition> definitions, boolean slimArms) {
+        Minecraft minecraft = Minecraft.getInstance();
+        minecraft.getProfiler().push(Reutilities.reutilities("full_body_outfit").toString());
         OutfitDefinition definition = definitions.get(ResourceLocation.parse(((FullBodyOutfit) mob).getOutfitDefinition()));
-        ResourceLocation outfitLocation = OutfitDefinition.getOutfitTexture(slot, definition, slimArms);
-        ResourceLocation emissiveLocation = OutfitDefinition.getEmissiveOutfitTexture(slot, definition, slimArms);
         int outfitColor = OutfitDefinition.getOutfitColors(definition, null, slot);
         int overlayCoordinates = ReClientConstants.getOverlayCoordinates(0);
 
         // Regular texture
+        ResourceLocation outfitLocation = OutfitDefinition.getOutfitTexture(slot, definition, slimArms);
         if (outfitLocation != null) {
             VertexConsumer translucentBuffer = buffer.getBuffer(RenderType.entityTranslucent(outfitLocation));
             Player player = Minecraft.getInstance().player;
@@ -89,38 +91,61 @@ public class OutfitLayer<T extends LivingEntity, A extends HumanoidModel<T>> ext
             this.outfitModel.renderToBuffer(stack, translucentBuffer, packedLight, overlayCoordinates, FastColor.ARGB32.color(transparency, outfitColor));
         }
 
+        // Overlay texture
+        ResourceLocation overlayLocation = OutfitDefinition.getOverlayOutfitTexture(slot, definition, slimArms);
+        if (overlayLocation != null) {
+            VertexConsumer translucentBuffer = buffer.getBuffer(RenderType.entityTranslucent(overlayLocation));
+            Player player = Minecraft.getInstance().player;
+            int transparency = mob.isInvisible() && player != null && !mob.isInvisibleTo(player) ? 38 : (mob.isInvisible() ? 0 : 255);
+            this.outfitModel.renderToBuffer(stack, translucentBuffer, packedLight, overlayCoordinates, FastColor.ARGB32.color(transparency, 0xFFFFFF));
+        }
+
         // Emissive texture
+        ResourceLocation emissiveLocation = OutfitDefinition.getEmissiveOutfitTexture(slot, definition, slimArms);
         if (emissiveLocation != null) {
             VertexConsumer emissiveBuffer = buffer.getBuffer(RenderType.eyes(emissiveLocation));
-            this.outfitModel.renderToBuffer(stack, emissiveBuffer, EMISSIVE_LIGHT_VALUE, overlayCoordinates);
+            int emissiveColor = ReConfigs.COLOR_EMISSIVE_OUTFIT_PARTS.get() ? outfitColor : -1;
+            this.outfitModel.renderToBuffer(stack, emissiveBuffer, EMISSIVE_LIGHT_VALUE, overlayCoordinates, emissiveColor);
         }
+        minecraft.getProfiler().pop();
     }
 
     /// Renders part of an outfit based on the item stack's {@link ReDataComponents#OUTFIT reutilities:outfit} component, called a "**component outfit**".
     public void renderComponentOutfit(PoseStack stack, MultiBufferSource buffer, EquipmentSlot slot, ItemStack armorStack, Level world, BlockPos pos, int packedLight, boolean slimArms) {
+        Minecraft minecraft = Minecraft.getInstance();
+        minecraft.getProfiler().push(Reutilities.reutilities("component_outfit").toString());
         OutfitDefinition definition = OutfitDefinition.getDefinition(world, armorStack);
-        ResourceLocation outfitLocation = OutfitDefinition.getOutfitTexture(slot, definition, slimArms);
-        ResourceLocation emissiveLocation = OutfitDefinition.getEmissiveOutfitTexture(slot, definition, slimArms);
         int outfitColor = OutfitDefinition.getOutfitColors(definition, armorStack, slot);
         int overlayCoordinates = ReClientConstants.getOverlayCoordinates(0);
 
-        packedLight = ReAPI.getLightOutputFromItem(armorStack, packedLight, world, pos, true);
+        packedLight = ReAPI.getItemBrightness(armorStack, packedLight, world, pos, true);
 
         // Regular texture
+        ResourceLocation outfitLocation = OutfitDefinition.getOutfitTexture(slot, definition, slimArms);
         if (outfitLocation != null) {
             VertexConsumer translucentBuffer = buffer.getBuffer(RenderType.entityTranslucent(outfitLocation));
             this.outfitModel.renderToBuffer(stack, translucentBuffer, packedLight, overlayCoordinates, FastColor.ARGB32.color(255, outfitColor));
         }
 
+        // Overlay texture
+        ResourceLocation overlayLocation = OutfitDefinition.getOverlayOutfitTexture(slot, definition, slimArms);
+        if (overlayLocation != null) {
+            VertexConsumer translucentBuffer = buffer.getBuffer(RenderType.entityTranslucent(overlayLocation));
+            this.outfitModel.renderToBuffer(stack, translucentBuffer, packedLight, overlayCoordinates);
+        }
+
         // Emissive texture
+        ResourceLocation emissiveLocation = OutfitDefinition.getEmissiveOutfitTexture(slot, definition, slimArms);
         if (emissiveLocation != null) {
             VertexConsumer emissiveBuffer = buffer.getBuffer(RenderType.eyes(emissiveLocation));
-            this.outfitModel.renderToBuffer(stack, emissiveBuffer, EMISSIVE_LIGHT_VALUE, overlayCoordinates);
+            int emissiveColor = ReConfigs.COLOR_EMISSIVE_OUTFIT_PARTS.get() ? outfitColor : -1;
+            this.outfitModel.renderToBuffer(stack, emissiveBuffer, EMISSIVE_LIGHT_VALUE, overlayCoordinates, emissiveColor);
         }
 
         // glint currently renders on the player as well, just like during Back Math dev ~isa 23-8-25
         /*if (armorStack.hasFoil()) {
-            this.outfitModel.renderToBuffer(stack, buffer.getBuffer(RenderType.entityGlint()), packedLight, Reconstants.getOverlayCoordinates(1));
+            this.outfitModel.renderToBuffer(stack, buffer.getBuffer(RenderType.entityGlint()), packedLight, ReClientConstants.getOverlayCoordinates(1));
         }*/
+        minecraft.getProfiler().pop();
     }
 }

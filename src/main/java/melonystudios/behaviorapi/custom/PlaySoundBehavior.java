@@ -6,7 +6,7 @@ import melonystudios.behaviorapi.BehaviorAPI;
 import melonystudios.behaviorapi.ItemBehavior;
 import melonystudios.behaviorapi.settings.GlobalSettings;
 import melonystudios.behaviorapi.settings.IndividualSettings;
-import melonystudios.reutilities.api.ReAPI;
+import melonystudios.reutilities.api.ReCodecs;
 import net.minecraft.core.Holder;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
@@ -87,11 +87,11 @@ public class PlaySoundBehavior extends ItemBehavior {
     public record PlaySound(ResourceLocation sound, SoundSource source, Optional<Vec3> position, float volume, float pitch, float minVolume) implements IndividualSettings<PlaySound> {
         public static final MapCodec<PlaySound> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
                 ResourceLocation.CODEC.fieldOf("sound").forGetter(PlaySound::sound),
-                ReAPI.SOUND_SOURCE_CODEC.fieldOf("source").forGetter(PlaySound::source),
+                ReCodecs.SOUND_SOURCE_CODEC.fieldOf("source").forGetter(PlaySound::source),
                 Vec3.CODEC.optionalFieldOf("position").forGetter(PlaySound::position),
-                ReAPI.floatRange(0, Float.MAX_VALUE).optionalFieldOf("volume", 1F).forGetter(PlaySound::volume),
-                ReAPI.floatRange(0, 2).optionalFieldOf("pitch", 1F).forGetter(PlaySound::pitch),
-                ReAPI.floatRange(0, 1).optionalFieldOf("min_volume", 1F).forGetter(PlaySound::minVolume)
+                ReCodecs.floatRange(0, Float.MAX_VALUE).optionalFieldOf("volume", 1F).forGetter(PlaySound::volume),
+                ReCodecs.floatRange(0, 2).optionalFieldOf("pitch", 1F).forGetter(PlaySound::pitch),
+                ReCodecs.floatRange(0, 1).optionalFieldOf("min_volume", 1F).forGetter(PlaySound::minVolume)
         ).apply(instance, PlaySound::new));
 
         public PlaySound(ResourceLocation sound, SoundSource source, Vec3 position) {
@@ -111,8 +111,8 @@ public class PlaySoundBehavior extends ItemBehavior {
         public StreamCodec<RegistryFriendlyByteBuf, PlaySound> streamCodec() {
             return StreamCodec.composite(
                     ResourceLocation.STREAM_CODEC, PlaySound::sound,
-                    ReAPI.SOUND_SOURCE_STREAM_CODEC, PlaySound::source,
-                    ByteBufCodecs.optional(ReAPI.VEC3_STREAM_CODEC), PlaySound::position,
+                    ReCodecs.SOUND_SOURCE_STREAM_CODEC, PlaySound::source,
+                    ByteBufCodecs.optional(ReCodecs.VEC3_STREAM_CODEC), PlaySound::position,
                     ByteBufCodecs.FLOAT, PlaySound::volume,
                     ByteBufCodecs.FLOAT, PlaySound::pitch,
                     ByteBufCodecs.FLOAT, PlaySound::minVolume,

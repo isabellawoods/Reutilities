@@ -57,7 +57,7 @@ public class Reutilities {
         return ResourceLocation.fromNamespaceAndPath(MOD_ID, name);
     }
 
-    /// Creates a new resource location using the **Common** (`c`) namespace.
+    /// Creates a new resource location under the **Common** (`c`) namespace.
     /// @param name The path of this resource location.
     public static ResourceLocation common(String name) {
         return ResourceLocation.fromNamespaceAndPath("c", name);

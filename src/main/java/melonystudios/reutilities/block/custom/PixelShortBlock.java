@@ -15,16 +15,16 @@ import org.jetbrains.annotations.Nullable;
 public interface PixelShortBlock {
     VoxelShape PIXEL_SHORT_SHAPE = Block.box(0, 0, 0, 16, 15, 16);
 
-    /// Represents the block that this block will turn into when not hydrated or not placed in the correct stop.
+    /// Represents the block state that this block will turn into when not hydrated or not placed in the correct way.
     /// Defaults to:
     /// - **Dirt** for vanilla farmland and dirt paths;
-    /// - **Numo Dirt** for *Numinosity*'s farmland and dirt paths.
+    /// - **Numo Dirt** for *Numinosity*'s farmland and dirt paths; or
     /// - **Netherrack** for Nether farmland added by *Revaried*.
     BlockState getBaseBlock();
 
     /// Represents the fluid that this farmland requires to stay hydrated. Defaults to:
-    /// - **Water** (`#reutilities:water_based_farmland`) for vanilla and *Numinosity*'s farmland.
-    /// * **Lava** (`#reutilities:lava_based_farmland`) for *Revaried*'s Nether farmland.
+    /// - **Water** ({@link ReFluidTags#HYDRATES_WATER_BASED_FARMLAND #reutilities:hydrates_water_based_farmland}) for vanilla and *Numinosity*'s farmland; or
+    /// - **Lava** ({@link ReFluidTags#HYDRATES_LAVA_BASED_FARMLAND #reutilities:hydrates_lava_based_farmland}) for *Revaried*'s Nether farmland.
     default TagKey<Fluid> getHydratingFluid() {
         return ReFluidTags.HYDRATES_WATER_BASED_FARMLAND;
     }

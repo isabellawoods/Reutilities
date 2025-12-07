@@ -7,7 +7,7 @@ import io.netty.buffer.ByteBuf;
 import melonystudios.behaviorapi.ItemBehavior;
 import melonystudios.behaviorapi.settings.GlobalSettings;
 import melonystudios.behaviorapi.settings.IndividualSettings;
-import melonystudios.reutilities.api.ReAPI;
+import melonystudios.reutilities.api.ReCodecs;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.RegistryCodecs;
@@ -126,10 +126,10 @@ public class ExplodeBehavior extends ItemBehavior {
         public static final MapCodec<Explode> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
                 Codec.BOOL.optionalFieldOf("attribute_to_target", false).forGetter(Explode::attributeToTarget),
                 DamageType.CODEC.optionalFieldOf("damage_type").forGetter(Explode::damageType),
-                ReAPI.floatRange(0, Float.MAX_VALUE).optionalFieldOf("knockback_multiplier").forGetter(Explode::knockbackMultiplier),
+                ReCodecs.floatRange(0, Float.MAX_VALUE).optionalFieldOf("knockback_multiplier").forGetter(Explode::knockbackMultiplier),
                 RegistryCodecs.homogeneousList(Registries.BLOCK).optionalFieldOf("immune_blocks").forGetter(Explode::immuneBlocks),
                 Vec3.CODEC.optionalFieldOf("offset", Vec3.ZERO).forGetter(Explode::offset),
-                ReAPI.floatRange(0, 128).fieldOf("radius").forGetter(Explode::radius),
+                ReCodecs.floatRange(0, 128).fieldOf("radius").forGetter(Explode::radius),
                 Codec.BOOL.optionalFieldOf("create_fire", false).forGetter(Explode::createFire),
                 Level.ExplosionInteraction.CODEC.fieldOf("block_interaction").forGetter(Explode::blockInteraction),
                 ParticleTypes.CODEC.fieldOf("small_particle").forGetter(Explode::smallParticle),
@@ -152,7 +152,7 @@ public class ExplodeBehavior extends ItemBehavior {
                     Optional<Holder<DamageType>> damageType = ByteBufCodecs.optional(ByteBufCodecs.holderRegistry(Registries.DAMAGE_TYPE)).decode(buffer);
                     Optional<Float> knockbackMultiplier = ByteBufCodecs.optional(ByteBufCodecs.FLOAT).decode(buffer);
                     Optional<HolderSet<Block>> immuneBlocks = ByteBufCodecs.optional(ByteBufCodecs.holderSet(Registries.BLOCK)).decode(buffer);
-                    Vec3 offset = ReAPI.VEC3_STREAM_CODEC.decode(buffer);
+                    Vec3 offset = ReCodecs.VEC3_STREAM_CODEC.decode(buffer);
                     float radius = ByteBufCodecs.FLOAT.decode(buffer);
                     boolean createFire = ByteBufCodecs.BOOL.decode(buffer);
                     Level.ExplosionInteraction blockInteraction = INTERACTION_STREAM_CODEC.decode(buffer);
@@ -181,7 +181,7 @@ public class ExplodeBehavior extends ItemBehavior {
                     ByteBufCodecs.optional(ByteBufCodecs.holderRegistry(Registries.DAMAGE_TYPE)).encode(buffer, explode.damageType());
                     ByteBufCodecs.optional(ByteBufCodecs.FLOAT).encode(buffer, explode.knockbackMultiplier());
                     ByteBufCodecs.optional(ByteBufCodecs.holderSet(Registries.BLOCK)).encode(buffer, explode.immuneBlocks());
-                    ReAPI.VEC3_STREAM_CODEC.encode(buffer, explode.offset());
+                    ReCodecs.VEC3_STREAM_CODEC.encode(buffer, explode.offset());
                     ByteBufCodecs.FLOAT.encode(buffer, explode.radius());
                     ByteBufCodecs.BOOL.encode(buffer, explode.createFire());
                     INTERACTION_STREAM_CODEC.encode(buffer, explode.blockInteraction());

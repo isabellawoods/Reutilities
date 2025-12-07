@@ -8,7 +8,7 @@ import melonystudios.behaviorapi.event.BehaviorTeleportEvent;
 import melonystudios.behaviorapi.ItemBehavior;
 import melonystudios.behaviorapi.settings.GlobalSettings;
 import melonystudios.behaviorapi.settings.IndividualSettings;
-import melonystudios.reutilities.api.ReAPI;
+import melonystudios.reutilities.api.ReCodecs;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -162,7 +162,7 @@ public class TeleportEntityBehavior extends ItemBehavior {
     public record TeleportEntity(boolean teleportRandomly, float diameter, Vec3 position) implements IndividualSettings<TeleportEntity> {
         public static final MapCodec<TeleportEntity> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
                 Codec.BOOL.fieldOf("teleport_randomly").forGetter(TeleportEntity::teleportRandomly),
-                ReAPI.floatRange(1, 60000000).optionalFieldOf("diameter", 16F).forGetter(TeleportEntity::diameter),
+                ReCodecs.floatRange(1, Float.MAX_VALUE).optionalFieldOf("diameter", 16F).forGetter(TeleportEntity::diameter),
                 Vec3.CODEC.optionalFieldOf("position", Vec3.ZERO).forGetter(TeleportEntity::position)
         ).apply(instance, TeleportEntity::new));
 
@@ -184,7 +184,7 @@ public class TeleportEntityBehavior extends ItemBehavior {
             return StreamCodec.composite(
                     ByteBufCodecs.BOOL, TeleportEntity::teleportRandomly,
                     ByteBufCodecs.FLOAT, TeleportEntity::diameter,
-                    ReAPI.VEC3_STREAM_CODEC, TeleportEntity::position,
+                    ReCodecs.VEC3_STREAM_CODEC, TeleportEntity::position,
                     TeleportEntity::new
             );
         }

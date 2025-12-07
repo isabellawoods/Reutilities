@@ -3,17 +3,15 @@ package melonystudios.reutilities.entity.outfit;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.netty.buffer.ByteBuf;
-import melonystudios.reutilities.api.ReAPI;
+import melonystudios.reutilities.api.ReCodecs;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.EquipmentSlot;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
 /// An **outfit slot** defines the textures and properties to be in a single equipment slot.
-/// @param slot The equipment slot this outfit slot applies to.
 /// @param texture A {@linkplain ResourceLocation resource location} for the texture used by this outfit slot. Omits the `textures/` prefix and `.png` suffix.
 /// @param emissiveTexture *(optional)* A resource location for the emissive texture used by this outfit slot. Omits the `textures/` prefix and `.png` suffix.
 /// @param overlayTexture *(optional)* A resource location for the overlay texture. Overlay textures will not be colored. Omits the `textures/` prefix and `.png` suffix.
@@ -21,17 +19,15 @@ import java.util.Optional;
 /// @param color *(optional)* An integer defining a set color for this outfit slot. When defined, this field overrides the item's default color and the "{@link net.minecraft.core.component.DataComponents#DYED_COLOR minecraft:dyed_color}" component.
 /// @see OutfitDefinition
 /// @author isabellawoods. Copied from [*Back Math*'s documentation on **IMF**](https://github.com/isabellawoods/Informational-Mod-Features/blob/main/Back%20Math/Docs/Outfit%20Definition.md).
-public record OutfitSlot(EquipmentSlot slot, ResourceLocation texture, Optional<ResourceLocation> emissiveTexture, Optional<ResourceLocation> overlayTexture, boolean hidesSkinLayers, Optional<Integer> color) {
+public record OutfitSlot(ResourceLocation texture, Optional<ResourceLocation> emissiveTexture, Optional<ResourceLocation> overlayTexture, boolean hidesSkinLayers, Optional<Integer> color) {
     public static final Codec<OutfitSlot> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-            EquipmentSlot.CODEC.fieldOf("slot").forGetter(OutfitSlot::slot),
             ResourceLocation.CODEC.fieldOf("texture").forGetter(OutfitSlot::texture),
             ResourceLocation.CODEC.optionalFieldOf("emissive_texture").forGetter(OutfitSlot::emissiveTexture),
             ResourceLocation.CODEC.optionalFieldOf("overlay_texture").forGetter(OutfitSlot::overlayTexture),
             Codec.BOOL.optionalFieldOf("hides_skin_layers", true).forGetter(OutfitSlot::hidesSkinLayers),
-            ReAPI.HEX_INT_CODEC.optionalFieldOf("color").forGetter(OutfitSlot::color)
+            ReCodecs.HEX_INT_CODEC.optionalFieldOf("color").forGetter(OutfitSlot::color)
     ).apply(instance, OutfitSlot::new));
     public static final StreamCodec<ByteBuf, OutfitSlot> STREAM_CODEC = StreamCodec.composite(
-            ReAPI.EQUIPMENT_SLOT_STREAM_CODEC, OutfitSlot::slot,
             ResourceLocation.STREAM_CODEC, OutfitSlot::texture,
             ResourceLocation.STREAM_CODEC.apply(ByteBufCodecs::optional), OutfitSlot::emissiveTexture,
             ResourceLocation.STREAM_CODEC.apply(ByteBufCodecs::optional), OutfitSlot::overlayTexture,
@@ -42,8 +38,8 @@ public record OutfitSlot(EquipmentSlot slot, ResourceLocation texture, Optional<
 
     /// Creates an instance of the **outfit slot builder**.
     /// @param texture A {@linkplain ResourceLocation resource location} for the texture used by this outfit slot. Omits the `textures/` prefix and `.png` suffix.
-    public static Builder builder(EquipmentSlot slot, ResourceLocation texture) {
-        return new Builder(slot, texture);
+    public static Builder slot(ResourceLocation texture) {
+        return new Builder(texture);
     }
 
     @Override
@@ -54,11 +50,10 @@ public record OutfitSlot(EquipmentSlot slot, ResourceLocation texture, Optional<
     @Override
     @NotNull
     public String toString() {
-        return "OutfitSlot[slot=" + this.slot.getName() + ", texture=" + this.texture + ", emissive_texture=" + this.emissiveTexture + ", overlay_texture=" + this.overlayTexture + ", hides_skin_layers=" + this.hidesSkinLayers + ", color=" + this.color + "]";
+        return "OutfitSlot[texture=" + this.texture + ", emissive_texture=" + this.emissiveTexture + ", overlay_texture=" + this.overlayTexture + ", hides_skin_layers=" + this.hidesSkinLayers + ", color=" + this.color + "]";
     }
 
     public static class Builder {
-        private final EquipmentSlot slot;
         private final ResourceLocation texture;
         private ResourceLocation emissiveTexture;
         private ResourceLocation overlayTexture;
@@ -66,10 +61,8 @@ public record OutfitSlot(EquipmentSlot slot, ResourceLocation texture, Optional<
         private Integer color;
 
         /// Creates an instance of the **outfit slot builder**.
-        /// @param slot The equipment slot this outfit slot applies to.
         /// @param texture A {@linkplain ResourceLocation resource location} for the texture used by this outfit slot. Omits the `textures/` prefix and `.png` suffix.
-        public Builder(EquipmentSlot slot, ResourceLocation texture) {
-            this.slot = slot;
+        public Builder(ResourceLocation texture) {
             this.texture = texture;
         }
 
@@ -102,7 +95,7 @@ public record OutfitSlot(EquipmentSlot slot, ResourceLocation texture, Optional<
 
         /// Builds this builder into an outfit slot.
         public OutfitSlot build() {
-            return new OutfitSlot(this.slot, this.texture, Optional.ofNullable(this.emissiveTexture), Optional.ofNullable(this.overlayTexture), this.hidesSkinLayers, Optional.ofNullable(this.color));
+            return new OutfitSlot(this.texture, Optional.ofNullable(this.emissiveTexture), Optional.ofNullable(this.overlayTexture), this.hidesSkinLayers, Optional.ofNullable(this.color));
         }
     }
 }

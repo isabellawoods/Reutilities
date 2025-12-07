@@ -45,12 +45,15 @@ public abstract class ReItemStackMixin implements DataComponentHolder, IItemStac
 
     @Inject(method = "getTooltipLines", at = @At(value = "INVOKE", target = "Ljava/util/List;add(Ljava/lang/Object;)Z", ordinal = 0, shift = At.Shift.AFTER))
     public void addComponentDisplay(Item.TooltipContext context, Player player, TooltipFlag flag, CallbackInfoReturnable<List<Component>> callback, @Local List<Component> list) {
+        if (player != null) player.level().getProfiler().push(Reutilities.reutilities("display_components_on_tooltip").toString());
+
         if (flag.isAdvanced() && ReConfigs.SHOW_COMPONENTS_WITH_ALT.get() && ReCommonConstants.shouldDisplay(this, Reutilities.reutilities("item_components"))) {
             List<Component> tags = ReCommonConstants.addItemTagsTooltip(this, context.registries(), new ArrayList<>());
             if (tags.isEmpty()) return;
             list.add(Component.translatable("tooltip.reutilities.for_components", Component.keybind("key.keyboard.left.alt").withStyle(flag.hasAltDown() ? ChatFormatting.WHITE : ChatFormatting.GRAY)).withStyle(ChatFormatting.DARK_GRAY));
             if (flag.hasAltDown()) list.addAll(tags);
         }
+        if (player != null) player.level().getProfiler().pop();
     }
 
     @Unique

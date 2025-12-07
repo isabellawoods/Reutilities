@@ -1,6 +1,5 @@
 package melonystudios.reutilities.data.model;
 
-import melonystudios.reutilities.Reutilities;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
@@ -11,6 +10,8 @@ import net.neoforged.neoforge.client.model.generators.BlockStateProvider;
 import net.neoforged.neoforge.client.model.generators.ConfiguredModel;
 import net.neoforged.neoforge.client.model.generators.ModelFile;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
+
+import static melonystudios.reutilities.Reutilities.reutilities;
 
 public abstract class ReBlockStateProvider extends BlockStateProvider {
     protected final String modID;
@@ -86,7 +87,7 @@ public abstract class ReBlockStateProvider extends BlockStateProvider {
         this.getVariantBuilder(ladder).forAllStatesExcept(state -> {
             String ladderPath = BuiltInRegistries.BLOCK.getKey(ladder).getPath();
             return ConfiguredModel.builder()
-                    .modelFile(this.models().withExistingParent(ladderPath, Reutilities.reutilities("block/template_ladder")).texture("ladder", this.modLoc("block/" + ladderPath)))
+                    .modelFile(this.models().withExistingParent(ladderPath, reutilities("block/template_ladder")).texture("ladder", this.modLoc("block/" + ladderPath)))
                     .rotationY((int) state.getValue(BlockStateProperties.HORIZONTAL_FACING).getOpposite().toYRot())
                     .build();
         }, BlockStateProperties.WATERLOGGED);
@@ -149,7 +150,7 @@ public abstract class ReBlockStateProvider extends BlockStateProvider {
             String chainPath = BuiltInRegistries.BLOCK.getKey(chain).getPath();
 
             return ConfiguredModel.builder()
-                    .modelFile(models().withExistingParent(chainPath, Reutilities.reutilities("block/template_chain")).texture("chain", this.modLoc("block/" + chainPath)))
+                    .modelFile(models().withExistingParent(chainPath, reutilities("block/template_chain")).texture("chain", this.modLoc("block/" + chainPath)))
                     .rotationX(axis == Direction.Axis.X || axis == Direction.Axis.Z ? 90 : 0)
                     .rotationY(axis == Direction.Axis.X ? 90 : 0)
                     .build();
@@ -158,8 +159,8 @@ public abstract class ReBlockStateProvider extends BlockStateProvider {
 
     public void lantern(Block lantern, boolean topDownModel) {
         String lanternPath = BuiltInRegistries.BLOCK.getKey(lantern).getPath();
-        ModelFile standingLantern = this.models().withExistingParent(lanternPath, topDownModel ? Reutilities.reutilities("block/template_mid_term_lantern") : this.mcLoc("block/template_lantern")).texture("lantern", "block/" + lanternPath);
-        ModelFile hangingLantern = this.models().withExistingParent(lanternPath + "_hanging", topDownModel ? Reutilities.reutilities("block/template_hanging_mid_term_lantern") : this.mcLoc("block/template_hanging_lantern")).texture("lantern", "block/" + lanternPath);
+        ModelFile standingLantern = this.models().withExistingParent(lanternPath, topDownModel ? reutilities("block/template_mid_term_lantern") : this.mcLoc("block/template_lantern")).texture("lantern", "block/" + lanternPath);
+        ModelFile hangingLantern = this.models().withExistingParent(lanternPath + "_hanging", topDownModel ? reutilities("block/template_hanging_mid_term_lantern") : this.mcLoc("block/template_hanging_lantern")).texture("lantern", "block/" + lanternPath);
 
         this.getVariantBuilder(lantern).forAllStatesExcept(state -> ConfiguredModel.builder()
                 .modelFile(state.getValue(BlockStateProperties.HANGING) ? hangingLantern : standingLantern).build(),
@@ -171,7 +172,7 @@ public abstract class ReBlockStateProvider extends BlockStateProvider {
             String blockPath = BuiltInRegistries.BLOCK.getKey(block).getPath();
             boolean snowy = state.getValue(BlockStateProperties.SNOWY);
 
-            ModelFile grassBlockModel = this.models().withExistingParent(blockPath + (snowy ? "_snowy" : ""), snowy ? this.mcLoc("block/cube_bottom_top") : Reutilities.reutilities("block/template_grass_block"))
+            ModelFile grassBlockModel = this.models().withExistingParent(blockPath + (snowy ? "_snowy" : ""), snowy ? this.mcLoc("block/cube_bottom_top") : reutilities("block/template_grass_block"))
                     .texture("bottom", bottomTexture).texture("top", baseTexture + "_top")
                     .texture("side", baseTexture + "_side" + (snowy ? "_snowy" : ""))
                     .texture("overlay", baseTexture + "_side_overlay");
@@ -180,8 +181,21 @@ public abstract class ReBlockStateProvider extends BlockStateProvider {
     }
 
     public void pixelShortBlock(Block block, ResourceLocation sideTexture, ResourceLocation bottomTexture, ResourceLocation topTexture) {
-        this.simpleBlock(block, this.models().withExistingParent(BuiltInRegistries.BLOCK.getKey(block).getPath(), Reutilities.reutilities("block/template_pixel_short_block"))
+        this.simpleBlock(block, this.models().withExistingParent(BuiltInRegistries.BLOCK.getKey(block).getPath(), reutilities("block/template_pixel_short_block"))
                 .texture("side", sideTexture).texture("dirt", bottomTexture).texture("top", topTexture));
+    }
+
+    public void farmland(Block block, ResourceLocation bottomTexture) {
+        this.getVariantBuilder(block).forAllStates(state -> {
+            String blockPath = BuiltInRegistries.BLOCK.getKey(block).getPath();
+            int moisture = state.getValue(BlockStateProperties.MOISTURE);
+
+            ModelFile farmlandModel = this.models().withExistingParent(blockPath + moistIndex(moisture), reutilities("block/template_pixel_short_block"))
+                    .texture("dirt", bottomTexture)
+                    .texture("side", this.modLoc("block/" + blockPath + "side" + moistIndex(moisture)))
+                    .texture("top", this.modLoc("block/" + blockPath + moistIndex(moisture)));
+            return ConfiguredModel.builder().modelFile(farmlandModel).build();
+        });
     }
 
     public void cake(Block cake) {
@@ -190,7 +204,7 @@ public abstract class ReBlockStateProvider extends BlockStateProvider {
             int bites = state.getValue(BlockStateProperties.BITES);
             String bite = bites == 0 ? "" : "_slice" + bites;
 
-            ModelFile cakeModel = this.models().withExistingParent(cakePath + bite, Reutilities.reutilities("block/template_cake" + bite))
+            ModelFile cakeModel = this.models().withExistingParent(cakePath + bite, reutilities("block/template_cake" + bite))
                     .texture("inside", this.modLoc("block/" + cakePath + "_inner"))
                     .texture("side", this.modLoc("block/" + cakePath + "_side"))
                     .texture("bottom", this.modLoc("block/" + cakePath + "_bottom"))
@@ -222,7 +236,7 @@ public abstract class ReBlockStateProvider extends BlockStateProvider {
 
     public void wildCrop(Block wildCrop) {
         String wildCropPath = BuiltInRegistries.BLOCK.getKey(wildCrop).getPath();
-        this.simpleBlock(wildCrop, this.models().withExistingParent(wildCropPath, Reutilities.reutilities("block/template_wild_crop")).texture("crop", this.modLoc("block/" + wildCropPath)));
+        this.simpleBlock(wildCrop, this.models().withExistingParent(wildCropPath, reutilities("block/template_wild_crop")).texture("crop", this.modLoc("block/" + wildCropPath)));
     }
 
     public static int wheatAgeIndex(int age) {

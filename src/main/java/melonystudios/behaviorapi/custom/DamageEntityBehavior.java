@@ -5,7 +5,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import melonystudios.behaviorapi.ItemBehavior;
 import melonystudios.behaviorapi.settings.IndividualSettings;
 import melonystudios.behaviorapi.settings.GlobalSettings;
-import melonystudios.reutilities.api.ReAPI;
+import melonystudios.reutilities.api.ReCodecs;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.registries.Registries;
@@ -80,7 +80,7 @@ public class DamageEntityBehavior extends ItemBehavior {
     public record DamageEntity(ResourceKey<DamageType> type, float amount) implements IndividualSettings<DamageEntity> {
         public static final MapCodec<DamageEntity> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
                 ResourceKey.codec(Registries.DAMAGE_TYPE).fieldOf("type").forGetter(DamageEntity::type),
-                ReAPI.floatRange(0, Float.MAX_VALUE).optionalFieldOf("amount", 0F).forGetter(DamageEntity::amount)
+                ReCodecs.floatRange(0, Float.MAX_VALUE).optionalFieldOf("amount", 0F).forGetter(DamageEntity::amount)
         ).apply(instance, DamageEntity::new));
 
         @Override

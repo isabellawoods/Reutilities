@@ -13,6 +13,6 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 public class ReItemInHandRendererMixin {
     @ModifyVariable(method = "renderItem", at = @At("HEAD"), ordinal = 0, argsOnly = true)
     private int makeItemEmissive(int packedLight, @Local(argsOnly = true) LivingEntity livEntity, @Local(argsOnly = true) ItemStack stack) {
-        return ReAPI.getLightOutputFromItem(stack, packedLight, livEntity.level(), livEntity.blockPosition(), true);
+        return ReAPI.getItemBrightness(stack, packedLight, livEntity.level(), livEntity.blockPosition(), true);
     }
 }

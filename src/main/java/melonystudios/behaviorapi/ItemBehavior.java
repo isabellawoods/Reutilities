@@ -1,16 +1,16 @@
 package melonystudios.behaviorapi;
 
 import com.mojang.serialization.MapCodec;
+import melonystudios.behaviorapi.custom.DefaultItemBehavior;
 import melonystudios.behaviorapi.settings.IndividualSettings;
 import melonystudios.behaviorapi.settings.GlobalSettings;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
-import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentUtils;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
@@ -53,7 +53,7 @@ public abstract class ItemBehavior implements TooltipProvider {
 
     /// Creates a new `ItemBehavior`, with both the **global** and **individual settings** being set to their defaults.
     public ItemBehavior() {
-        this(new Default());
+        this(new DefaultItemBehavior.Default());
     }
 
     public IndividualSettings<?> behaviorCodec() {
@@ -95,7 +95,8 @@ public abstract class ItemBehavior implements TooltipProvider {
         ResourceLocation behaviorID = BehaviorAPI.ITEM_BEHAVIOR.getKey(this);
         MutableComponent component = Component.empty();
         component.append(Component.translatable(this.getDescriptionID()).withStyle(style -> style.withColor(DEFAULT_BEHAVIOR_COLOR).withBold(true)));
-        component.append("\n").append(Component.translatable(this.getDescriptionID() + ".desc").withStyle(style -> style.withColor(ChatFormatting.GRAY).withBold(false)));
+        String descriptionKey = this.getDescriptionID() + ".desc";
+        if (I18n.exists(descriptionKey)) component.append("\n").append(Component.translatable(descriptionKey).withStyle(style -> style.withColor(ChatFormatting.GRAY).withBold(false)));
         component.append("\n").append(behaviorID == null ? Component.translatable("item_behavior.unregistered_sadface") : Component.literal(behaviorID.toString())).withStyle(style -> style.withColor(ChatFormatting.DARK_GRAY).withBold(false));
 
         return ComponentUtils.wrapInSquareBrackets(Component.translatable(this.getDescriptionID()).withColor(DEFAULT_BEHAVIOR_COLOR))
@@ -121,20 +122,5 @@ public abstract class ItemBehavior implements TooltipProvider {
     @Override
     public String toString() {
         return String.format("ConsumeBehavior[settings=%s, %s]", this.behaviorCodec, this.settings.toString());
-    }
-
-    public static class Default implements IndividualSettings<Default> {
-        public static final Default INSTANCE = new Default();
-        public static final MapCodec<Default> CODEC = MapCodec.unit(INSTANCE);
-
-        @Override
-        public MapCodec<Default> codec() {
-            return CODEC;
-        }
-
-        @Override
-        public StreamCodec<RegistryFriendlyByteBuf, Default> streamCodec() {
-            return StreamCodec.unit(INSTANCE);
-        }
     }
 }

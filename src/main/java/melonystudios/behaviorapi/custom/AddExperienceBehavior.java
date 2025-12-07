@@ -6,13 +6,20 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import melonystudios.behaviorapi.ItemBehavior;
 import melonystudios.behaviorapi.settings.IndividualSettings;
 import melonystudios.behaviorapi.settings.GlobalSettings;
+import net.minecraft.ChatFormatting;
 import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
+
+import java.util.function.Consumer;
 
 public class AddExperienceBehavior extends ItemBehavior {
     public static final MapCodec<AddExperienceBehavior> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
@@ -54,9 +61,17 @@ public class AddExperienceBehavior extends ItemBehavior {
         }
     }
 
+    @Override
+    public void addToTooltip(Item.TooltipContext context, Consumer<Component> adder, TooltipFlag flag) {
+        super.addToTooltip(context, adder, flag);
+        adder.accept(Component.translatable("item_behavior.behaviorapi.add_experience.experience",
+                Component.translatable("item_behavior.behaviorapi.add_experience." + (this.addExperience().levels() ? "levels" : "points"), this.addExperience().amount()).withColor(0x80FF20)
+        ).withStyle(ChatFormatting.GRAY));
+    }
+
     public record AddExperience(int amount, boolean levels) implements IndividualSettings<AddExperience> {
         public static final MapCodec<AddExperience> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-                Codec.INT.optionalFieldOf("amount", 0).forGetter(AddExperience::amount),
+                ExtraCodecs.NON_NEGATIVE_INT.optionalFieldOf("amount", 0).forGetter(AddExperience::amount),
                 Codec.BOOL.optionalFieldOf("levels", false).forGetter(AddExperience::levels)
         ).apply(instance, AddExperience::new));
 

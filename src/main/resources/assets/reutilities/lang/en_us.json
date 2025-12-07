@@ -20,6 +20,8 @@
   "config.reutilities.render_outfit_on_hand.tooltip": "Whether to render outfits in the \"chest\" slot in your first-person hand.",
   "config.reutilities.render_armor_on_hand": "Render Armor on Hand",
   "config.reutilities.render_armor_on_hand.tooltip": "Whether to render chestplates in your first-person hand.",
+  "config.reutilities.color_emissive_outfit_parts": "Color Emissive Outfit Parts",
+  "config.reutilities.color_emissive_outfit_parts.tooltip": "Whether emissive parts of outfits should be colored.",
   "config.reutilities.light_emitting_emissives": "Light Emitting Emissives",
   "config.reutilities.light_emitting_emissives.tooltip": "Whether light-emitting blocks should be emissive based on their light level.",
   "config.reutilities.show_components_with_alt": "Show Components with Alt",
@@ -95,6 +97,9 @@
   "item_behavior.behaviorapi.remove_effects.desc": "Remove specific effects from the entity if they have it.",
   "item_behavior.behaviorapi.teleport_entity.desc": "Teleports an entity either randomly or to a specific position.",
 
+  "item_behavior.behaviorapi.add_experience.experience": "Stored Experience: %s",
+  "item_behavior.behaviorapi.add_experience.points": "%s Points",
+  "item_behavior.behaviorapi.add_experience.levels": "%s Levels",
   "item_behavior.behaviorapi.damage_entity.damage": "Deals %s damage using source %s",
   "item_behavior.behaviorapi.ignite.ablaze": "Ablaze (%s)",
   "item_behavior.behaviorapi.teleport_entity.diameter": "Teleport Diameter: %s Blocks",
@@ -111,13 +116,15 @@
   "tooltip.reutilities.for_components": "Hold [%s] for Components",
   "tooltip.reutilities.for_description": "Hold [%s] for Description",
   "tooltip.reutilities.components": "%s",
+  "tooltip.reutilities.stored_experience": "Stored Experience: %s",
+  "tooltip.reutilities.stored_experience.points": "%s Points",
+  "tooltip.reutilities.stored_experience.levels": "%s Levels",
   "tooltip.reutilities.outfit": "Outfit: %s",
   "tooltip.reutilities.character": "Character: %s",
   "tooltip.reutilities.player": "Player: %s",
   "tooltip.reutilities.design": "Clothing Design:",
 
   "logger.reutilities.outside_bounds": "Value must be within %s and %s; is %s",
-  "logger.reutilities.outfit_definition.wrong_equipment_slot": "Tried finding the outfit slot for non-armor slot '%s'",
   "logger.reutilities.wood_type.non_existent": "Wood type does not exist in any mod: '%s'",
   "logger.reutilities.recolor.non_existent": "Recolor does not exist in any mod: '%s'"
 }

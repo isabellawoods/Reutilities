@@ -14,7 +14,7 @@ public class ReItemFrameRendererMixin<T extends ItemFrame> {
     @Inject(method = "getLightVal", at = @At("HEAD"), cancellable = true)
     private void getLightVal(T frame, int glowLight, int regularLight, CallbackInfoReturnable<Integer> callback) {
         int oldLight = frame.getType() == EntityType.GLOW_ITEM_FRAME ? glowLight : regularLight;
-        int newLight = ReAPI.getLightOutputFromItem(frame.getItem(), oldLight, frame.level(), frame.blockPosition(), true);
+        int newLight = ReAPI.getItemBrightness(frame.getItem(), oldLight, frame.level(), frame.blockPosition(), true);
         if (oldLight != newLight) callback.setReturnValue(newLight);
     }
 }

@@ -74,7 +74,8 @@ public class ReClientBusEvents {
 
     @SubscribeEvent
     public static void addComponentTooltips(AddComponentTooltipsEvent event) {
-        event.addComponent(ReDataComponents.OUTFIT.get());
+        event.addComponent(1, ReDataComponents.OUTFIT.get());
+        event.addComponent(1.1, ReDataComponents.STORED_EXPERIENCE.get());
     }
 
     @SubscribeEvent

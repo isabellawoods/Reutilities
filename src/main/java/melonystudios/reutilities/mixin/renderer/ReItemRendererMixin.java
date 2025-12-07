@@ -18,6 +18,6 @@ public class ReItemRendererMixin {
         if (context == ItemDisplayContext.GUI || context == ItemDisplayContext.FIXED) return packedLight;
         Minecraft minecraft = Minecraft.getInstance();
         BlockPos pos = minecraft.cameraEntity != null ? minecraft.cameraEntity.blockPosition() : null;
-        return ReAPI.getLightOutputFromItem(stack, packedLight, minecraft.level, pos, true);
+        return ReAPI.getItemBrightness(stack, packedLight, minecraft.level, pos, true);
     }
 }

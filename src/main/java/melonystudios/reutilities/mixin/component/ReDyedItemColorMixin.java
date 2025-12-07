@@ -1,6 +1,7 @@
 package melonystudios.reutilities.mixin.component;
 
 import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.component.DyedItemColor;
 import org.spongepowered.asm.mixin.Mixin;
@@ -16,8 +17,9 @@ public abstract class ReDyedItemColorMixin {
     @Shadow
     public abstract int rgb();
 
-    @Redirect(method = "addToTooltip", at = @At(value = "INVOKE", target = "Ljava/util/function/Consumer;accept(Ljava/lang/Object;)V", ordinal = 0))
+    @Redirect(method = "addToTooltip", at = @At(value = "INVOKE", target = "Ljava/util/function/Consumer;accept(Ljava/lang/Object;)V", ordinal = 0)) // ☶ tim
     public <T> void addColoredTooltip(Consumer<Component> adder, T t) {
-        adder.accept(Component.translatable("item.color", Component.literal(String.format(Locale.ROOT, "#%06X", this.rgb())).withColor(this.rgb())).withStyle(ChatFormatting.GRAY));
+        adder.accept(Component.translatable("item.color", Component.literal(String.format(Locale.ROOT, "#%06X", this.rgb()))).withStyle(ChatFormatting.GRAY)
+                .append(CommonComponents.space()).append(Component.literal("█").withColor(this.rgb())));
     }
 }

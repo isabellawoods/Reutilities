@@ -35,7 +35,7 @@ public abstract class ReHumanoidArmorLayerMixin<T extends LivingEntity, M extend
     @ModifyVariable(method = "renderArmorPiece(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/entity/EquipmentSlot;ILnet/minecraft/client/model/HumanoidModel;FFFFFF)V",
             at = @At("HEAD"), ordinal = 0, argsOnly = true)
     private int makeModelsEmissive(int packedLight, @Local(argsOnly = true) LivingEntity livEntity) {
-        return ReAPI.getLightOutputFromItem(livEntity.getItemBySlot(EquipmentSlot.CHEST), packedLight, livEntity.level(), livEntity.blockPosition(), true);
+        return ReAPI.getItemBrightness(livEntity.getItemBySlot(EquipmentSlot.CHEST), packedLight, livEntity.level(), livEntity.blockPosition(), true);
     }
 
     @ModifyArg(method = "renderArmorPiece(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/entity/EquipmentSlot;ILnet/minecraft/client/model/HumanoidModel;FFFFFF)V",

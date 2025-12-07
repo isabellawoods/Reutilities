@@ -9,8 +9,8 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 
 /// Represents an **{@linkplain ItemBehavior item behavior}'s global settings**. It has the following fields:
-/// <li>`show_in_tooltip`: <i>(optional)</i> Whether this behavior's tooltips are displayed. Defaults to `true`;</li>
-/// <li>`environment`: <i>(optional)</i> Which environment this behavior should be run on. Can be one of `eating` or `attacking`.</li>
+/// - `show_in_tooltip`: *(optional)* Whether this behavior's tooltips are displayed. Defaults to `true`;
+/// - `environment`: *(optional)* Which environment this behavior should be run on. Can be one of `eating` or `attacking`.
 public class GlobalSettings {
     /// The default *"eating"* environment, ran when finishing to eat the item this behavior is attached to.
     public static final String EATING = "eating";

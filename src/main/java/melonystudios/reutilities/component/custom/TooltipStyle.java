@@ -42,6 +42,12 @@ public enum TooltipStyle implements StringRepresentable {
         return this.name;
     }
 
+    @Override
+    @NotNull
+    public String toString() {
+        return this.name;
+    }
+
     public int getID() {
         return this.id;
     }

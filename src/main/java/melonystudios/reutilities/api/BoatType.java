@@ -13,7 +13,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.function.Supplier;
 
 /// Represents a single boat type, used by *Reutilities*' boats to save and render the correct wood type.
-/// @apiNote This can only be used to make boats with the default model. **Rafts will not work with this system!**
 /// @param boat The boat item.
 /// @param chestBoat The boat with chest item.
 /// @param raft Whether this boat type represents a raft.
@@ -39,6 +38,6 @@ public record BoatType(Supplier<Item> boat, Supplier<Item> chestBoat, boolean ra
     @Override
     @NotNull
     public String toString() {
-        return this.woodType.toString();
+        return this.woodType().toString();
     }
 }

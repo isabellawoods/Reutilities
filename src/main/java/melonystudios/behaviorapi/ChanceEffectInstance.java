@@ -2,7 +2,7 @@ package melonystudios.behaviorapi;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import melonystudios.reutilities.api.ReAPI;
+import melonystudios.reutilities.api.ReCodecs;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -11,12 +11,12 @@ import net.minecraft.world.effect.MobEffectInstance;
 /// A custom {@link MobEffectInstance} that can have a chance to apply the effect.
 ///
 /// This class' {@link #CODEC} has the following fields:
-/// <li>`effect`: A {@linkplain MobEffectInstance#CODEC mob effect instance codec}, defining the effect that should be applied;</li>
-/// <li>`chance`: A float codec with a range of `0` to `1`, defining the chance of this effect being applied.</li>
+/// - `effect`: A {@linkplain MobEffectInstance#CODEC mob effect instance codec}, defining the effect that should be applied;
+/// - `chance`: A float codec with a range of `0` to `1`, defining the chance of this effect being applied.
 public class ChanceEffectInstance {
     public static final Codec<ChanceEffectInstance> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             MobEffectInstance.CODEC.fieldOf("effect").forGetter(ChanceEffectInstance::copyEffect),
-            ReAPI.floatRange(0, 1).optionalFieldOf("chance", 1F).forGetter(ChanceEffectInstance::chance)
+            ReCodecs.floatRange(0, 1).optionalFieldOf("chance", 1F).forGetter(ChanceEffectInstance::chance)
     ).apply(instance, ChanceEffectInstance::new));
     public static final StreamCodec<RegistryFriendlyByteBuf, ChanceEffectInstance> STREAM_CODEC = StreamCodec.composite(
             MobEffectInstance.STREAM_CODEC,

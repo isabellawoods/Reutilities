@@ -6,6 +6,7 @@ import melonystudios.reutilities.util.ReCommonConstants;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.DyeColor;
+import org.jetbrains.annotations.NotNull;
 
 /// Represents a single recolor (*Reutilities* color), used as an accompanying system to {@link DyeColor}.
 /// @param color The color of this recolor.
@@ -15,4 +16,10 @@ public record Recolor(int color, ResourceLocation colorLocation, DyeColor toVani
     public static final Codec<Recolor> CODEC = Codec.stringResolver(color -> color.colorLocation().toString(), location -> ReCommonConstants.COLORS.get(ResourceLocation.parse(location)));
     public static final Codec<ResourceLocation> RECOLOR_CODEC = ResourceLocation.CODEC.validate(location -> ReCommonConstants.COLORS.containsKey(location)
             ? DataResult.success(location) : DataResult.error(() -> Component.translatable("logger.reutilities.recolor.non_existent", location.toString()).getString()));
+
+    @Override
+    @NotNull
+    public String toString() {
+        return this.colorLocation().toString();
+    }
 }
