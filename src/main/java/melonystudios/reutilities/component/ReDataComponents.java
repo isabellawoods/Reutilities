@@ -4,6 +4,7 @@ import melonystudios.behaviorapi.ItemBehavior;
 import melonystudios.reutilities.Reutilities;
 import melonystudios.reutilities.api.BoatType;
 import melonystudios.reutilities.api.ReCodecs;
+import melonystudios.reutilities.component.custom.CapePositioning;
 import melonystudios.reutilities.component.custom.ComponentOutfit;
 import melonystudios.reutilities.component.custom.StoredExperience;
 import net.minecraft.core.component.DataComponentType;
@@ -28,9 +29,11 @@ public class ReDataComponents {
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<List<ResourceLocation>>> HIDE_COMPONENTS = COMPONENTS.registerComponentType("hide_components",
             builder -> builder.persistent(ResourceLocation.CODEC.listOf()).cacheEncoding());
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<ComponentOutfit>> OUTFIT = COMPONENTS.registerComponentType("outfit",
-            builder -> builder.persistent(ComponentOutfit.CODEC).networkSynchronized(ComponentOutfit.STREAM_CODEC).cacheEncoding());
+            builder -> builder.persistent(ComponentOutfit.CODEC).networkSynchronized(ComponentOutfit.STREAM_CODEC));
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<List<ItemBehavior>>> BEHAVIORS = COMPONENTS.registerComponentType("behaviors",
             builder -> builder.persistent(ItemBehavior.CODEC.get().codec().listOf()).cacheEncoding());
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> LIGHT_EMISSION = COMPONENTS.registerComponentType("light_emission",
             builder -> builder.persistent(ExtraCodecs.intRange(0, 15)).networkSynchronized(ByteBufCodecs.VAR_INT));
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<CapePositioning>> CAPE_POSITIONING = COMPONENTS.registerComponentType("cape_positioning",
+            builder -> builder.persistent(CapePositioning.CODEC).networkSynchronized(CapePositioning.STREAM_CODEC).cacheEncoding());
 }

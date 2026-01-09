@@ -1,4 +1,4 @@
-// 1.21.1	2025-11-22T15:54:39.2518383	Reutilities — Item Tags
+// 1.21.1	2026-01-07T14:31:47.5865176	Reutilities — Item Tags
 35133e95f1c8fdd7a1c21afcc231fc0bffefb9a8 data/c/tags/item/dual_wielded.json
 31aa96fa54f54fe975faec4e4e9ee340f5ee12b6 data/c/tags/item/dusts.json
 9798d67e68f1fc1fcbc41d664432a3a37ba63beb data/c/tags/item/dusts/blaze.json
@@ -6,6 +6,7 @@
 e801bdef0719e27dd7decd88269ada7c5740348e data/c/tags/item/dusts/sugar.json
 593a2844eb6e370c12d05278bede44d6e786b8e5 data/c/tags/item/emissive_lighting.json
 4333e5b0d3c082c5e91baec1955d1a9d418dc318 data/c/tags/item/flint.json
+ee80c9220221080c16cfe4ee78240a6590cc7a84 data/c/tags/item/hides_cape_when_worn.json
 35133e95f1c8fdd7a1c21afcc231fc0bffefb9a8 data/c/tags/item/logos.json
 d9fa8492b3cf95f697b9823051abd6f56771b81b data/c/tags/item/nether_stars.json
 d9b65f02ce612563378b2326213bd4993b44d1fb data/reutilities/tags/item/cobblestone_crafting_materials.json

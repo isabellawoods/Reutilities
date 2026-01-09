@@ -23,6 +23,7 @@
     "block.mayplace.ReWaterlilyBlockMixin",
     "block.mayplace.ReWitherRoseBlockMixin",
     "blockentity.ReBlockEntityTypeMixin",
+    "compat.femalegender.ReClientConfigurationMixin",
     "component.ReDyedItemColorMixin",
     "entity.ReLivingEntityMixin",
     "item.ReBoatItemMixin",
@@ -31,7 +32,8 @@
   ],
   "client": [
     "client.ReScreenshotMixin",
-    "renderer.PlayerSlimAccessor",
+    "compat.femalegender.ReGenderLayerMixin",
+    "renderer.ReCapeLayerMixin",
     "renderer.ReHumanoidArmorLayerMixin",
     "renderer.ReItemFrameRendererMixin",
     "renderer.ReItemInHandRendererMixin",

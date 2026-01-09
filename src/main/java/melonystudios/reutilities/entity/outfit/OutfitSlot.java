@@ -25,7 +25,7 @@ public record OutfitSlot(ResourceLocation texture, Optional<ResourceLocation> em
             ResourceLocation.CODEC.optionalFieldOf("emissive_texture").forGetter(OutfitSlot::emissiveTexture),
             ResourceLocation.CODEC.optionalFieldOf("overlay_texture").forGetter(OutfitSlot::overlayTexture),
             Codec.BOOL.optionalFieldOf("hides_skin_layers", true).forGetter(OutfitSlot::hidesSkinLayers),
-            ReCodecs.HEX_INT_CODEC.optionalFieldOf("color").forGetter(OutfitSlot::color)
+            ReCodecs.hexadecimalRange(0, 16777215).optionalFieldOf("color").forGetter(OutfitSlot::color)
     ).apply(instance, OutfitSlot::new));
     public static final StreamCodec<ByteBuf, OutfitSlot> STREAM_CODEC = StreamCodec.composite(
             ResourceLocation.STREAM_CODEC, OutfitSlot::texture,

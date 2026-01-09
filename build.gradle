@@ -45,7 +45,7 @@ neoForge {
     runs {
         client {
             client()
-            programArguments.addAll '--uuid', project.getProperty('mc_uuid'), '--username', project.getProperty('mc_username')
+            devLogin = true
 
             // Comma-separated list of namespaces to load gametests from. Empty = all namespaces.
             systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
@@ -121,6 +121,9 @@ dependencies {
     // At runtime, we use the full JEI jar for NeoForge
     runtimeOnly("mezz.jei:jei-${minecraft_version}-neoforge:${jei_version}")
 
+    // Female Gender Mod
+    implementation "maven.modrinth:female-gender:${femalegender_version}"
+
     // Example mod dependency using a mod jar from ./libs with a flat directory repository:
     // This maps to ./libs/coolmod-${mc_version}-${coolmod_version}.jar
     // The group id is ignored when searching -- in this case, it is "blank".
@@ -147,6 +150,10 @@ repositories {
         // Location of a maven mirror for Just Enough Items files, as a fallback.
         name = "ModMaven"
         url = "https://modmaven.dev"
+    }
+    maven {
+        name = "Modrinth API"
+        url = "https://api.modrinth.com/maven"
     }
 }
 

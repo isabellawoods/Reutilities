@@ -5,6 +5,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import melonystudios.behaviorapi.ItemBehavior;
 import melonystudios.behaviorapi.settings.IndividualSettings;
 import melonystudios.behaviorapi.settings.GlobalSettings;
+import melonystudios.reutilities.api.ReCodecs;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
@@ -68,7 +69,7 @@ public class IgniteBehavior extends ItemBehavior {
     public record Ignite(int ticksOnFire, int tooltipColor) implements IndividualSettings<Ignite> {
         public static final MapCodec<Ignite> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
                 ExtraCodecs.NON_NEGATIVE_INT.optionalFieldOf("ticks_on_fire", 100).forGetter(Ignite::ticksOnFire),
-                ExtraCodecs.intRange(0, 16777215).optionalFieldOf("tooltip_color", DEFAULT_TOOLTIP_COLOR).forGetter(Ignite::tooltipColor)
+                ReCodecs.hexadecimalRange(0, 16777215).optionalFieldOf("tooltip_color", DEFAULT_TOOLTIP_COLOR).forGetter(Ignite::tooltipColor)
         ).apply(instance, Ignite::new));
 
         public Ignite(int ticksOnFire) {

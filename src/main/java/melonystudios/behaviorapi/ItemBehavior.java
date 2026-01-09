@@ -4,6 +4,7 @@ import com.mojang.serialization.MapCodec;
 import melonystudios.behaviorapi.custom.DefaultItemBehavior;
 import melonystudios.behaviorapi.settings.IndividualSettings;
 import melonystudios.behaviorapi.settings.GlobalSettings;
+import melonystudios.reutilities.util.ReCommonConstants;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.client.resources.language.I18n;
@@ -31,7 +32,7 @@ public abstract class ItemBehavior implements TooltipProvider {
     public static final Supplier<MapCodec<ItemBehavior>> CODEC = () -> BehaviorAPI.ITEM_BEHAVIOR_SERIALIZER.byNameCodec().dispatchMap("id", ItemBehavior::settingsCodec, Function.identity());
     // public static final StreamCodec<RegistryFriendlyByteBuf, List<ItemBehavior>> STREAM_CODEC = ByteBufCodecs.registry(BehaviorAPI.ITEM_BEHAVIOR_KEY).dispatch((Function<? super List<ItemBehavior>, ? extends ItemBehavior>) ItemBehavior::behaviorCodec, IndividualSettings::streamCodec);
     public static final ResourceLocation DEFAULT_BEHAVIOR_ID = BehaviorAPI.behaviorAPI("default");
-    public static final int DEFAULT_BEHAVIOR_COLOR = 0xFFC55F;
+    public static final int DEFAULT_BEHAVIOR_COLOR = ReCommonConstants.REVARIED_ACCENT_COLOR;
     private final IndividualSettings<?> behaviorCodec;
     private final GlobalSettings settings;
     @Nullable

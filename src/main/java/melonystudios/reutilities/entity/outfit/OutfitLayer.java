@@ -2,10 +2,10 @@ package melonystudios.reutilities.entity.outfit;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import melonystudios.reutilities.ReConfigs;
 import melonystudios.reutilities.Reutilities;
 import melonystudios.reutilities.api.ReAPI;
 import melonystudios.reutilities.component.ReDataComponents;
+import melonystudios.reutilities.option.ReClientOptions;
 import melonystudios.reutilities.util.ReClientConstants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
@@ -15,7 +15,6 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FastColor;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -37,12 +36,16 @@ public class OutfitLayer<T extends LivingEntity, A extends HumanoidModel<T>> ext
         this.outfitModel = outfitModel;
     }
 
+    public OutfitModel<T> getOutfitModel() {
+        return this.outfitModel;
+    }
+
     @Override
     public void render(PoseStack stack, MultiBufferSource buffer, int packedLight, T mob, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float headYaw, float headPitch) {
-        if (!ReConfigs.RENDER_OUTFITS.get()) return;
+        if (!ReClientOptions.RENDER_OUTFITS.get()) return;
         Minecraft minecraft = Minecraft.getInstance();
         minecraft.getProfiler().push(Reutilities.reutilities("outfit_rendering").toString());
-        boolean slimArms = this.outfitModel.slimArms();
+        boolean slimArms = this.outfitModel.reutilities$slimArms();
 
         this.outfitModel.setAllVisible(true);
         if (this.getParentModel() instanceof PlayerModel<?> playerModel) {
@@ -60,25 +63,24 @@ public class OutfitLayer<T extends LivingEntity, A extends HumanoidModel<T>> ext
 
     /// Renders part of an outfit based on which type of outfit is available for the current slot: either the "**full-body outfit**", or the "**component outfit**".
     public void renderOutfitPart(PoseStack stack, MultiBufferSource buffer, T mob, EquipmentSlot slot, int packedLight, boolean slimArms) {
-        boolean wearingOutfit = false;
-        if (mob instanceof FullBodyOutfit wearer) wearingOutfit = wearer.isWearingOutfit();
-
         Level world = mob.level();
         ItemStack armorStack = mob.getItemBySlot(slot);
 
         // Updated outfit rendering ~isa 4-12-24
-        if (mob instanceof FullBodyOutfit && wearingOutfit) {
-            this.renderFullBodyOutfit(stack, buffer, mob, slot, packedLight, OutfitDefinition.definitions(world), slimArms);
-        } else if (!armorStack.isEmpty() && mob.getEquipmentSlotForItem(armorStack) == slot && armorStack.has(ReDataComponents.OUTFIT)) {
+        // prioritize rendering component outfit over full-body ~isa 5-1-26
+        FullBodyOutfit outfit = mob.getCapability(ReAPI.OUTFIT_CAPABILITY);
+        if (!armorStack.isEmpty() && mob.getEquipmentSlotForItem(armorStack) == slot && armorStack.has(ReDataComponents.OUTFIT)) {
             this.renderComponentOutfit(stack, buffer, slot, armorStack, world, mob.blockPosition(), packedLight, slimArms);
+        } else if (outfit != null) {
+            this.renderFullBodyOutfit(stack, buffer, mob, slot, packedLight, outfit, slimArms);
         }
     }
 
-    /// Renders part of an outfit based on the {@linkplain FullBodyOutfit entity's built-in `outfit` tag}, called a "**full-body outfit**".
-    public void renderFullBodyOutfit(PoseStack stack, MultiBufferSource buffer, T mob, EquipmentSlot slot, int packedLight, Registry<OutfitDefinition> definitions, boolean slimArms) {
+    /// Renders part of an outfit based on the {@linkplain FullBodyOutfit entity's built-in `outfit` attachment}, called a "**full-body outfit**".
+    public void renderFullBodyOutfit(PoseStack stack, MultiBufferSource buffer, T mob, EquipmentSlot slot, int packedLight, FullBodyOutfit outfit, boolean slimArms) {
         Minecraft minecraft = Minecraft.getInstance();
         minecraft.getProfiler().push(Reutilities.reutilities("full_body_outfit").toString());
-        OutfitDefinition definition = definitions.get(ResourceLocation.parse(((FullBodyOutfit) mob).getOutfitDefinition()));
+        OutfitDefinition definition = outfit.definition().value();
         int outfitColor = OutfitDefinition.getOutfitColors(definition, null, slot);
         int overlayCoordinates = ReClientConstants.getOverlayCoordinates(0);
 
@@ -104,7 +106,7 @@ public class OutfitLayer<T extends LivingEntity, A extends HumanoidModel<T>> ext
         ResourceLocation emissiveLocation = OutfitDefinition.getEmissiveOutfitTexture(slot, definition, slimArms);
         if (emissiveLocation != null) {
             VertexConsumer emissiveBuffer = buffer.getBuffer(RenderType.eyes(emissiveLocation));
-            int emissiveColor = ReConfigs.COLOR_EMISSIVE_OUTFIT_PARTS.get() ? outfitColor : -1;
+            int emissiveColor = ReClientOptions.COLOR_EMISSIVE_OUTFIT_PARTS.get() ? outfitColor : -1;
             this.outfitModel.renderToBuffer(stack, emissiveBuffer, EMISSIVE_LIGHT_VALUE, overlayCoordinates, emissiveColor);
         }
         minecraft.getProfiler().pop();
@@ -138,7 +140,7 @@ public class OutfitLayer<T extends LivingEntity, A extends HumanoidModel<T>> ext
         ResourceLocation emissiveLocation = OutfitDefinition.getEmissiveOutfitTexture(slot, definition, slimArms);
         if (emissiveLocation != null) {
             VertexConsumer emissiveBuffer = buffer.getBuffer(RenderType.eyes(emissiveLocation));
-            int emissiveColor = ReConfigs.COLOR_EMISSIVE_OUTFIT_PARTS.get() ? outfitColor : -1;
+            int emissiveColor = ReClientOptions.COLOR_EMISSIVE_OUTFIT_PARTS.get() ? outfitColor : -1;
             this.outfitModel.renderToBuffer(stack, emissiveBuffer, EMISSIVE_LIGHT_VALUE, overlayCoordinates, emissiveColor);
         }
 

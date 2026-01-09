@@ -1,19 +1,24 @@
 package melonystudios.reutilities.api;
 
 import melonystudios.behaviorapi.ItemBehavior;
-import melonystudios.reutilities.ReConfigs;
+import melonystudios.reutilities.Reutilities;
 import melonystudios.reutilities.block.custom.*;
 import melonystudios.reutilities.blockentity.ReBlockEntities;
+import melonystudios.reutilities.compat.femalegender.BreastArmorData;
 import melonystudios.reutilities.component.ReDataComponents;
 import melonystudios.reutilities.component.custom.ComponentOutfit;
 import melonystudios.reutilities.component.custom.TooltipStyle;
+import melonystudios.reutilities.entity.cape.WornRecape;
 import melonystudios.reutilities.entity.outfit.OutfitDefinition;
-import melonystudios.reutilities.util.DebuggingFlags;
+import melonystudios.reutilities.option.ReCommonOptions;
+import melonystudios.reutilities.entity.outfit.FullBodyOutfit;
+import melonystudios.reutilities.util.debug.ReDebuggingFlags;
 import melonystudios.reutilities.util.tag.ReItemTags;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.LightTexture;
+import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -32,6 +37,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.FireBlock;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.neoforge.capabilities.EntityCapability;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.LocalDate;
@@ -47,6 +53,11 @@ import static net.minecraft.client.renderer.item.ItemProperties.register;
 /// ***Reutilities'*** **API** class, used by my mods to add new boats and signs, register item overrides, get light emission values, etc.
 @SuppressWarnings("deprecation")
 public class ReAPI {
+    /// The `reutilities:full_body_outfit` entity capability, used to store full-body outfits on entities.
+    public static final EntityCapability<FullBodyOutfit, Void> OUTFIT_CAPABILITY = EntityCapability.createVoid(Reutilities.reutilities("full_body_outfit"), FullBodyOutfit.class);
+    /// The `reutilities:cape` entity capability, used to store capes on entities.
+    public static final EntityCapability<WornRecape, Void> CAPE_CAPABILITY = EntityCapability.createVoid(Reutilities.reutilities("cape"), WornRecape.class);
+
     /// Adds various boat types to *Reutilities'* boat map.
     ///
     /// This method should be called during the {@linkplain FMLCommonSetupEvent common setup event}.
@@ -69,6 +80,31 @@ public class ReAPI {
     /// @param colors The recolors to be added.
     public static void addRecolors(Recolor... colors) {
         for (Recolor color : colors) COLORS.put(color.colorLocation(), color);
+    }
+
+    /// Defines how an item (usually a chestplate) behaves when the wearer has breasts.
+    ///
+    /// This method should be called during the {@linkplain FMLCommonSetupEvent common setup event}.
+    /// @param item The item to add the `wildfire_gender:gender_armor` capability, usually a chestplate.
+    /// @param physicsResistance The physical resistance provided to the wearer's breasts when calculating physics.
+    /// @param tightness How "tight" the armor is. Breasts will appear up to **15%** smaller at full tightness.
+    /// @param alwaysHidesBreasts Hides the wearer's breasts regardless of the **"Show Breasts in Armor"** option.
+    /// @see BreastArmorData
+    public static void defineBreastArmorData(Item item, float physicsResistance, float tightness, boolean alwaysHidesBreasts) {
+        defineBreastArmorData(item, physicsResistance, tightness, alwaysHidesBreasts, null);
+    }
+
+    /// Defines how an item (usually a chestplate) behaves when the wearer has breasts.
+    ///
+    /// This method should be called during the {@linkplain FMLCommonSetupEvent common setup event}.
+    /// @param item The item to add the `wildfire_gender:gender_armor` capability, usually a chestplate.
+    /// @param physicsResistance The physical resistance provided to the wearer's breasts when calculating physics.
+    /// @param tightness How "tight" the armor is. Breasts will appear up to **15%** smaller at full tightness.
+    /// @param alwaysHidesBreasts Hides the wearer's breasts regardless of the **"Show Breasts in Armor"** option.
+    /// @param armorStandsCopySettings Whether armor stands show the chestplate's breasts when worn. Settings this to `null` uses the default logic.
+    /// @see BreastArmorData
+    public static void defineBreastArmorData(Item item, float physicsResistance, float tightness, boolean alwaysHidesBreasts, Boolean armorStandsCopySettings) {
+        BREAST_ARMOR_CAPABILITIES.put(item, new BreastArmorData(physicsResistance, tightness, alwaysHidesBreasts, armorStandsCopySettings));
     }
 
     /// Adds signs to the valid list of blocks of the {@link ReBlockEntities#SIGN SIGN} block entity.
@@ -102,6 +138,15 @@ public class ReAPI {
         fire.setFlammable(block, encouragement, flammability);
     }
 
+    /// Gets the translated text for a translation key, and uses a fallback if not available.
+    /// @param key The translation key to use and check.
+    /// @param fallback A fallback string to use, using `%s` for arguments.
+    /// @param args An optional array of arguments.
+    public static String translate(String key, String fallback, Object... args) {
+        if (I18n.exists(key)) return I18n.get(key, args);
+        else return String.format(fallback, args);
+    }
+
     /// Whether a tooltip can be displayed on an item, or is hidden by the {@link ReDataComponents#HIDE_COMPONENTS reutilities:hide_components} component.
     /// @param stack The item stack.
     /// @param name A resource location of the tooltip name, like `reutilities:item_components`.
@@ -125,9 +170,9 @@ public class ReAPI {
         int emittedBlockLight = getEmittedBlockLight(stack, world, pos);
         int ambientBlockLight = LightTexture.block(lightEmission);
 
-        if (DebuggingFlags.DEBUG_LIGHT_EMISSION_DISPLAY && world.isClientSide()) {
+        if (ReDebuggingFlags.DEBUG_LIGHT_EMISSION_DISPLAY && world.isClientSide()) {
             Player player = Minecraft.getInstance().player;
-            if (player != null && ItemStack.isSameItemSameComponents(stack, player.getItemBySlot(EquipmentSlot.MAINHAND))) {
+            if (player != null && !player.getItemBySlot(EquipmentSlot.MAINHAND).isEmpty() && ItemStack.isSameItemSameComponents(stack, player.getItemBySlot(EquipmentSlot.MAINHAND))) {
                 player.displayClientMessage(Component.literal(String.format(
                         "emitted light: %s // light emission (sky/block): %s/%s",
                         emittedBlockLight,
@@ -142,7 +187,7 @@ public class ReAPI {
             return LightTexture.pack(maxLight, maxLight);
         } else if (stack.is(ReItemTags.EMISSIVE_LIGHTING)) {
             return EMISSIVE_LIGHT_VALUE;
-        } else if (ReConfigs.LIGHT_EMITTING_EMISSIVES.get() && emittedBlockLight > 0) {
+        } else if (ReCommonOptions.LIGHT_EMITTING_EMISSIVES.get() && emittedBlockLight > 0) {
             int maxLight = (int) Math.max(ambientBlockLight, Math.max(emittedBlockLight, skylight));
             return LightTexture.pack(maxLight, maxLight);
         }
@@ -222,6 +267,13 @@ public class ReAPI {
     /// @param month The month to check for.
     public static void addMonthCheckProperty(Item item, Month month) {
         register(item, monthCheck(month), (stack, world, livEntity, seed) -> LocalDate.now().getMonth() == month ? 1 : 0);
+    }
+
+    /// Transforms the provided resource location into a texture path.
+    /// @param location The resource location.
+    /// @return A new location, with the `textures/` prefix and `.png` suffix added.
+    public static ResourceLocation toTexturePath(ResourceLocation location) {
+        return location.withPath(path -> (path.startsWith("textures/") ? "" : "textures/") + path + (path.endsWith(".png") ? "" : ".png"));
     }
 
     /// Runs a list of {@linkplain ItemBehavior **item behaviors**} from an item stack, based on the provided environment.

@@ -15,6 +15,8 @@ public class ReItemTags {
     public static final TagKey<Item> EMISSIVE_LIGHTING = common("emissive_lighting");
     /// Items in this tag are held using the "crossbow charge" animation. This does have some issues when eating since it plays the charging animation.
     public static final TagKey<Item> DUAL_WIELDED = common("dual_wielded");
+    /// Items in this tag hide the wearer's cape when worn in their chest slot.
+    public static final TagKey<Item> HIDES_CAPE_WHEN_WORN = common("hides_cape_when_worn");
     public static final TagKey<Item> LOGOS = common("logos");
     public static final TagKey<Item> FLINT = common("flint");
     public static final TagKey<Item> NETHER_STARS = common("nether_stars");

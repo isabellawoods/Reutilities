@@ -10,7 +10,9 @@ import melonystudios.reutilities.blockentity.ReBlockEntities;
 import melonystudios.reutilities.component.ReDataComponents;
 import melonystudios.reutilities.container.ReMenuTypes;
 import melonystudios.reutilities.entity.ReEntities;
+import melonystudios.reutilities.option.ReCommonOptions;
 import melonystudios.reutilities.util.ReArmorMaterials;
+import melonystudios.reutilities.util.ReAttachmentTypes;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
@@ -35,6 +37,7 @@ public class Reutilities {
         ReBlockTypes.TYPES.register(eventBus);
         ReBlockEntities.BLOCK_ENTITIES.register(eventBus);
         ReEntities.ENTITIES.register(eventBus);
+        ReAttachmentTypes.ATTACHMENTS.register(eventBus);
         ReMenuTypes.MENUS.register(eventBus);
 
         // Behavior API
@@ -42,7 +45,7 @@ public class Reutilities {
         ItemBehaviors.BEHAVIORS.register(eventBus);
         ConsumeBehaviorSerializers.SERIALIZERS.register(eventBus);
 
-        container.registerConfig(ModConfig.Type.COMMON, ReConfigs.SPEC, "melonystudios/reutilities-common.toml");
+        container.registerConfig(ModConfig.Type.COMMON, ReCommonOptions.SPEC, "melonystudios/reutilities-common.toml");
     }
 
     /// Creates a name for a data generator using ***Reutilities***' name.

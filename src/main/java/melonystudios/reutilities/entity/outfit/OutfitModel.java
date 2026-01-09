@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.mojang.blaze3d.vertex.PoseStack;
 import melonystudios.reutilities.Reutilities;
+import melonystudios.reutilities.entity.custom.ArmSize;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.PlayerModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
@@ -20,7 +21,7 @@ import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
 @OnlyIn(Dist.CLIENT)
-public class OutfitModel<T extends LivingEntity> extends HumanoidModel<T> {
+public class OutfitModel<T extends LivingEntity> extends HumanoidModel<T> implements ArmSize {
     public static final ModelLayerLocation CLASSIC = new ModelLayerLocation(Reutilities.reutilities("outfit/classic"), "main");
     public static final ModelLayerLocation SLIM = new ModelLayerLocation(Reutilities.reutilities("outfit/slim"), "main");
     public final ModelPart jacket;
@@ -40,7 +41,8 @@ public class OutfitModel<T extends LivingEntity> extends HumanoidModel<T> {
         this.rightPants = root.getChild("right_pants");
     }
 
-    public boolean slimArms() {
+    @Override
+    public boolean reutilities$slimArms() {
         return this.slimArms;
     }
 
@@ -136,7 +138,7 @@ public class OutfitModel<T extends LivingEntity> extends HumanoidModel<T> {
     @Override
     public void translateToHand(HumanoidArm side, PoseStack stack) {
         ModelPart arm = this.getArm(side);
-        if (this.slimArms) {
+        if (this.reutilities$slimArms()) {
             float offset = 0.5F * (float) (side == HumanoidArm.RIGHT ? 1 : -1);
             arm.x += offset;
             arm.translateAndRotate(stack);

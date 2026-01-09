@@ -1,8 +1,11 @@
 package melonystudios.reutilities.mixin.renderer;
 
-import melonystudios.reutilities.ReConfigs;
+import melonystudios.reutilities.api.ReAPI;
 import melonystudios.reutilities.component.ReDataComponents;
+import melonystudios.reutilities.entity.custom.ArmSize;
+import melonystudios.reutilities.entity.outfit.FullBodyOutfit;
 import melonystudios.reutilities.entity.outfit.OutfitDefinition;
+import melonystudios.reutilities.option.ReClientOptions;
 import melonystudios.reutilities.util.tag.ReItemTags;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.PlayerModel;
@@ -31,14 +34,23 @@ public abstract class RePlayerRendererMixin extends LivingEntityRenderer<Abstrac
     private void hideLayersForOutfit(AbstractClientPlayer player, CallbackInfo callback) {
         PlayerModel<AbstractClientPlayer> model = this.getModel();
 
-        if (!ReConfigs.RENDER_OUTFITS.get()) return;
+        if (!ReClientOptions.RENDER_OUTFITS.get()) return;
+        FullBodyOutfit outfit = player.getCapability(ReAPI.OUTFIT_CAPABILITY);
+        if (outfit != null) {
+            for (EquipmentSlot slot : new EquipmentSlot[]{EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET}) {
+                if (OutfitDefinition.shouldHideLayer(slot, outfit.definition().value(), ((ArmSize) model).reutilities$slimArms())) {
+                    this.hideModelLayers(model, slot);
+                }
+            }
+        }
+
         for (ItemStack stack : player.getArmorSlots()) {
             if (stack.has(ReDataComponents.OUTFIT)) {
                 OutfitDefinition definition = OutfitDefinition.getDefinition(player.clientLevel, stack);
                 Equipable equipable = Equipable.get(stack);
                 if (equipable == null) return;
 
-                if (OutfitDefinition.shouldHideLayer(equipable.getEquipmentSlot(), definition, ((PlayerSlimAccessor) model).reutilities$slimArms())) {
+                if (OutfitDefinition.shouldHideLayer(equipable.getEquipmentSlot(), definition, ((ArmSize) model).reutilities$slimArms())) {
                     this.hideModelLayers(model, equipable.getEquipmentSlot());
                 }
             }

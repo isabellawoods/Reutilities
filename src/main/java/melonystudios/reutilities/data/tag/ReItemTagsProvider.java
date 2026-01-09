@@ -38,6 +38,7 @@ public final class ReItemTagsProvider extends ItemTagsProvider {
         this.tag(EMISSIVE_LIGHTING).addTag(Tags.Items.DUSTS_GLOWSTONE).addTag(Tags.Items.RODS_BLAZE).add(Items.BLAZE_POWDER, Items.BLAZE_SPAWN_EGG, Items.GLOW_INK_SAC, Items.GLOW_SQUID_SPAWN_EGG,
                 Items.NETHER_STAR, Items.END_CRYSTAL);
         this.tag(DUAL_WIELDED);
+        this.tag(HIDES_CAPE_WHEN_WORN).add(Items.ELYTRA).addOptionalTag(Reutilities.common("elytra"));
         this.tag(LOGOS);
         this.tag(FLINT).add(Items.FLINT);
         this.tag(NETHER_STARS).add(Items.NETHER_STAR);

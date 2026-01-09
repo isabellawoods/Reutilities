@@ -1,9 +1,9 @@
 package melonystudios.reutilities.mixin.item;
 
 import com.llamalad7.mixinextras.sugar.Local;
-import melonystudios.reutilities.ReConfigs;
 import melonystudios.reutilities.Reutilities;
 import melonystudios.reutilities.component.ReDataComponents;
+import melonystudios.reutilities.option.ReCommonOptions;
 import melonystudios.reutilities.util.ReCommonConstants;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponentHolder;
@@ -47,7 +47,7 @@ public abstract class ReItemStackMixin implements DataComponentHolder, IItemStac
     public void addComponentDisplay(Item.TooltipContext context, Player player, TooltipFlag flag, CallbackInfoReturnable<List<Component>> callback, @Local List<Component> list) {
         if (player != null) player.level().getProfiler().push(Reutilities.reutilities("display_components_on_tooltip").toString());
 
-        if (flag.isAdvanced() && ReConfigs.SHOW_COMPONENTS_WITH_ALT.get() && ReCommonConstants.shouldDisplay(this, Reutilities.reutilities("item_components"))) {
+        if (flag.isAdvanced() && ReCommonOptions.SHOW_COMPONENTS_WITH_ALT.get() && ReCommonConstants.shouldDisplay(this, Reutilities.reutilities("item_components"))) {
             List<Component> tags = ReCommonConstants.addItemTagsTooltip(this, context.registries(), new ArrayList<>());
             if (tags.isEmpty()) return;
             list.add(Component.translatable("tooltip.reutilities.for_components", Component.keybind("key.keyboard.left.alt").withStyle(flag.hasAltDown() ? ChatFormatting.WHITE : ChatFormatting.GRAY)).withStyle(ChatFormatting.DARK_GRAY));

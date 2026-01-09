@@ -4,8 +4,8 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import melonystudios.reutilities.Reutilities;
-import melonystudios.reutilities.util.DebuggingFlags;
 import melonystudios.reutilities.util.ReCommonConstants;
+import melonystudios.reutilities.util.debug.ReDebuggingFlags;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -29,12 +29,12 @@ public class ReCommands {
         // /melonystudios reutilities:dump_<locations> <alphabetical_sort>
         dispatcher.register(Commands.literal("melonystudios")
                 .then(Commands.literal(Reutilities.reutilities("dump_boat_types").toString())
-                        .requires(stack -> stack.hasPermission(Commands.LEVEL_OWNERS) && DebuggingFlags.DEBUG_DUMP_COMMANDS)
+                        .requires(stack -> stack.hasPermission(Commands.LEVEL_OWNERS) && ReDebuggingFlags.DEBUG_DUMP_COMMANDS)
                         .executes(context -> dumpLocations(
                                 context,
                                 false,
                                 ReCommonConstants.BOATS.keySet(),
-                                Component.translatable("commands.reutilities.boat_types").withColor(0xFFA134),
+                                Component.translatable("commands.reutilities.boat_types").withColor(ReCommonConstants.REUTILITIES_ACCENT_COLOR),
                                 "boat_types.txt")
                         )
                         .then(Commands.argument(ALPHABETICAL_SORT_PARAM, BoolArgumentType.bool())
@@ -42,17 +42,17 @@ public class ReCommands {
                                 context,
                                 BoolArgumentType.getBool(context, ALPHABETICAL_SORT_PARAM),
                                 ReCommonConstants.BOATS.keySet(),
-                                Component.translatable("commands.reutilities.boat_types").withColor(0xFFA134),
+                                Component.translatable("commands.reutilities.boat_types").withColor(ReCommonConstants.REUTILITIES_ACCENT_COLOR),
                                 "boat_types.txt")
                         )
                 ))
                 .then(Commands.literal(Reutilities.reutilities("dump_recolors").toString())
-                        .requires(stack -> stack.hasPermission(Commands.LEVEL_OWNERS) && DebuggingFlags.DEBUG_DUMP_COMMANDS)
+                        .requires(stack -> stack.hasPermission(Commands.LEVEL_OWNERS) && ReDebuggingFlags.DEBUG_DUMP_COMMANDS)
                         .executes(context -> dumpLocations(
                                 context,
                                 false,
                                 ReCommonConstants.COLORS.keySet(),
-                                Component.translatable("commands.reutilities.recolors").withColor(0xFFA134),
+                                Component.translatable("commands.reutilities.recolors").withColor(ReCommonConstants.REUTILITIES_ACCENT_COLOR),
                                 "recolors.txt")
                         )
                         .then(Commands.argument(ALPHABETICAL_SORT_PARAM, BoolArgumentType.bool())
@@ -60,7 +60,7 @@ public class ReCommands {
                                 context,
                                 BoolArgumentType.getBool(context, ALPHABETICAL_SORT_PARAM),
                                 ReCommonConstants.COLORS.keySet(),
-                                Component.translatable("commands.reutilities.recolors").withColor(0xFFA134),
+                                Component.translatable("commands.reutilities.recolors").withColor(ReCommonConstants.REUTILITIES_ACCENT_COLOR),
                                 "recolors.txt")
                         )
                 ))
@@ -83,7 +83,7 @@ public class ReCommands {
             }
 
             MutableComponent filePathMessage = Component.literal(FMLLoader.getGamePath().relativize(dumpFile).toString())
-                    .withStyle(ChatFormatting.UNDERLINE).withColor(0xFFC55F);
+                    .withStyle(ChatFormatting.UNDERLINE).withColor(ReCommonConstants.REVARIED_ACCENT_COLOR);
 
             if (!FMLLoader.getDist().isDedicatedServer()) {
                 filePathMessage.withStyle(style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_FILE, dumpFile.toString())));

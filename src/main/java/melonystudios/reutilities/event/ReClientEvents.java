@@ -1,17 +1,17 @@
 package melonystudios.reutilities.event;
 
-import melonystudios.reutilities.ReConfigs;
 import melonystudios.reutilities.Reutilities;
 import melonystudios.reutilities.api.BoatType;
 import melonystudios.reutilities.blockentity.ReBlockEntities;
 import melonystudios.reutilities.component.ReDataComponents;
 import melonystudios.reutilities.entity.ReEntities;
+import melonystudios.reutilities.entity.custom.ArmSize;
 import melonystudios.reutilities.entity.outfit.OutfitLayer;
 import melonystudios.reutilities.entity.outfit.OutfitModel;
 import melonystudios.reutilities.entity.renderer.HandArmorRenderer;
 import melonystudios.reutilities.entity.renderer.ReBoatRenderer;
 import melonystudios.reutilities.event.custom.AddComponentTooltipsEvent;
-import melonystudios.reutilities.mixin.renderer.PlayerSlimAccessor;
+import melonystudios.reutilities.option.ReClientOptions;
 import melonystudios.reutilities.util.ReClientConstants;
 import melonystudios.reutilities.util.ReCommonConstants;
 import net.minecraft.ChatFormatting;
@@ -24,10 +24,13 @@ import net.minecraft.client.model.geom.builders.CubeDeformation;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.renderer.blockentity.HangingSignRenderer;
 import net.minecraft.client.renderer.blockentity.SignRenderer;
+import net.minecraft.client.renderer.entity.LivingEntityRenderer;
+import net.minecraft.client.renderer.entity.PiglinRenderer;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.minecraft.client.resources.PlayerSkin;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.EntityType;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModList;
@@ -39,14 +42,24 @@ import net.neoforged.neoforge.client.event.ScreenshotEvent;
 import java.io.File;
 
 @EventBusSubscriber(modid = Reutilities.MOD_ID, value = Dist.CLIENT)
-public class ReClientBusEvents {
+public class ReClientEvents {
     @SubscribeEvent
     public static void registerLayers(EntityRenderersEvent.AddLayers event) {
         for (PlayerSkin.Model model : event.getSkins()) {
             if (event.getSkin(model) instanceof PlayerRenderer renderer) {
-                boolean slimArms = ((PlayerSlimAccessor) renderer.getModel()).reutilities$slimArms();
+                boolean slimArms = ((ArmSize) renderer.getModel()).reutilities$slimArms();
                 renderer.addLayer(new OutfitLayer<>(renderer, new OutfitModel<>(event.getContext().bakeLayer(slimArms ? OutfitModel.SLIM : OutfitModel.CLASSIC), slimArms)));
             }
+        }
+
+        if (event.getRenderer(EntityType.PIGLIN) instanceof LivingEntityRenderer livRenderer && livRenderer instanceof PiglinRenderer renderer) {
+            renderer.addLayer(new OutfitLayer<>(renderer, Util.make(new OutfitModel<>(event.getContext().bakeLayer(OutfitModel.CLASSIC), false), model -> model.head.visible = model.hat.visible = false)));
+        }
+        if (event.getRenderer(EntityType.PIGLIN_BRUTE) instanceof LivingEntityRenderer livRenderer && livRenderer instanceof PiglinRenderer renderer) {
+            renderer.addLayer(new OutfitLayer<>(renderer, Util.make(new OutfitModel<>(event.getContext().bakeLayer(OutfitModel.CLASSIC), false), model -> model.head.visible = model.hat.visible = false)));
+        }
+        if (event.getRenderer(EntityType.ZOMBIFIED_PIGLIN) instanceof LivingEntityRenderer livRenderer && livRenderer instanceof PiglinRenderer renderer) {
+            renderer.addLayer(new OutfitLayer<>(renderer, Util.make(new OutfitModel<>(event.getContext().bakeLayer(OutfitModel.CLASSIC), false), model -> model.head.visible = model.hat.visible = false)));
         }
     }
 
@@ -80,20 +93,20 @@ public class ReClientBusEvents {
 
     @SubscribeEvent
     public static void renderArmorInArm(RenderArmEvent event) {
-        if (ReConfigs.RENDER_OUTFITS.get()) HandArmorRenderer.renderOutfitInArm(event.getPlayer(), event.getArm(), event.getPoseStack(), event.getMultiBufferSource(), event.getPackedLight());
+        if (ReClientOptions.RENDER_OUTFITS.get()) HandArmorRenderer.renderOutfitInArm(event.getPlayer(), event.getArm(), event.getPoseStack(), event.getMultiBufferSource(), event.getPackedLight());
         HandArmorRenderer.renderArmorInArm(event.getPlayer(), event.getArm(), event.getPoseStack(), event.getMultiBufferSource(), event.getPackedLight());
     }
 
     @SubscribeEvent
     public static void takePanoramicScreenshot(ScreenshotEvent event) {
         Minecraft minecraft = Minecraft.getInstance();
-        int size = ReConfigs.PANORAMIC_SCREENSHOT_SIZE.get();
-        if (ReConfigs.PANORAMIC_SCREENSHOTS.get() && Screen.hasControlDown() && minecraft.level != null && event.getImage().getWidth() != size && event.getImage().getHeight() != size) {
+        int size = ReClientOptions.PANORAMIC_SCREENSHOT_SIZE.get();
+        if (ReClientOptions.PANORAMIC_SCREENSHOTS.get() && Screen.hasControlDown() && minecraft.level != null && event.getImage().getWidth() != size && event.getImage().getHeight() != size) {
             event.setCanceled(true);
             // make the folder where the panorama will be saved
             // ".minecraft/panorama/<date>"
             ReClientConstants.CURRENT_PANORAMA_OUTPUT_FOLDER = Util.getFilenameFormattedDateTime();
-            String panoramaFolder = ReConfigs.PANORAMA_SAVE_FOLDER.get();
+            String panoramaFolder = ReClientOptions.PANORAMA_SAVE_FOLDER.get();
             String fileLocation = panoramaFolder + "/" + ReClientConstants.CURRENT_PANORAMA_OUTPUT_FOLDER;
             File outputFolder = new File(minecraft.gameDirectory, fileLocation);
 

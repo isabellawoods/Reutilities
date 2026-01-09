@@ -15,8 +15,8 @@ import java.util.function.*;
 
 public enum TooltipStyle implements StringRepresentable {
     NONE(0, "none", (translation, adder) -> {}),
-    OUTFIT(1, "outfit", (translation, adder) -> adder.accept(Component.translatable("tooltip.reutilities.character", translation).withStyle(ChatFormatting.DARK_GRAY))),
-    CHARACTER(2, "character", (translation, adder) -> adder.accept(Component.translatable("tooltip.reutilities.outfit", translation).withStyle(ChatFormatting.DARK_GRAY))),
+    OUTFIT(1, "outfit", (translation, adder) -> adder.accept(Component.translatable("tooltip.reutilities.outfit", translation).withStyle(ChatFormatting.DARK_GRAY))),
+    CHARACTER(2, "character", (translation, adder) -> adder.accept(Component.translatable("tooltip.reutilities.character", translation).withStyle(ChatFormatting.DARK_GRAY))),
     PLAYER(3, "player", (translation, adder) -> adder.accept(Component.translatable("tooltip.reutilities.player", translation).withStyle(ChatFormatting.DARK_GRAY))),
     DESIGN(4, "design", (translation, adder) -> {
         adder.accept(Component.translatable("tooltip.reutilities.design").withStyle(ChatFormatting.GRAY));

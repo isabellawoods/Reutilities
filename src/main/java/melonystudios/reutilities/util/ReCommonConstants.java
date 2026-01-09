@@ -1,16 +1,18 @@
 package melonystudios.reutilities.util;
 
-import melonystudios.reutilities.ReConfigs;
 import melonystudios.reutilities.Reutilities;
 import melonystudios.reutilities.api.BoatType;
 import melonystudios.reutilities.api.ReAPI;
 import melonystudios.reutilities.api.Recolor;
+import melonystudios.reutilities.compat.femalegender.BreastArmorData;
 import melonystudios.reutilities.event.custom.AddComponentTooltipsEvent;
+import melonystudios.reutilities.option.ReCommonOptions;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.*;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.common.NeoForge;
@@ -25,8 +27,11 @@ import java.util.*;
 public class ReCommonConstants {
     public static final List<Block> SIGNS = new ArrayList<>();
     public static final List<Block> HANGING_SIGNS = new ArrayList<>();
+    public static final Map<Item, BreastArmorData> BREAST_ARMOR_CAPABILITIES = new HashMap<>();
     public static final Map<ResourceLocation, BoatType> BOATS = new HashMap<>();
     public static final Map<ResourceLocation, Recolor> COLORS = new HashMap<>();
+    public static final int REUTILITIES_ACCENT_COLOR = 0xFFA134;
+    public static final int REVARIED_ACCENT_COLOR = 0xFFC55F;
 
     /// Gets a {@linkplain BoatType boat type} from a string.
     /// @param woodType A string containing the wood type to get, usually a resource location.
@@ -53,9 +58,9 @@ public class ReCommonConstants {
     /// @param tooltip A list of {@linkplain Component components} to add the tooltip into. This is usually empty, so when there is something it should display the tag.
     public static <S extends IItemStackExtension> List<Component> addItemTagsTooltip(S extension, HolderLookup.Provider registries, List<Component> tooltip) {
         if (!(extension instanceof ItemStack stack)) return tooltip;
-        var stackTag = stack.save(registries, new CompoundTag());
+        var stackTag = stack.copyWithCount(1).save(registries, new CompoundTag()); // set count to 1 to fix crash with Classic Pipes ~isa 8-1-26
         if (stackTag instanceof CompoundTag tag && tag.contains("components", Tag.TAG_COMPOUND)) {
-            String indentation = ReConfigs.LINE_BREAKS_ON_COMPONENTS.get() ? " " : "";
+            String indentation = ReCommonOptions.LINE_BREAKS_ON_COMPONENTS.get() ? " " : "";
             tooltip.add(Component.translatable("tooltip.reutilities.components", new TextComponentTagVisitor(indentation).visit(tag.getCompound("components"))).withStyle(ChatFormatting.GRAY));
         }
         return tooltip;
