@@ -151,6 +151,15 @@ public class ReAPI {
     }
 
     /// Whether a tooltip can be displayed on an item, or is hidden by the {@link ReDataComponents#HIDE_COMPONENTS reutilities:hide_components} component.
+    ///
+    /// Recommended to use {@link #shouldDisplay(DataComponentHolder, ResourceLocation)} instead.
+    /// @param stack An item stack.
+    /// @param name A resource location of the tooltip name, like `reutilities:item_components`.
+    public static boolean shouldDisplay(ItemStack stack, ResourceLocation name) {
+        return shouldDisplay((DataComponentHolder) stack, name);
+    }
+
+    /// Whether a tooltip can be displayed on an item, or is hidden by the {@link ReDataComponents#HIDE_COMPONENTS reutilities:hide_components} component.
     /// @param holder A data component holder, such as an item stack.
     /// @param name A resource location of the tooltip name, like `reutilities:item_components`.
     public static boolean shouldDisplay(DataComponentHolder holder, ResourceLocation name) {
