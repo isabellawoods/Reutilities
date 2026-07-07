@@ -1,4 +1,4 @@
-<div style="text-align: center;">
+<div style="align: center;">
   <img src="assets/banner_1170x500.png" alt="A banner with Reutilities' logo (wide version). (Mellomedley 1.21.1)"/>
 </div>
 
@@ -38,14 +38,13 @@ this.blockFamily(this.modLoc("block/avondale_planks"), "avondale").stairs(NumiBl
 ## The API
 *Reutilities*' API, known as **ReAPI**, allows you to easily register new boats, signs, colors, breast armor definitions and more, as well as give items their properties and create armor material layers.
 
-The `api` package also includes `ReCodecs`, which provides codec utilities, and `ReTiers`, to create new tiers for tools.
+The `api` package also includes `ReCodecs`, which provides codec utilities.
 
 ## Development
 To add *Reutilities* to the development environment, you'll need to add the following line to the `dependencies` block in your `build.gradle` file:
 ```groovy
 /// [...other dependencies]
 
-// External libraries
 // Reutilities
 implementation files("build/libs/reutilities-neoforge-${reutilities_version}+${minecraft_version}.jar")
 ```
@@ -53,7 +52,7 @@ implementation files("build/libs/reutilities-neoforge-${reutilities_version}+${m
 This will add the *Reutilities* jar file located inside `build/libs/`, where `reutilities_version` is the version of the mod you want to use. 
 This property should be added to your `gradle.properties` file, but can inline it if you want to.
 
-On the [GitHub Releases](https://github.com/isabellawoods/Reutilities/releases) page, a **sources** jar is provided for the versions released to keep the JavaDocs.
+On the [GitHub Releases](https://github.com/isabellawoods/Reutilities/releases) page, a **sources** jar is provided for the versions released to keep the Javadoc.
 
 It is also recommended to add a hard dependency on this mod through the **neoforge.mods.toml** file.
 The dependency should always target the version being used, as I tend to make many breaking changes between versions:
@@ -62,7 +61,7 @@ The dependency should always target the version being used, as I tend to make ma
 [[dependencies.examplemod]]
     modId = "reutilities"
     type = "required"
-    versionRange = "[1.5.0,)" # Latest version of the mod as of writing this
+    versionRange = "[1.4.0,),(,1.6.0)"
     ordering = "NONE"
     side = "BOTH"
 ```

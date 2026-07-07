@@ -8,7 +8,7 @@ public final class ReDebuggingFlags implements DebuggingFlags {
     /// @apiNote You must be holding an item for the display to work properly.
     /// @see melonystudios.reutilities.api.ReAPI#getItemBrightness ReAPI.getItemBrightness
     public static final boolean DEBUG_LIGHT_EMISSION_DISPLAY = FLAGS.locateBooleanFlag("lightEmissionDisplay", false);
-    /// Enables the `/melonystudios reutilities:dump_<locations> <alphabetical_sort>` command.
+    /// Enables the `/mstudios develop/dump_<locations> [<alphabetical_sort>]` command.
     /// @see melonystudios.reutilities.command.ReCommands#register ReCommands.register
     public static final boolean DEBUG_DUMP_COMMANDS = FLAGS.locateBooleanFlag("dumpCommands", true);
 

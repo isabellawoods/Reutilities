@@ -66,8 +66,8 @@ public class OutfitLayer<T extends LivingEntity, A extends HumanoidModel<T>> ext
         Level world = mob.level();
         ItemStack armorStack = mob.getItemBySlot(slot);
 
-        // Updated outfit rendering ~isa 4-12-24
-        // prioritize rendering component outfit over full-body ~isa 5-1-26
+        // Updated outfit rendering ~isa 04-12-24
+        // prioritize rendering component outfit over full-body ~isa 05-01-26
         FullBodyOutfit outfit = mob.getCapability(ReAPI.OUTFIT_CAPABILITY);
         if (!armorStack.isEmpty() && mob.getEquipmentSlotForItem(armorStack) == slot && armorStack.has(ReDataComponents.OUTFIT)) {
             this.renderComponentOutfit(stack, buffer, slot, armorStack, world, mob.blockPosition(), packedLight, slimArms);
@@ -105,7 +105,7 @@ public class OutfitLayer<T extends LivingEntity, A extends HumanoidModel<T>> ext
         // Emissive texture
         ResourceLocation emissiveLocation = OutfitDefinition.getEmissiveOutfitTexture(slot, definition, slimArms);
         if (emissiveLocation != null) {
-            VertexConsumer emissiveBuffer = buffer.getBuffer(RenderType.eyes(emissiveLocation));
+            VertexConsumer emissiveBuffer = buffer.getBuffer(RenderType.entityTranslucentEmissive(emissiveLocation, false));
             int emissiveColor = ReClientOptions.COLOR_EMISSIVE_OUTFIT_PARTS.get() ? outfitColor : -1;
             this.outfitModel.renderToBuffer(stack, emissiveBuffer, EMISSIVE_LIGHT_VALUE, overlayCoordinates, emissiveColor);
         }
@@ -126,7 +126,7 @@ public class OutfitLayer<T extends LivingEntity, A extends HumanoidModel<T>> ext
         ResourceLocation outfitLocation = OutfitDefinition.getOutfitTexture(slot, definition, slimArms);
         if (outfitLocation != null) {
             VertexConsumer translucentBuffer = buffer.getBuffer(RenderType.entityTranslucent(outfitLocation));
-            this.outfitModel.renderToBuffer(stack, translucentBuffer, packedLight, overlayCoordinates, FastColor.ARGB32.color(255, outfitColor));
+            this.outfitModel.renderToBuffer(stack, translucentBuffer, packedLight, overlayCoordinates, FastColor.ARGB32.opaque(outfitColor));
         }
 
         // Overlay texture
@@ -139,12 +139,12 @@ public class OutfitLayer<T extends LivingEntity, A extends HumanoidModel<T>> ext
         // Emissive texture
         ResourceLocation emissiveLocation = OutfitDefinition.getEmissiveOutfitTexture(slot, definition, slimArms);
         if (emissiveLocation != null) {
-            VertexConsumer emissiveBuffer = buffer.getBuffer(RenderType.eyes(emissiveLocation));
+            VertexConsumer emissiveBuffer = buffer.getBuffer(RenderType.entityTranslucentEmissive(emissiveLocation, false));
             int emissiveColor = ReClientOptions.COLOR_EMISSIVE_OUTFIT_PARTS.get() ? outfitColor : -1;
             this.outfitModel.renderToBuffer(stack, emissiveBuffer, EMISSIVE_LIGHT_VALUE, overlayCoordinates, emissiveColor);
         }
 
-        // glint currently renders on the player as well, just like during Back Math dev ~isa 23-8-25
+        // glint currently renders on the player as well, just like during Back Math dev ~isa 23-08-25
         /*if (armorStack.hasFoil()) {
             this.outfitModel.renderToBuffer(stack, buffer.getBuffer(RenderType.entityGlint()), packedLight, ReClientConstants.getOverlayCoordinates(1));
         }*/

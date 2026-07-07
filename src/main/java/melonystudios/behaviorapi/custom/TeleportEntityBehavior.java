@@ -80,7 +80,7 @@ public class TeleportEntityBehavior extends ItemBehavior {
         } else {
             if (livEntity.isPassenger()) livEntity.unRide();
 
-            // cancel the teleportation if the event was cancelled
+            // cancel the teleportation if the event was canceled
             BehaviorTeleportEvent event = BehaviorAPI.exactTeleportThroughBehavior(stack, world, livEntity, pos);
             if (event.isCanceled()) return;
 
@@ -114,7 +114,7 @@ public class TeleportEntityBehavior extends ItemBehavior {
             );
             double z = livEntity.getZ() + (rand.nextDouble() - 0.5) * diameter;
 
-            // cancel the teleportation if the event was cancelled
+            // cancel the teleportation if the event was canceled
             BehaviorTeleportEvent event = BehaviorAPI.randomTeleportThroughBehavior(stack, world, livEntity, x, y, z, diameter);
             if (event.isCanceled()) return;
 

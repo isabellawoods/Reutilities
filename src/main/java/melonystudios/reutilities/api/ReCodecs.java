@@ -19,7 +19,13 @@ import java.util.function.Function;
 /// Utility class that houses various codecs and stream codecs.
 public class ReCodecs {
     public static final Codec<Integer> HEX_INT_CODEC = new HexadecimalIntCodec();
-    public static final Codec<SoundSource> SOUND_SOURCE_CODEC = Codec.stringResolver(SoundSource::getName, name -> SoundSource.valueOf(name.toUpperCase(Locale.ENGLISH)));
+    public static final Codec<SoundSource> SOUND_SOURCE_CODEC = Codec.stringResolver(SoundSource::getName, name -> {
+        try {
+            return SoundSource.valueOf(name.toUpperCase(Locale.ENGLISH));
+        } catch (IllegalArgumentException exception) {
+            return null;
+        }
+    });
     public static final StreamCodec<ByteBuf, SoundSource> SOUND_SOURCE_STREAM_CODEC = ByteBufCodecs.idMapper(ByIdMap.continuous(Enum::ordinal, SoundSource.values(), ByIdMap.OutOfBoundsStrategy.ZERO), Enum::ordinal);
     public static final StreamCodec<ByteBuf, EquipmentSlot> EQUIPMENT_SLOT_STREAM_CODEC = ByteBufCodecs.idMapper(ByIdMap.continuous(Enum::ordinal, EquipmentSlot.values(), ByIdMap.OutOfBoundsStrategy.ZERO), Enum::ordinal);
     public static final StreamCodec<ByteBuf, Vec3> VEC3_STREAM_CODEC = StreamCodec.composite(ByteBufCodecs.DOUBLE, Vec3::x, ByteBufCodecs.DOUBLE, Vec3::y, ByteBufCodecs.DOUBLE, Vec3::z, Vec3::new);

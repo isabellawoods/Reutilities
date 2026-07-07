@@ -59,6 +59,7 @@ public class ChanceEffectInstance {
         return instance;
     }
 
+    /// @return The chance of this effect being applied. Defaults to `1`.
     public float chance() {
         return this.chance;
     }

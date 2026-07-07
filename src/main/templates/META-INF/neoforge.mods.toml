@@ -3,6 +3,7 @@
 # The overall format is standard TOML format, v0.5.0.
 # Note that there are a couple of TOML lists in this file.
 # Find more information on toml format here:  https://github.com/toml-lang/toml
+
 # The name of the mod loader type to load - for regular FML @Mod mods it should be javafml
 modLoader="javafml" #mandatory
 # A version range to match for said mod loader - for regular FML @Mod it will be the FML version. This is currently 2.
@@ -24,7 +25,7 @@ issueTrackerURL="https://github.com/isabellawoods/Reutilities/issues" #optional
     # A URL to query for updates for this mod. See the JSON update specification https://docs.neoforged.net/docs/misc/updatechecker/
     updateJSONURL="https://raw.githubusercontent.com/isabellawoods/Reutilities/refs/heads/neoforge-1.21.1/update_checker.json" #optional
     # A URL for the "homepage" for this mod, displayed in the mod UI
-    displayURL="https://github.com/isabellawoods/Reutilities/tree/neoforge-1.21.1" #optional
+    displayURL="https://modrinth.com/mod/reutilities" #optional
     # A file name (in the root of the mod JAR) containing a logo for display
     logoFile="${mod_id}.png" #optional
     # Whether the logo is blurry when viewed from up close
@@ -36,12 +37,32 @@ issueTrackerURL="https://github.com/isabellawoods/Reutilities/issues" #optional
     # The description text for the mod (multi line!) (#mandatory)
     description='''${mod_description}'''
 
-# The [modproperties] block is used by MrCrayfish's mods to change features about its menus
+# The [modproperties] block is used by mods to define features for each mod
 [modproperties.${mod_id}]
     # A small image displayed to the left of your mod’s name in Catalogue's mod list
     catalogueImageIcon="pack.png"
     # An image displayed on the background of the mod's logo. Catalogue makes the texture fade out at the bottom to blend into the description
     catalogueBackground="assets/${mod_id}/textures/gui/catalogue_background.png"
+    # A list of links to be displayed in Forged Mod Menu's mods screen
+    modMenuLinks=[
+        "modmenu.source=https://github.com/isabellawoods/Reutilities/tree/neoforge-1.21.1",
+        "modmenu.github_releases=https://github.com/isabellawoods/Reutilities/releases",
+        "reutilities.link.documentation=https://github.com/isabellawoods/Informational-Mod-Features/tree/main/Reutilities/Docs"
+    ]
+    # A file name (in the root of the mod JAR) containing a square logo to display in Forged Mod Menu's mods screen
+    modMenuLogoFile="pack.png"
+
+# The Behavior API sub-mod. It exists because I want it to
+[[mods]]
+    modId = "behaviorapi"
+    displayName = "Behavior API"
+    version = "1.5.1-beta"
+    authors="${mod_authors}"
+    description = "Adds expandable item behaviors which run in different environments."
+
+[modproperties.behaviorapi]
+    modMenuParent = "reutilities"
+    modMenuBadges = ["library"]
 
 # The [[mixins]] block allows you to declare your mixin config to FML so that it gets loaded.
 [[mixins]]
@@ -53,7 +74,8 @@ issueTrackerURL="https://github.com/isabellawoods/Reutilities/issues" #optional
     #file="META-INF/accesstransformer.cfg"
 
 # The coremods config file path is not configurable and is always loaded from META-INF/coremods.json
-# A dependency - use the . to indicate dependency for a specific modid. Dependencies are optional.
+
+# A dependency - use the . to indicate dependency for a specific mod id. Dependencies are optional.
 [[dependencies.${mod_id}]] #optional
     # the modid of the dependency
     modId="neoforge" #mandatory
@@ -80,14 +102,6 @@ issueTrackerURL="https://github.com/isabellawoods/Reutilities/issues" #optional
     versionRange="${minecraft_version_range}"
     ordering="NONE"
     side="BOTH"
-
-# Optional dependency for Female Gender Mod
-[[dependencies.${mod_id}]]
-    modId = "wildfire_gender"
-    type = "optional"
-    versionRange = "[3.2.2,)"
-    ordering = "NONE"
-    side = "CLIENT"
 
 # Features are specific properties of the game environment, that you may want to declare you require. This example declares
 # that your mod requires GL version 3.2 or higher. Other features will be added. They are side aware so declaring this won't

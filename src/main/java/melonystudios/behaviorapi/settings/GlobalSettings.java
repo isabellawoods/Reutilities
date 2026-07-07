@@ -31,7 +31,7 @@ public class GlobalSettings {
         return RecordCodecBuilder.mapCodec(instance -> instance.group(
                 Codec.BOOL.optionalFieldOf("show_in_tooltip", true).forGetter(GlobalSettings::showInTooltip),
                 Codec.STRING.optionalFieldOf("environment", EATING).forGetter(GlobalSettings::environment)
-        ).apply(instance, GlobalSettings::new));
+        ).apply(instance, GlobalSettings::of));
     }
 
     public static StreamCodec<ByteBuf, GlobalSettings> streamCodec() {

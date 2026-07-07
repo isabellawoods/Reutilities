@@ -4,6 +4,7 @@ import melonystudios.reutilities.Reutilities;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
+import org.jetbrains.annotations.ApiStatus;
 
 public class ReItemTags {
     // Reutilities' tags
@@ -17,8 +18,12 @@ public class ReItemTags {
     public static final TagKey<Item> DUAL_WIELDED = common("dual_wielded");
     /// Items in this tag hide the wearer's cape when worn in their chest slot.
     public static final TagKey<Item> HIDES_CAPE_WHEN_WORN = common("hides_cape_when_worn");
+    /// Contains all logos and icons for mods and creative tabs.
     public static final TagKey<Item> LOGOS = common("logos");
     public static final TagKey<Item> FLINT = common("flint");
+    /// @deprecated Use {@link net.neoforged.neoforge.common.Tags.Items#NETHER_STARS #c:nether_stars} (from *NeoForge*) instead.
+    @Deprecated(since = "1.5.1", forRemoval = true)
+    @ApiStatus.ScheduledForRemoval(inVersion = "1.6.0")
     public static final TagKey<Item> NETHER_STARS = common("nether_stars");
 
     public static final TagKey<Item> SUGAR_DUSTS = common("dusts/sugar");

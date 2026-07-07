@@ -11,7 +11,7 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.resources.RegistryFileCodec;
+import net.minecraft.resources.RegistryFixedCodec;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
@@ -66,7 +66,7 @@ public record OutfitDefinition(Optional<OutfitSlot> headSlot, Optional<OutfitSlo
             ByteBufCodecs.optional(OutfitSlot.STREAM_CODEC).encode(buffer, definition.offhandSlot());
         }
     };
-    public static final Codec<Holder<OutfitDefinition>> CODEC = RegistryFileCodec.create(ReRegistries.OUTFIT_DEFINITION, DIRECT_CODEC);
+    public static final Codec<Holder<OutfitDefinition>> CODEC = RegistryFixedCodec.create(ReRegistries.OUTFIT_DEFINITION);
     public static final StreamCodec<RegistryFriendlyByteBuf, Holder<OutfitDefinition>> STREAM_CODEC = ByteBufCodecs.holder(ReRegistries.OUTFIT_DEFINITION, DIRECT_STREAM_CODEC);
     public static final int DEFAULT_OUTFIT_COLOR = 0xFFFFFF;
 
@@ -110,7 +110,7 @@ public record OutfitDefinition(Optional<OutfitSlot> headSlot, Optional<OutfitSlo
 
     /// Whether to hide the skin layers for the player or entity when wearing this outfit on this slot.
     /// @param slotType Which slot the outfit is being rendered in.
-    /// @param definition The outfit definition. Used to get the "`hides_skin_layers`" boolean field on the slot.
+    /// @param definition The outfit definition. Used to get the `hides_skin_layers` boolean field on the slot.
     /// @param slimArms Whether the entity has slim arms, used to find the correct texture.
     public static boolean shouldHideLayer(EquipmentSlot slotType, OutfitDefinition definition, boolean slimArms) {
         ResourceLocation outfitLocation = getOutfitTexture(slotType, definition, slimArms);

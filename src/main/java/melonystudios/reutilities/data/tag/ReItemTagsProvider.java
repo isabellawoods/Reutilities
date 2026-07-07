@@ -41,7 +41,6 @@ public final class ReItemTagsProvider extends ItemTagsProvider {
         this.tag(HIDES_CAPE_WHEN_WORN).add(Items.ELYTRA).addOptionalTag(Reutilities.common("elytra"));
         this.tag(LOGOS);
         this.tag(FLINT).add(Items.FLINT);
-        this.tag(NETHER_STARS).add(Items.NETHER_STAR);
 
         this.tag(SUGAR_DUSTS).add(Items.SUGAR);
         this.tag(GUNPOWDER_DUSTS).addTag(Tags.Items.GUNPOWDERS);

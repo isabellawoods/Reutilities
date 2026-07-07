@@ -45,6 +45,7 @@ neoForge {
     runs {
         client {
             client()
+            // programArguments.addAll '--quickPlaySingleplayer', 'New World (2)'
             devLogin = true
 
             // Comma-separated list of namespaces to load gametests from. Empty = all namespaces.
@@ -115,14 +116,17 @@ configurations {
 }
 
 dependencies {
-    // Example optional mod dependency with JEI
-    // The JEI API is declared for compile time use, while the full JEI artifact is used at runtime
-    compileOnly("mezz.jei:jei-${minecraft_version}-neoforge-api:${jei_version}")
-    // At runtime, we use the full JEI jar for NeoForge
-    runtimeOnly("mezz.jei:jei-${minecraft_version}-neoforge:${jei_version}")
-
     // Female Gender Mod
     implementation "maven.modrinth:female-gender:${femalegender_version}"
+
+    // Forged Mod Menu
+    implementation files("build/libs/forgedmodmenu-neoforge-${forgedmodmenu_version}+${minecraft_version}.jar")
+
+    // Just Enough Items
+    // The JEI API is declared for compile time use, while the full JEI artifact is used at runtime.
+    compileOnly("mezz.jei:jei-${minecraft_version}-neoforge-api:${jei_version}")
+    // At runtime, we use the full JEI jar for NeoForge.
+    runtimeOnly("mezz.jei:jei-${minecraft_version}-neoforge:${jei_version}")
 
     // Example mod dependency using a mod jar from ./libs with a flat directory repository:
     // This maps to ./libs/coolmod-${mc_version}-${coolmod_version}.jar

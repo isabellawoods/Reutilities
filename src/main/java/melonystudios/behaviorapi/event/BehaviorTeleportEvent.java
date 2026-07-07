@@ -6,9 +6,9 @@ import net.minecraft.world.level.Level;
 import net.neoforged.bus.api.ICancellableEvent;
 import net.neoforged.neoforge.event.entity.EntityTeleportEvent;
 
-/// `BehaviorTeleportEvent` is fired before a LivingEntity is teleported from a {@linkplain melonystudios.behaviorapi.custom.TeleportEntityBehavior Teleport Entity item behavior}.
+/// `BehaviorTeleportEvent` is fired before a `LivingEntity` is teleported by a {@linkplain melonystudios.behaviorapi.custom.TeleportEntityBehavior "teleport entity" item behavior}.
 ///
-/// This event is {@linkplain ICancellableEvent cancellable}. When cancelled, the entity will not be teleported.
+/// This event is {@linkplain ICancellableEvent cancelable}. When canceled, the entity will not be teleported.
 ///
 /// This event is only fired on the {@linkplain net.neoforged.fml.LogicalSide#SERVER logical server side}.
 public class BehaviorTeleportEvent extends EntityTeleportEvent implements ICancellableEvent {
@@ -16,9 +16,9 @@ public class BehaviorTeleportEvent extends EntityTeleportEvent implements ICance
     private final Level world;
     private final LivingEntity livEntity;
 
-    /// `BehaviorTeleportEvent` is fired before a LivingEntity is teleported from a {@linkplain melonystudios.behaviorapi.custom.TeleportEntityBehavior Teleport Entity item behavior}.
+    /// `BehaviorTeleportEvent` is fired before a `LivingEntity` is teleported by a {@linkplain melonystudios.behaviorapi.custom.TeleportEntityBehavior "teleport entity" item behavior}.
     ///
-    /// This event is {@linkplain ICancellableEvent cancellable}. When cancelled, the entity will not be teleported.
+    /// This event is {@linkplain ICancellableEvent cancelable}. When canceled, the entity will not be teleported.
     ///
     /// This event is only fired on the {@linkplain net.neoforged.fml.LogicalSide#SERVER logical server side}.
     /// @param stack The item stack with the `reutilities:behaviors` component.
@@ -47,19 +47,19 @@ public class BehaviorTeleportEvent extends EntityTeleportEvent implements ICance
         return this.livEntity;
     }
 
-    /// `BehaviorTeleportEvent.RandomTeleport` is fired before a LivingEntity randomly teleported from a
-    /// {@linkplain melonystudios.behaviorapi.custom.TeleportEntityBehavior Teleport Entity item behavior}.
+    /// `BehaviorTeleportEvent.RandomTeleport` is fired before a `LivingEntity` is randomly teleported by a
+    /// {@linkplain melonystudios.behaviorapi.custom.TeleportEntityBehavior "teleport entity" item behavior}.
     ///
-    /// This event is {@linkplain ICancellableEvent cancellable}. When cancelled, the entity will not be teleported.
+    /// This event is {@linkplain ICancellableEvent cancelable}. When canceled, the entity will not be teleported.
     ///
     /// This event is only fired on the {@linkplain net.neoforged.fml.LogicalSide#SERVER logical server side}..
     public static class RandomTeleport extends BehaviorTeleportEvent {
         private final float teleportDiameter;
 
-        /// `BehaviorTeleportEvent.RandomTeleport` is fired before a LivingEntity randomly teleported from a
-        /// {@linkplain melonystudios.behaviorapi.custom.TeleportEntityBehavior Teleport Entity item behavior}.
+        /// `BehaviorTeleportEvent.RandomTeleport` is fired before a `LivingEntity` is randomly teleported by a
+        /// {@linkplain melonystudios.behaviorapi.custom.TeleportEntityBehavior "teleport entity" item behavior}.
         ///
-        /// This event is {@linkplain ICancellableEvent cancellable}. When cancelled, the entity will not be teleported.
+        /// This event is {@linkplain ICancellableEvent cancelable}. When canceled, the entity will not be teleported.
         ///
         /// This event is only fired on the {@linkplain net.neoforged.fml.LogicalSide#SERVER logical server side}..
         /// @param stack The item stack with the `reutilities:behaviors` component.

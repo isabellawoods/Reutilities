@@ -11,8 +11,8 @@ import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 
 @Mod(value = Reutilities.MOD_ID, dist = Dist.CLIENT)
-public class ReClient {
-    public ReClient(IEventBus eventBus, ModContainer container) {
+public class ReutilitiesClient {
+    public ReutilitiesClient(IEventBus eventBus, ModContainer container) {
         container.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
         container.registerConfig(ModConfig.Type.CLIENT, ReClientOptions.SPEC, "melonystudios/reutilities-client.toml");
 

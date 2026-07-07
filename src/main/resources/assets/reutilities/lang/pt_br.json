@@ -33,7 +33,7 @@
   "config.reutilities.show_components_with_alt": "Mostrar componentes com Alt",
   "config.reutilities.show_components_with_alt.tooltip": "Se deve mostrar os componentes de um item na sua descrição quando segurar Alt.",
   "config.reutilities.line_breaks_on_components": "Quebra de linha nos componentes",
-  "config.reutilities.line_breaks_on_components.tooltip": "Se os componentes nas descrições de itens devem ter quebras de linha.",
+  "config.reutilities.line_breaks_on_components.tooltip": "Se os componentes nas descrições de itens devem ter quebras de linha.\n§eMarcações curtas podem mostrar o caractére de nova linha. Isso é um problema com a renderização de descrições do Minecraft.§r",
   "config.reutilities.panoramic_screenshots": "Captura de panoramas",
   "config.reutilities.panoramic_screenshots.tooltip": "Se capturas panorâmicas podem ser salvas usando Ctrl + [tecla de captura].\n§eSe o Iris Shaders estiver carregado, capturas não serão salvas corretamente.",
   "config.reutilities.panoramic_screenshot_size": "Tamanho das capturas de panorama",
@@ -43,9 +43,10 @@
   "config.reutilities.maximum_bust_size": "§l[FGM]§r Tamanho máximo do busto",
   "config.reutilities.maximum_bust_size.tooltip": "Determina o tamanho máximos dos peitos adicionados pelo Female Gender Mod. O padrão é 0.8.\n§eValores acima de 1 fazem com que a renderização quebre mais e mais.",
 
-  "commands.itembehavior.set.success.single": "Adicionou o funcionamento de item %s para %s",
+  "commands.itembehavior.set.success.single": "Adicionou o funcionamento de item %s em %s",
   "commands.itembehavior.set.success.multiple": "Adicionou o funcionamento de item %s para %s jogadores",
-  "commands.itembehavior.set.fail": "Falha ao adicionar o funcionamento de item %s para %s",
+  "commands.itembehavior.set.fail": "Falha ao adicionar o funcionamento de item %s em %s",
+  "commands.itembehavior.set.fail_with_reason": "Falha ao adicionar o funcionamento de item %s em %s:\n%s",
   "commands.itembehavior.set.invalid": "Nenhum funcionamento encontrado com o ID \"%s\"",
   "commands.reutilities.dump_locations.success": "Novo arquivo criado com todos os(as) %s em \"%s\"",
   "commands.reutilities.dump_locations.fail": "Falha ao criar um arquivo com todos os(as) %s em \"%s\"",
@@ -119,6 +120,15 @@
   "screenshot.fail.iris_loaded": "Iris Shaders está carregado. Capturas panorâmicas não serão salvas corretamente!",
   "screenshot.fail": "Falha ao salvar a captura panorâmica",
 
+  "modmenu.nameTranslation.reutilities": "Reutilities",
+  "modmenu.summaryTranslation.reutilities": "Biblioteca para todos os mods do Estúdio Melony.",
+  "modmenu.descriptionTranslation.reutilities": "Biblioteca para todos os mods do Estúdio Melony à partir da versão 1.21.1, que unifica a maioria do código usado em meus mods, e contém várias coisas úteis e extensivas.",
+  "modmenu.nameTranslation.behaviorapi": "Behavior API",
+  "modmenu.descriptionTranslation.behaviorapi": "Adiciona funcionamentos de itens que rodam em circunstâncias diferentes.",
+  "reutilities.link.imf": "Informações dos Mods",
+  "reutilities.link.documentation": "[IM] Documentação",
+  "reutilities.link.changelogs": "[IM] Mudanças",
+
   "tooltip.reutilities.beneficial_effect": "[☑] %s",
   "tooltip.reutilities.harmful_effect": "[☒] %s",
   "tooltip.reutilities.neutral_effect": "[☐] %s",
@@ -133,10 +143,12 @@
   "tooltip.reutilities.player": "Jogador(a): %s",
   "tooltip.reutilities.design": "Design da roupa:",
 
-  "logger.reutilities.wildfire_gender_capabilities": "Não foi possível adicionar as capacidades dos peitos de armadura do Female Gender Mod",
+  "logger.reutilities.wildfire_gender_capabilities": "Não foi possível adicionar as capacidades de peitos em armaduras do Female Gender Mod",
   "logger.reutilities.wrong_holder_type.outfit": "A entidade-anexo precisa ser uma instância de LivingEntity",
   "logger.reutilities.wrong_holder_type.cape": "A entidade-anexo precisa ser uma instância de LivingEntity e OffsetGetter",
   "logger.reutilities.outside_bounds": "Valor tem que estar entre %s e %s; é %s",
   "logger.reutilities.wood_type.non_existent": "Tipo de madeira não existe em nenhum mod: '%s'",
-  "logger.reutilities.recolor.non_existent": "Recoloração não existe em nenhum mod: '%s'"
+  "logger.reutilities.recolor.non_existent": "Recoloração não existe em nenhum mod: '%s'",
+
+  "debug.reutilities.light_emission_display": "luz emitida: %s // luz (céu/bloco): %s/%s"
 }

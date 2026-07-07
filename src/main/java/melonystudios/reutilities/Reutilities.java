@@ -1,9 +1,6 @@
 package melonystudios.reutilities;
 
 import com.mojang.logging.LogUtils;
-import melonystudios.behaviorapi.BehaviorSounds;
-import melonystudios.behaviorapi.ItemBehaviors;
-import melonystudios.behaviorapi.serializer.ConsumeBehaviorSerializers;
 import melonystudios.reutilities.api.ReAPI;
 import melonystudios.reutilities.block.ReBlockTypes;
 import melonystudios.reutilities.blockentity.ReBlockEntities;
@@ -31,7 +28,6 @@ public class Reutilities {
     public Reutilities(IEventBus eventBus, ModContainer container) {
         eventBus.addListener(this::commonSetup);
 
-        // Reutilities
         ReArmorMaterials.MATERIALS.register(eventBus);
         ReDataComponents.COMPONENTS.register(eventBus);
         ReBlockTypes.TYPES.register(eventBus);
@@ -39,11 +35,6 @@ public class Reutilities {
         ReEntities.ENTITIES.register(eventBus);
         ReAttachmentTypes.ATTACHMENTS.register(eventBus);
         ReMenuTypes.MENUS.register(eventBus);
-
-        // Behavior API
-        BehaviorSounds.SOUNDS.register(eventBus);
-        ItemBehaviors.BEHAVIORS.register(eventBus);
-        ConsumeBehaviorSerializers.SERIALIZERS.register(eventBus);
 
         container.registerConfig(ModConfig.Type.COMMON, ReCommonOptions.SPEC, "melonystudios/reutilities-common.toml");
     }

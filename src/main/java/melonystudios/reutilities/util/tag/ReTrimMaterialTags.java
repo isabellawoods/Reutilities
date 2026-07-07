@@ -6,6 +6,7 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.armortrim.TrimMaterial;
 
 public class ReTrimMaterialTags {
+    /// Trim materials in this tag glow at light level `15` when displayed.
     public static final TagKey<TrimMaterial> EMISSIVE_LIGHTING = common("emissive_lighting");
 
     /// Creates a new trim material tag with a specified name.

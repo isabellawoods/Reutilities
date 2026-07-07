@@ -1,7 +1,5 @@
 package melonystudios.reutilities.event;
 
-import melonystudios.behaviorapi.BehaviorAPI;
-import melonystudios.behaviorapi.command.ItemBehaviorCommand;
 import melonystudios.behaviorapi.settings.GlobalSettings;
 import melonystudios.reutilities.Reutilities;
 import melonystudios.reutilities.api.ReAPI;
@@ -31,7 +29,6 @@ import net.neoforged.neoforge.event.BlockEntityTypeAddBlocksEvent;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.entity.player.AttackEntityEvent;
 import net.neoforged.neoforge.registries.DataPackRegistryEvent;
-import net.neoforged.neoforge.registries.NewRegistryEvent;
 import org.slf4j.MarkerFactory;
 
 import java.util.concurrent.CompletableFuture;
@@ -40,7 +37,6 @@ import java.util.concurrent.CompletableFuture;
 public class ReEvents {
     @SubscribeEvent
     public static void registerCommands(RegisterCommandsEvent event) {
-        ItemBehaviorCommand.register(event.getDispatcher(), event.getBuildContext());
         ReCommands.register(event.getDispatcher());
     }
 
@@ -97,12 +93,6 @@ public class ReEvents {
         event.registerEntity(ReAPI.CAPE_CAPABILITY, EntityType.PIGLIN, (piglin, context) -> piglin.getData(ReAttachmentTypes.CAPE.get()));
         event.registerEntity(ReAPI.CAPE_CAPABILITY, EntityType.PIGLIN_BRUTE, (piglin, context) -> piglin.getData(ReAttachmentTypes.CAPE.get()));
         event.registerEntity(ReAPI.CAPE_CAPABILITY, EntityType.ZOMBIFIED_PIGLIN, (piglin, context) -> piglin.getData(ReAttachmentTypes.CAPE.get()));
-    }
-
-    @SubscribeEvent
-    public static void addBuiltInRegistries(NewRegistryEvent event) {
-        event.register(BehaviorAPI.ITEM_BEHAVIOR);
-        event.register(BehaviorAPI.ITEM_BEHAVIOR_SERIALIZER);
     }
 
     @SubscribeEvent

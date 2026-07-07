@@ -77,7 +77,7 @@ public abstract class ItemBehavior implements TooltipProvider {
     /// Gets the codec for this behavior's **individual settings**.
     public abstract MapCodec<? extends ItemBehavior> settingsCodec();
 
-    /// Runs this item behavior, based on the behavior's {@linkplain GlobalSettings **individual settings**}.
+    /// Runs this item behavior, based on the behavior's {@linkplain IndividualSettings **individual settings**}.
     /// @param stack The item stack with the `reutilities:behaviors` component.
     /// @param world The world.
     /// @param livEntity The entity running the effect.

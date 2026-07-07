@@ -2,6 +2,7 @@ package melonystudios.reutilities.mixin.item;
 
 import com.llamalad7.mixinextras.sugar.Local;
 import melonystudios.reutilities.Reutilities;
+import melonystudios.reutilities.api.ReAPI;
 import melonystudios.reutilities.component.ReDataComponents;
 import melonystudios.reutilities.option.ReCommonOptions;
 import melonystudios.reutilities.util.ReCommonConstants;
@@ -16,7 +17,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.TooltipProvider;
-import net.neoforged.neoforge.common.extensions.IItemStackExtension;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -27,7 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Mixin(ItemStack.class)
-public abstract class ReItemStackMixin implements DataComponentHolder, IItemStackExtension {
+public abstract class ReItemStackMixin implements DataComponentHolder {
     @Inject(method = "getBarColor", at = @At("HEAD"), cancellable = true)
     public void getBarColor(CallbackInfoReturnable<Integer> callback) {
         if (this.has(ReDataComponents.BAR_COLOR)) callback.setReturnValue(this.get(ReDataComponents.BAR_COLOR));
@@ -47,7 +47,7 @@ public abstract class ReItemStackMixin implements DataComponentHolder, IItemStac
     public void addComponentDisplay(Item.TooltipContext context, Player player, TooltipFlag flag, CallbackInfoReturnable<List<Component>> callback, @Local List<Component> list) {
         if (player != null) player.level().getProfiler().push(Reutilities.reutilities("display_components_on_tooltip").toString());
 
-        if (flag.isAdvanced() && ReCommonOptions.SHOW_COMPONENTS_WITH_ALT.get() && ReCommonConstants.shouldDisplay(this, Reutilities.reutilities("item_components"))) {
+        if (flag.isAdvanced() && ReCommonOptions.SHOW_COMPONENTS_WITH_ALT.get() && ReAPI.shouldDisplay(this, Reutilities.reutilities("item_components"))) {
             List<Component> tags = ReCommonConstants.addItemTagsTooltip(this, context.registries(), new ArrayList<>());
             if (tags.isEmpty()) return;
             list.add(Component.translatable("tooltip.reutilities.for_components", Component.keybind("key.keyboard.left.alt").withStyle(flag.hasAltDown() ? ChatFormatting.WHITE : ChatFormatting.GRAY)).withStyle(ChatFormatting.DARK_GRAY));

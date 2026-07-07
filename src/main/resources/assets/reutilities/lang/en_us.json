@@ -33,7 +33,7 @@
   "config.reutilities.show_components_with_alt": "Show Components with Alt",
   "config.reutilities.show_components_with_alt.tooltip": "Whether to display an item's data components when holding Alt.",
   "config.reutilities.line_breaks_on_components": "Line Breaks on Components",
-  "config.reutilities.line_breaks_on_components.tooltip": "Whether component display on tooltips should have line breaks.",
+  "config.reutilities.line_breaks_on_components.tooltip": "Whether component display on tooltips should have line breaks.\n§eShort tags may display the newline character. This is an issue with Minecraft's tooltip rendering.§r",
   "config.reutilities.panoramic_screenshots": "Panoramic Screenshots",
   "config.reutilities.panoramic_screenshots.tooltip": "Whether panoramic screenshots can be taken using Ctrl + [Screenshot Key].\n§eIf Iris Shaders is loaded, panoramas will not be taken correctly.",
   "config.reutilities.panoramic_screenshot_size": "Panoramic Screenshot Size",
@@ -46,6 +46,7 @@
   "commands.itembehavior.set.success.single": "Added item behavior %s to %s",
   "commands.itembehavior.set.success.multiple": "Added item behavior %s to %s players",
   "commands.itembehavior.set.fail": "Failed to add item behavior %s to %s",
+  "commands.itembehavior.set.fail_with_reason": "Failed to add item behavior %s to %s:\n%s",
   "commands.itembehavior.set.invalid": "There is no item behavior with type \"%s\"",
   "commands.reutilities.dump_locations.success": "New file created with all %s at \"%s\"",
   "commands.reutilities.dump_locations.fail": "Failed to create new file with all %s at \"%s\"",
@@ -119,6 +120,15 @@
   "screenshot.fail.iris_loaded": "Iris Shaders is loaded. Panoramas will not be taken correctly!",
   "screenshot.fail": "Failed to save panorama",
 
+  "modmenu.nameTranslation.reutilities": "Reutilities",
+  "modmenu.summaryTranslation.reutilities": "Library for all of Melony Studios' mods.",
+  "modmenu.descriptionTranslation.reutilities": "Library for all of Melony Studios' mods beginning on version 1.21.1.\nIt unifies most of the code that was used across my mods, and ports various useful and extensible features.",
+  "modmenu.nameTranslation.behaviorapi": "Behavior API",
+  "modmenu.descriptionTranslation.behaviorapi": "Adds expandable item behaviors which run in different environments.",
+  "reutilities.link.imf": "Informational Mod Features",
+  "reutilities.link.documentation": "[IMF] Documentation",
+  "reutilities.link.changelogs": "[IMF] Changelogs",
+
   "tooltip.reutilities.beneficial_effect": "[☑] %s",
   "tooltip.reutilities.harmful_effect": "[☒] %s",
   "tooltip.reutilities.neutral_effect": "[☐] %s",
@@ -138,5 +148,7 @@
   "logger.reutilities.wrong_holder_type.cape": "Holder entity must be an instance of LivingEntity and OffsetGetter",
   "logger.reutilities.outside_bounds": "Value must be within %s and %s; is %s",
   "logger.reutilities.wood_type.non_existent": "Wood type does not exist in any mod: '%s'",
-  "logger.reutilities.recolor.non_existent": "Recolor does not exist in any mod: '%s'"
+  "logger.reutilities.recolor.non_existent": "Recolor does not exist in any mod: '%s'",
+
+  "debug.reutilities.light_emission_display": "emitted light: %s // light emission (sky/block): %s/%s"
 }

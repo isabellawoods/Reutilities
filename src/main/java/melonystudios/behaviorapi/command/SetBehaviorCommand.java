@@ -4,11 +4,11 @@ import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
+import com.mojang.serialization.DataResult;
 import melonystudios.behaviorapi.BehaviorAPI;
 import melonystudios.behaviorapi.ItemBehavior;
 import melonystudios.reutilities.component.ReDataComponents;
 import net.minecraft.ChatFormatting;
-import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.CompoundTagArgument;
@@ -17,10 +17,12 @@ import net.minecraft.commands.arguments.ResourceKeyArgument;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentUtils;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
@@ -34,7 +36,7 @@ public class SetBehaviorCommand {
             behavior -> Component.translatableEscape("commands.itembehavior.set.invalid", behavior)
     );
 
-    public static ArgumentBuilder<CommandSourceStack, ?> register(CommandBuildContext buildContext) {
+    public static ArgumentBuilder<CommandSourceStack, ?> register() {
         return Commands.argument("targets", EntityArgument.players())
                 .then(Commands.literal("add").then(Commands.argument("item_behavior", ResourceKeyArgument.key(BehaviorAPI.ITEM_BEHAVIOR_KEY))
                         .then(Commands.argument("properties", CompoundTagArgument.compoundTag())
@@ -45,21 +47,39 @@ public class SetBehaviorCommand {
     private static int addItemBehavior(CommandSourceStack source, Holder.Reference<ItemBehavior> behaviorRef, CompoundTag properties, Collection<ServerPlayer> players) {
         for (ServerPlayer player : players) {
             ItemStack stack = player.getItemInHand(InteractionHand.MAIN_HAND);
-            ItemBehavior behavior = behaviorRef.value();
+            ResourceKey<ItemBehavior> behaviorKey = behaviorRef.key();
+
             if (!stack.isEmpty()) {
                 List<ItemBehavior> existing = stack.getOrDefault(ReDataComponents.BEHAVIORS, new ArrayList<>());
-
                 List<ItemBehavior> behaviors = new ArrayList<>(existing);
-                behaviors.add(behavior);
+
+                // add "id" field if it doesn't exist
+                properties.putString("id", behaviorKey.location().toString());
+
+                // parse behavior data from the provided CompoundTag
+                DataResult<ItemBehavior> parsing = ItemBehavior.CODEC.get().compressedDecode(NbtOps.INSTANCE, properties);
+                if (parsing.error().isPresent()) {
+                    source.sendFailure(Component.translatable("commands.itembehavior.set.fail_with_reason",
+                            behaviorRef.value().getCommandDisplayName(),
+                            getItemDisplayName(stack),
+                            parsing.error().get().message()
+                    ));
+                    return 0;
+                }
+                ItemBehavior parsed = parsing.getOrThrow();
+
+                // add the newly parsed behavior to the item's behavior component
+                behaviors.add(parsed);
                 stack.set(ReDataComponents.BEHAVIORS, behaviors);
+
                 if (players.size() == 1) {
-                    source.sendSuccess(() -> Component.translatable("commands.itembehavior.set.success.single", behavior.getCommandDisplayName(), player.getDisplayName()), true);
+                    source.sendSuccess(() -> Component.translatable("commands.itembehavior.set.success.single", behaviorRef.value().getCommandDisplayName(), player.getDisplayName()), true);
                 } else {
-                    source.sendSuccess(() -> Component.translatable("commands.itembehavior.set.success.multiple", behavior.getCommandDisplayName(), players.size()), true);
+                    source.sendSuccess(() -> Component.translatable("commands.itembehavior.set.success.multiple", behaviorRef.value().getCommandDisplayName(), players.size()), true);
                 }
                 return players.size();
             } else {
-                source.sendFailure(Component.translatable("commands.itembehavior.set.fail", behavior.getCommandDisplayName(), getItemDisplayName(stack)));
+                source.sendFailure(Component.translatable("commands.itembehavior.set.fail", behaviorRef.value().getCommandDisplayName(), getItemDisplayName(stack)));
             }
         }
         return 0;
@@ -69,6 +89,8 @@ public class SetBehaviorCommand {
         MutableComponent component = stack.getHoverName().copy().withStyle(ChatFormatting.RED);
         if (stack.get(DataComponents.CUSTOM_NAME) != null) component.withStyle(ChatFormatting.ITALIC);
         MutableComponent wrappedComponent = ComponentUtils.wrapInSquareBrackets(component);
+        if (stack.isEmpty()) return wrappedComponent;
+
         wrappedComponent.withStyle(style -> style.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_ITEM, new HoverEvent.ItemStackInfo(stack))));
         return wrappedComponent;
     }

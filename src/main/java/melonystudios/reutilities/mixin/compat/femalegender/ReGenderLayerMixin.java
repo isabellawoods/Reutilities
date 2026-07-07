@@ -142,7 +142,7 @@ public abstract class ReGenderLayerMixin<ENTITY extends LivingEntity, MODEL exte
         // Emissive texture
         ResourceLocation emissiveLocation = OutfitDefinition.getEmissiveOutfitTexture(EquipmentSlot.CHEST, definition, slimArms);
         if (emissiveLocation != null) {
-            VertexConsumer emissiveBuffer = buffer.getBuffer(RenderType.eyes(emissiveLocation));
+            VertexConsumer emissiveBuffer = buffer.getBuffer(RenderType.entityTranslucentEmissive(emissiveLocation, false));
             int emissiveColor = ReClientOptions.COLOR_EMISSIVE_OUTFIT_PARTS.get() ? outfitColor : -1;
             renderBox(outfitBox, stack, emissiveBuffer, EMISSIVE_LIGHT_VALUE, overlayCoordinates, emissiveColor);
         }
@@ -163,7 +163,7 @@ public abstract class ReGenderLayerMixin<ENTITY extends LivingEntity, MODEL exte
         ResourceLocation outfitLocation = OutfitDefinition.getOutfitTexture(EquipmentSlot.CHEST, definition, slimArms);
         if (outfitLocation != null) {
             VertexConsumer translucentBuffer = buffer.getBuffer(RenderType.entityTranslucent(outfitLocation));
-            renderBox(outfitBox, stack, translucentBuffer, packedLight, overlayCoordinates, FastColor.ARGB32.color(255, outfitColor));
+            renderBox(outfitBox, stack, translucentBuffer, packedLight, overlayCoordinates, FastColor.ARGB32.opaque(outfitColor));
         }
 
         // Overlay texture
@@ -176,7 +176,7 @@ public abstract class ReGenderLayerMixin<ENTITY extends LivingEntity, MODEL exte
         // Emissive texture
         ResourceLocation emissiveLocation = OutfitDefinition.getEmissiveOutfitTexture(EquipmentSlot.CHEST, definition, slimArms);
         if (emissiveLocation != null) {
-            VertexConsumer emissiveBuffer = buffer.getBuffer(RenderType.eyes(emissiveLocation));
+            VertexConsumer emissiveBuffer = buffer.getBuffer(RenderType.entityTranslucentEmissive(emissiveLocation, false));
             int emissiveColor = ReClientOptions.COLOR_EMISSIVE_OUTFIT_PARTS.get() ? outfitColor : -1;
             renderBox(outfitBox, stack, emissiveBuffer, EMISSIVE_LIGHT_VALUE, overlayCoordinates, emissiveColor);
         }
@@ -197,7 +197,7 @@ public abstract class ReGenderLayerMixin<ENTITY extends LivingEntity, MODEL exte
         return ReAPI.getItemBrightness(livEntity.getItemBySlot(EquipmentSlot.CHEST), light, livEntity.level(), livEntity.blockPosition(), true);
     }
 
-    /// @author ~isa 5-1-26
+    /// @author ~isa 05-01-26
     /// @reason allows any entity to have a correct breast texture, will be used for some of my mods later (like *Numinosity*)
     @Overwrite
     @Nullable

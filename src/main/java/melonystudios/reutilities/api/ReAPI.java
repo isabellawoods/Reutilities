@@ -20,6 +20,8 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.DataComponentHolder;
+import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
@@ -30,6 +32,7 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
+import net.minecraft.world.item.component.BlockItemStateProperties;
 import net.minecraft.world.item.component.ChargedProjectiles;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.Level;
@@ -44,6 +47,7 @@ import java.time.LocalDate;
 import java.time.Month;
 import java.util.EnumMap;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 import static melonystudios.reutilities.util.ReClientConstants.*;
@@ -143,17 +147,26 @@ public class ReAPI {
     /// @param fallback A fallback string to use, using `%s` for arguments.
     /// @param args An optional array of arguments.
     public static String translate(String key, String fallback, Object... args) {
-        if (I18n.exists(key)) return I18n.get(key, args);
-        else return String.format(fallback, args);
+        return I18n.exists(key) ? I18n.get(key, args) : String.format(fallback, args);
     }
 
     /// Whether a tooltip can be displayed on an item, or is hidden by the {@link ReDataComponents#HIDE_COMPONENTS reutilities:hide_components} component.
-    /// @param stack The item stack.
+    /// @param holder A data component holder, such as an item stack.
     /// @param name A resource location of the tooltip name, like `reutilities:item_components`.
-    public static boolean shouldDisplay(ItemStack stack, ResourceLocation name) {
-        List<ResourceLocation> itemTags = stack.get(ReDataComponents.HIDE_COMPONENTS);
-        if (itemTags == null || itemTags.isEmpty()) return true;
-        return !itemTags.contains(name);
+    public static boolean shouldDisplay(DataComponentHolder holder, ResourceLocation name) {
+        List<ResourceLocation> hiddenComponents = holder.get(ReDataComponents.HIDE_COMPONENTS.get());
+        if (hiddenComponents == null || hiddenComponents.isEmpty()) return true;
+        return !hiddenComponents.contains(name);
+    }
+
+    /// Whether a tooltip can be displayed on an item, or is hidden by the {@link ReDataComponents#HIDE_COMPONENTS reutilities:hide_components} component.
+    /// @param patch A data component patch, usually taken from an item stack.
+    /// @param name A resource location of the tooltip name, like `reutilities:item_components`.
+    public static boolean shouldDisplay(DataComponentPatch patch, ResourceLocation name) {
+        Optional<? extends List<ResourceLocation>> hiddenComponents = patch.get(ReDataComponents.HIDE_COMPONENTS.get());
+        // noinspection OptionalAssignedToNull
+        if (hiddenComponents == null || hiddenComponents.isEmpty() || hiddenComponents.get().isEmpty()) return true;
+        return !hiddenComponents.get().contains(name);
     }
 
     /// Gets the brightness that should be applied to an item, based on its presence in the {@link ReItemTags#EMISSIVE_LIGHTING #c:emissive_lighting} item tag,
@@ -173,11 +186,11 @@ public class ReAPI {
         if (ReDebuggingFlags.DEBUG_LIGHT_EMISSION_DISPLAY && world.isClientSide()) {
             Player player = Minecraft.getInstance().player;
             if (player != null && !player.getItemBySlot(EquipmentSlot.MAINHAND).isEmpty() && ItemStack.isSameItemSameComponents(stack, player.getItemBySlot(EquipmentSlot.MAINHAND))) {
-                player.displayClientMessage(Component.literal(String.format(
-                        "emitted light: %s // light emission (sky/block): %s/%s",
+                player.displayClientMessage(Component.translatable(
+                        "debug.reutilities.light_emission_display",
                         emittedBlockLight,
                         skylight,
-                        ambientBlockLight)), true);
+                        ambientBlockLight), true);
             }
         }
 
@@ -209,11 +222,12 @@ public class ReAPI {
     /// @param pos *(optional)* The location in the world this item is in.
     public static int getEmittedBlockLight(ItemStack stack, @Nullable Level world, @Nullable BlockPos pos) {
         if (!(stack.getItem() instanceof BlockItem blockItem)) return 0;
+        var state = stack.getOrDefault(DataComponents.BLOCK_STATE, BlockItemStateProperties.EMPTY);
 
         if (world == null || pos == null) {
-            return blockItem.getBlock().defaultBlockState().getLightEmission();
+            return state.apply(blockItem.getBlock().defaultBlockState()).getLightEmission();
         } else {
-            return blockItem.getBlock().getLightEmission(blockItem.getBlock().defaultBlockState(), world, pos);
+            return blockItem.getBlock().getLightEmission(state.apply(blockItem.getBlock().defaultBlockState()), world, pos);
         }
     }
 
@@ -235,7 +249,7 @@ public class ReAPI {
             if (livEntity == null) {
                 return 0;
             } else {
-                return livEntity.getUseItem() != stack ? 0 : (float) (bow.getUseDuration(stack, livEntity) - livEntity.getUseItemRemainingTicks()) / Math.min(bow.getUseDuration(stack, livEntity), 20);
+                return livEntity.getUseItem() != stack ? 0 : (float) (bow.getUseDuration(stack, livEntity) - livEntity.getUseItemRemainingTicks()) / Math.min(stack.getUseDuration(livEntity), 20);
             }
         });
         register(bow, pulling(), (stack, world, livEntity, seed) -> livEntity != null && livEntity.isUsingItem() && livEntity.getUseItem() == stack ? 1 : 0);

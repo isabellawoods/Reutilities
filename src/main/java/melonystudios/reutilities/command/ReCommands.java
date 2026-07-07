@@ -26,9 +26,9 @@ public class ReCommands {
     public static final String ALPHABETICAL_SORT_PARAM = "alphabetical_sort";
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
-        // /melonystudios reutilities:dump_<locations> <alphabetical_sort>
-        dispatcher.register(Commands.literal("melonystudios")
-                .then(Commands.literal(Reutilities.reutilities("dump_boat_types").toString())
+        // /mstudios develop/dump_<locations> <alphabetical_sort>
+        dispatcher.register(Commands.literal("mstudios")
+                .then(Commands.literal("develop/dump_boat_types")
                         .requires(stack -> stack.hasPermission(Commands.LEVEL_OWNERS) && ReDebuggingFlags.DEBUG_DUMP_COMMANDS)
                         .executes(context -> dumpLocations(
                                 context,
@@ -46,7 +46,7 @@ public class ReCommands {
                                 "boat_types.txt")
                         )
                 ))
-                .then(Commands.literal(Reutilities.reutilities("dump_recolors").toString())
+                .then(Commands.literal("develop/dump_recolors")
                         .requires(stack -> stack.hasPermission(Commands.LEVEL_OWNERS) && ReDebuggingFlags.DEBUG_DUMP_COMMANDS)
                         .executes(context -> dumpLocations(
                                 context,
