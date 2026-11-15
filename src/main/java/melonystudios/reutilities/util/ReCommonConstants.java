@@ -1,8 +1,9 @@
 package melonystudios.reutilities.util;
 
 import melonystudios.reutilities.Reutilities;
-import melonystudios.reutilities.api.BoatType;
-import melonystudios.reutilities.api.Recolor;
+import melonystudios.reutilities.api.boat.BoatType;
+import melonystudios.reutilities.api.boat.ReBoats;
+import melonystudios.reutilities.api.color.Recolor;
 import melonystudios.reutilities.compat.femalegender.BreastArmorData;
 import melonystudios.reutilities.event.custom.AddComponentTooltipsEvent;
 import melonystudios.reutilities.option.ReCommonOptions;
@@ -29,17 +30,21 @@ public class ReCommonConstants {
     public static final Map<Item, BreastArmorData> BREAST_ARMOR_CAPABILITIES = new HashMap<>();
     public static final Map<ResourceLocation, BoatType> BOATS = new HashMap<>();
     public static final Map<ResourceLocation, Recolor> COLORS = new HashMap<>();
-    public static final int REUTILITIES_ACCENT_COLOR = 0xFFA134;
     public static final int REVARIED_ACCENT_COLOR = 0xFFC55F;
 
-    /// Gets a {@linkplain BoatType boat type} from a string.
-    /// @param woodType A string containing the wood type to get, usually a resource location.
+    // Mod IDs
+    public static final String STANCEMENTS_ID = "stancements";
+    public static final String STACKED_GOODS_ID = "stackedgoods";
+    public static final String FEMALE_GENDER_MOD_ID = "wildfire_gender";
+
+    /// Gets a [boat type][BoatType] from a string.
+    /// @param woodType A string containing the wood type to get, usually an identifier.
     public static BoatType byWoodType(String woodType) {
         return byWoodType(woodType, ReBoats.OAK);
     }
 
-    /// Gets a {@linkplain BoatType boat type} from a string.
-    /// @param woodType A string containing the wood type to get, usually a resource location.
+    /// Gets a [boat type][BoatType] from a string.
+    /// @param woodType A string containing the wood type to get, usually an identifier.
     /// @param defaultType A default boat type if the requested type doesn't exist in the map.
     public static BoatType byWoodType(String woodType, BoatType defaultType) {
         return BOATS.getOrDefault(ResourceLocation.parse(woodType), defaultType);
@@ -54,7 +59,7 @@ public class ReCommonConstants {
 
     /// Adds all tag entries from an item stack's `components` field to a list.
     /// @param holder A data component holder, such as an item stack.
-    /// @param tooltip A list of {@linkplain Component components} to add the tooltip into. This is usually empty, so when there is something it should display the tag.
+    /// @param tooltip A list of [text components][Component] to add the tooltip into. This is usually empty, so when there is something it should display the tag.
     public static <S extends DataComponentHolder> List<Component> addItemTagsTooltip(S holder, HolderLookup.Provider registries, List<Component> tooltip) {
         if (!(holder instanceof ItemStack stack) || stack.isEmpty()) return tooltip;
         var stackTag = stack.copyWithCount(1).save(registries, new CompoundTag()); // set count to 1 to fix crash with Classic Pipes ~isa 08-01-26

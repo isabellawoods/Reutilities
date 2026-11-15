@@ -53,8 +53,8 @@ public class IgniteBehavior extends ItemBehavior {
     }
 
     @Override
-    public void runBehavior(ItemStack stack, Level world, LivingEntity livEntity) {
-        if (!world.isClientSide()) livEntity.igniteForTicks(this.ignite().ticksOnFire());
+    public void runBehavior(ItemStack stack, Level level, LivingEntity livEntity) {
+        if (!level.isClientSide()) livEntity.igniteForTicks(this.ignite().ticksOnFire());
     }
 
     @Override
@@ -69,7 +69,7 @@ public class IgniteBehavior extends ItemBehavior {
     public record Ignite(int ticksOnFire, int tooltipColor) implements IndividualSettings<Ignite> {
         public static final MapCodec<Ignite> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
                 ExtraCodecs.NON_NEGATIVE_INT.optionalFieldOf("ticks_on_fire", 100).forGetter(Ignite::ticksOnFire),
-                ReCodecs.hexadecimalRange(0, 16777215).optionalFieldOf("tooltip_color", DEFAULT_TOOLTIP_COLOR).forGetter(Ignite::tooltipColor)
+                ReCodecs.RGB_CODEC.optionalFieldOf("tooltip_color", DEFAULT_TOOLTIP_COLOR).forGetter(Ignite::tooltipColor)
         ).apply(instance, Ignite::new));
 
         public Ignite(int ticksOnFire) {

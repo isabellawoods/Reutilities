@@ -64,62 +64,62 @@ public class TeleportEntityBehavior extends ItemBehavior {
     }
 
     @Override
-    public void runBehavior(ItemStack stack, Level world, LivingEntity livEntity) {
+    public void runBehavior(ItemStack stack, Level level, LivingEntity livEntity) {
         Vec3 pos = this.teleportEntity().position();
         RandomSource rand = livEntity.getRandom();
 
         // spawns particles
-        if (!isAllowedToTeleportTarget(livEntity, world)) return;
+        if (!isAllowedToTeleportTarget(livEntity, level)) return;
         for (int i = 0; i < 32; ++i) {
-            world.addParticle(ParticleTypes.PORTAL, pos.x, pos.y + rand.nextDouble() * 2, pos.z, rand.nextGaussian(), 0, rand.nextGaussian());
+            level.addParticle(ParticleTypes.PORTAL, pos.x, pos.y + rand.nextDouble() * 2, pos.z, rand.nextGaussian(), 0, rand.nextGaussian());
         }
-        if (world.isClientSide()) return;
+        if (level.isClientSide()) return;
 
         if (this.teleportEntity().teleportRandomly()) {
-            teleportWithinDiameter(stack, world, livEntity, this.teleportEntity().diameter());
+            teleportWithinDiameter(stack, level, livEntity, this.teleportEntity().diameter());
         } else {
             if (livEntity.isPassenger()) livEntity.unRide();
 
             // cancel the teleportation if the event was canceled
-            BehaviorTeleportEvent event = BehaviorAPI.exactTeleportThroughBehavior(stack, world, livEntity, pos);
+            BehaviorTeleportEvent event = BehaviorAPI.exactTeleportThroughBehavior(stack, level, livEntity, pos);
             if (event.isCanceled()) return;
 
             if (livEntity instanceof ServerPlayer player && player.connection.isAcceptingMessages()) {
-                livEntity.changeDimension(new DimensionTransition((ServerLevel) world, pos, livEntity.getDeltaMovement(), livEntity.getYRot(), livEntity.getXRot(), DimensionTransition.DO_NOTHING));
+                livEntity.changeDimension(new DimensionTransition((ServerLevel) level, pos, livEntity.getDeltaMovement(), livEntity.getYRot(), livEntity.getXRot(), DimensionTransition.DO_NOTHING));
                 livEntity.resetFallDistance();
                 player.resetCurrentImpulseContext();
-                world.playSound(null, pos.x, pos.y, pos.z, SoundEvents.PLAYER_TELEPORT, SoundSource.PLAYERS);
+                level.playSound(null, pos.x, pos.y, pos.z, SoundEvents.PLAYER_TELEPORT, SoundSource.PLAYERS);
             } else {
                 SoundEvent teleportSound = livEntity instanceof Fox ? SoundEvents.FOX_TELEPORT : SoundEvents.PLAYER_TELEPORT;
-                livEntity.changeDimension(new DimensionTransition((ServerLevel) world, pos, livEntity.getDeltaMovement(), livEntity.getYRot(), livEntity.getXRot(), DimensionTransition.DO_NOTHING));
+                livEntity.changeDimension(new DimensionTransition((ServerLevel) level, pos, livEntity.getDeltaMovement(), livEntity.getYRot(), livEntity.getXRot(), DimensionTransition.DO_NOTHING));
                 livEntity.resetFallDistance();
-                world.playSound(null, pos.x, pos.y, pos.z, teleportSound, livEntity instanceof Fox ? SoundSource.NEUTRAL : SoundSource.PLAYERS);
+                level.playSound(null, pos.x, pos.y, pos.z, teleportSound, livEntity instanceof Fox ? SoundSource.NEUTRAL : SoundSource.PLAYERS);
             }
         }
     }
 
     /// Teleports an entity to any valid position within the specified diameter.
-    /// @param stack The item stack with the `reutilities:behaviors` component.
-    /// @param world The world.
+    /// @param stack The item stack with the `behaviorapi:behaviors` component.
+    /// @param level The world.
     /// @param livEntity The entity running the effect.
     /// @param diameter The diameter that the entity can teleport within.
-    public static void teleportWithinDiameter(ItemStack stack, Level world, LivingEntity livEntity, float diameter) {
+    public static void teleportWithinDiameter(ItemStack stack, Level level, LivingEntity livEntity, float diameter) {
         RandomSource rand = livEntity.getRandom();
         for (int attempts = 0; attempts < 16; ++attempts) {
             double x = livEntity.getX() + (rand.nextDouble() - 0.5) * diameter;
             double y = Mth.clamp(
                     livEntity.getY() + (rand.nextInt((int) diameter) - (diameter / 2)),
-                    world.getMinBuildHeight(),
-                    world.getMinBuildHeight() + ((ServerLevel) world).getLogicalHeight() - 1
+                    level.getMinBuildHeight(),
+                    level.getMinBuildHeight() + ((ServerLevel) level).getLogicalHeight() - 1
             );
             double z = livEntity.getZ() + (rand.nextDouble() - 0.5) * diameter;
 
             // cancel the teleportation if the event was canceled
-            BehaviorTeleportEvent event = BehaviorAPI.randomTeleportThroughBehavior(stack, world, livEntity, x, y, z, diameter);
+            BehaviorTeleportEvent event = BehaviorAPI.randomTeleportThroughBehavior(stack, level, livEntity, x, y, z, diameter);
             if (event.isCanceled()) return;
 
             if (livEntity.randomTeleport(event.getTargetX(), event.getTargetY(), event.getTargetZ(), true)) {
-                world.gameEvent(GameEvent.TELEPORT, livEntity.position(), GameEvent.Context.of(livEntity));
+                level.gameEvent(GameEvent.TELEPORT, livEntity.position(), GameEvent.Context.of(livEntity));
                 SoundEvent sound = SoundEvents.CHORUS_FRUIT_TELEPORT;
                 SoundSource source = SoundSource.PLAYERS;
 
@@ -128,7 +128,7 @@ public class TeleportEntityBehavior extends ItemBehavior {
                     source = SoundSource.NEUTRAL;
                 }
 
-                world.playSound(null, livEntity.getX(), livEntity.getY(), livEntity.getZ(), sound, source);
+                level.playSound(null, livEntity.getX(), livEntity.getY(), livEntity.getZ(), sound, source);
                 livEntity.resetFallDistance();
                 break;
             }
@@ -137,9 +137,9 @@ public class TeleportEntityBehavior extends ItemBehavior {
 
     /// Whether an entity is allowed to be teleported.
     /// @param livEntity The entity running the effect.
-    /// @param world The world.
-    public static boolean isAllowedToTeleportTarget(LivingEntity livEntity, Level world) {
-        if (livEntity.level().dimension() == world.dimension()) {
+    /// @param level The world.
+    public static boolean isAllowedToTeleportTarget(LivingEntity livEntity, Level level) {
+        if (livEntity.level().dimension() == level.dimension()) {
             return livEntity.isAlive() && !livEntity.isSleeping();
         } else {
             return livEntity.canUsePortal(true);

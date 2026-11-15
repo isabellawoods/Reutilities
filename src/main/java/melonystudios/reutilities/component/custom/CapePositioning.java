@@ -3,8 +3,8 @@ package melonystudios.reutilities.component.custom;
 import com.mojang.serialization.Codec;
 import io.netty.buffer.ByteBuf;
 import melonystudios.reutilities.component.ReDataComponents;
-import melonystudios.reutilities.entity.outfit.FullBodyOutfit;
-import melonystudios.reutilities.util.tag.ReItemTags;
+import melonystudios.reutilities.entity.attachment.FullBodyOutfit;
+import melonystudios.reutilities.tag.ReItemTags;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.ByIdMap;
@@ -64,7 +64,7 @@ public enum CapePositioning implements StringRepresentable {
 
     /// Gets the positioning for a cape based on the item's chest item and worn outfits.
     /// @param stack The item stack. Checks if it's elytra, or if it has the `reutilities:cape_positioning` component,
-    /// @param outfit The {@linkplain FullBodyOutfit full-body outfit} attachment from the entity, if available.
+    /// @param outfit The [full-body outfit][FullBodyOutfit] attachment from the entity, if available.
     public static CapePositioning positionCapeBasedOnOutfit(ItemStack stack, @Nullable FullBodyOutfit outfit) {
         // if the item has the positioning component, always use that
         if (stack.has(ReDataComponents.CAPE_POSITIONING)) return stack.get(ReDataComponents.CAPE_POSITIONING);

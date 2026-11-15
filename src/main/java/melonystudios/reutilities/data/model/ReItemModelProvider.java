@@ -1,12 +1,14 @@
 package melonystudios.reutilities.data.model;
 
 import melonystudios.reutilities.Reutilities;
+import melonystudios.reutilities.api.picker.ColorPicker;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.world.item.ArmorItem;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.armortrim.TrimMaterial;
@@ -20,6 +22,7 @@ import net.neoforged.neoforge.common.data.ExistingFileHelper;
 
 import java.time.Month;
 import java.util.LinkedHashMap;
+import java.util.function.Consumer;
 
 import static melonystudios.reutilities.util.ReCommonConstants.*;
 
@@ -52,6 +55,21 @@ public abstract class ReItemModelProvider extends ItemModelProvider {
     /// @param name The item's registry ID, used to locate the texture.
     public void standard(ModelFile parent, String name) {
         this.getBuilder(name).parent(parent).texture("layer0", this.modLoc("item/" + name));
+    }
+
+    /// Makes a model for an item with an **overlay texture** on the second layer (`layer1`).
+    /// @param parent The location of the parent model, usually `item/generated` or `item/handheld`.
+    /// @param name The item's registry ID, used for the model name.
+    /// @param baseTexture The location of the base item texture.
+    /// @param overlayTexture The location of the overlay texture.
+    public void standardOverlaid(ModelFile parent, String name, ResourceLocation baseTexture, ResourceLocation overlayTexture) {
+        this.getBuilder(name).parent(parent).texture("layer0", baseTexture).texture("layer1", overlayTexture);
+    }
+
+    /// Runs the provided consumer for every registered [DyeColor] in the game.
+    /// @param forColor The consumer, ran for every color.
+    public void forAllColors(Consumer<String> forColor) {
+        for (DyeColor color : ColorPicker.DYE_COLORS) forColor.accept(color.getName());
     }
 
     public void blockItem(String name) {
@@ -88,8 +106,8 @@ public abstract class ReItemModelProvider extends ItemModelProvider {
 
     /// Makes the models for a whole armor set, with trims.
     ///
-    /// New trims can be added using the {@link #TRIM_MATERIALS} map.
-    /// @param parent The location of the parent model, usually {@link #generated minecraft:item/generated}.
+    /// New trims can be added using the [#TRIM_MATERIALS] map.
+    /// @param parent The location of the parent model, usually [`minecraft:item/generated`][#generated].
     /// @param helmet The helmet item.
     /// @param chestplate The chestplate item.
     /// @param leggings The leggings item.
@@ -102,7 +120,7 @@ public abstract class ReItemModelProvider extends ItemModelProvider {
     }
 
     /// Makes the models for a whole tool set (sword, pickaxe, shovel, axe and hoe).
-    /// @param parent The location of the parent model, usually {@link #generated minecraft:item/generated}.
+    /// @param parent The location of the parent model, usually [`minecraft:item/generated`][#generated].
     /// @param material The base material name of the tool set, such as `diamond` or `numeed`.
     public void toolSet(ModelFile parent, String material) {
         this.getBuilder(material + "_sword").parent(parent).texture("layer0", this.modLoc("item/" + material + "_sword"));
@@ -113,8 +131,8 @@ public abstract class ReItemModelProvider extends ItemModelProvider {
     }
 
     /// Makes the model for a dual-wielded sword, using two separate models for the inventory and when held.
-    /// @param parent The location of the inventory parent model, usually {@link #handheld minecraft:item/handheld}.
-    /// @param parent32x The location of the held parent model, usually {@link #handheld32x reutilities:item/handheld_32x}.
+    /// @param parent The location of the inventory parent model, usually [`minecraft:item/handheld`][#handheld].
+    /// @param parent32x The location of the held parent model, usually [`reutilities:item/handheld_32x`][#handheld32x].
     /// @param name The ID of the sword item, without the namespace.
     public void dualWieldedSword(ModelFile parent, ModelFile parent32x, String name) {
         this.getBuilder(name + "_inventory").parent(parent).texture("layer0", this.modLoc("item/" + name + "_inventory"));
@@ -129,8 +147,8 @@ public abstract class ReItemModelProvider extends ItemModelProvider {
 
     /// Makes the model for a dual-wielded sword which has a pride flag texture during the specified month,
     /// using two separate models for the inventory and when held.
-    /// @param parent The location of the inventory parent model, usually {@link #handheld minecraft:item/handheld}.
-    /// @param parent32x The location of the held parent model, usually {@link #handheld32x reutilities:item/handheld_32x}.
+    /// @param parent The location of the inventory parent model, usually [`minecraft:item/handheld`][#handheld].
+    /// @param parent32x The location of the held parent model, usually [`reutilities:item/handheld_32x`][#handheld32x].
     /// @param name The ID of the sword item, without the namespace.
     /// @param prideMonth Which month to use the pride texture in.
     public void prideDualWieldedSword(ModelFile parent, ModelFile parent32x, String name, int prideMonth) {
@@ -198,10 +216,10 @@ public abstract class ReItemModelProvider extends ItemModelProvider {
                 .override().predicate(blocking(), 1).model(this.getExistingFile(this.modLoc("item/" + name + "_blocking"))).end();
     }
 
-    /// Makes the model for a spyglass, using the {@link #spyglassInHand reutilities:item/template_spyglass_in_hand}.
+    /// Makes the model for a spyglass, using the [`reutilities:item/template_spyglass_in_hand`][#spyglassInHand].
     ///
     /// Since this uses models for rendering the spyglass, its positioning is a bit inaccurate to the original.
-    /// @param baseParent The location of the inventory model, usually {@link #generated minecraft:item/generated}.
+    /// @param baseParent The location of the inventory model, usually [`minecraft:item/generated`][#generated].
     /// @param name The ID of the spyglass, without the namespace.
     public void spyglass(ModelFile baseParent, String name) {
         this.getBuilder(name + "_inventory").parent(baseParent).texture("layer0", this.modLoc("item/" + name));
@@ -214,9 +232,9 @@ public abstract class ReItemModelProvider extends ItemModelProvider {
     }
 
     /// Creates the model for a *NeoForge* filled bucket.
-    /// @param parent The parent model file. Usually, this is set to {@link #generated minecraft:item/generated}.
+    /// @param parent The parent model file. Usually, this is set to [`minecraft:item/generated`][#generated].
     /// @param name The item model file name.
-    /// @param fluid The {@link Fluid} contained in this bucket.
+    /// @param fluid The [Fluid] contained in this bucket.
     /// @param applyTint Whether to apply a colored tint to the bucket contents. Defaults to `null`.
     /// @param gaseous Whether this fluid is considered as gas, thus flipping the model upside-down. Defaults to `null`. Requires that the fluid itself is gaseous.
     public void filledBucket(ModelFile parent, String name, Fluid fluid, Boolean applyTint, Boolean gaseous) {
@@ -225,8 +243,8 @@ public abstract class ReItemModelProvider extends ItemModelProvider {
 
     /// Copied from [Kaupenjoe's *NeoForge* 1.21 tutorials](https://github.com/Tutorials-By-Kaupenjoe/NeoForge-Tutorial-1.21.X/blob/75229679f5195c7c726c5be5dc939b2f4a0baf9f/src/main/java/net/kaupenjoe/tutorialmod/datagen/ModItemModelProvider.java).
     ///
-    /// New trims can be added using the {@link #TRIM_MATERIALS} map.
-    /// @param parent The parent model file. Usually, this is set to {@link #generated minecraft:item/generated}.
+    /// New trims can be added using the [#TRIM_MATERIALS] map.
+    /// @param parent The parent model file. Usually, this is set to [`minecraft:item/generated`][#generated].
     /// @param item The armor item to create the (trimmed) item models for.
     /// @author El_Redstoniano, Kaupenjoe
     public void trimmedArmorItem(ModelFile parent, Item item) {

@@ -85,11 +85,11 @@ public class ExplodeBehavior extends ItemBehavior {
     }
 
     @Override
-    public void runBehavior(ItemStack stack, Level world, LivingEntity livEntity) {
-        if (world.isClientSide()) return;
+    public void runBehavior(ItemStack stack, Level level, LivingEntity livEntity) {
+        if (level.isClientSide()) return;
 
         Vec3 pos = livEntity.position().add(this.explode.offset());
-        world.explode(
+        level.explode(
                 this.explode.attributeToTarget() ? livEntity : null,
                 this.getDamageSource(livEntity, pos),
                 new SimpleExplosionDamageCalculator(

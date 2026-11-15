@@ -1,7 +1,7 @@
 package melonystudios.reutilities.data.tag;
 
 import melonystudios.reutilities.Reutilities;
-import melonystudios.reutilities.util.tag.ReBlockTags;
+import melonystudios.reutilities.tag.ReBlockTags;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.tags.BlockTags;
@@ -32,17 +32,17 @@ public final class ReBlockTagsProvider extends BlockTagsProvider {
         // Reutilities' tags
         this.tag(ReBlockTags.FARMLAND).add(Blocks.FARMLAND);
         this.tag(ReBlockTags.FARMLAND_TRANSPARENT).addTag(Tags.Blocks.FENCE_GATES).add(Blocks.MOVING_PISTON);
-        this.tag(ReBlockTags.PLANTS_MAY_PLACE_ON).addTag(BlockTags.DIRT).addTag(ReBlockTags.FARMLAND);
-        this.tag(ReBlockTags.CROPS_MAY_PLACE_ON).addTag(ReBlockTags.FARMLAND);
-        this.tag(ReBlockTags.AZALEA_MAY_PLACE_ON).addTag(ReBlockTags.PLANTS_MAY_PLACE_ON).add(Blocks.CLAY);
-        this.tag(ReBlockTags.MANGROVE_PROPAGULE_MAY_PLACE_ON).addTag(ReBlockTags.PLANTS_MAY_PLACE_ON).add(Blocks.CLAY);
-        this.tag(ReBlockTags.LILY_PAD_MAY_PLACE_ON).add(Blocks.ICE, Blocks.FROSTED_ICE);
-        this.tag(ReBlockTags.FUNGI_MAY_PLACE_ON).addTag(ReBlockTags.PLANTS_MAY_PLACE_ON).addTag(BlockTags.NYLIUM).add(Blocks.MYCELIUM, Blocks.SOUL_SOIL);
-        this.tag(ReBlockTags.ROOTS_MAY_PLACE_ON).addTag(ReBlockTags.PLANTS_MAY_PLACE_ON).addTag(BlockTags.NYLIUM).add(Blocks.SOUL_SOIL);
-        this.tag(ReBlockTags.NETHER_SPROUTS_MAY_PLACE_ON).addTag(ReBlockTags.PLANTS_MAY_PLACE_ON).addTag(BlockTags.NYLIUM).add(Blocks.SOUL_SOIL);
-        this.tag(ReBlockTags.WITHER_ROSE_MAY_PLACE_ON).addTag(ReBlockTags.PLANTS_MAY_PLACE_ON).addTag(Tags.Blocks.NETHERRACKS).add(Blocks.SOUL_SAND, Blocks.SOUL_SOIL);
-        this.tag(ReBlockTags.NETHER_WART_MAY_PLACE_ON).add(Blocks.SOUL_SAND);
-        this.tag(ReBlockTags.SEAGRASS_CANNOT_PLACE_ON).add(Blocks.MAGMA_BLOCK);
+        this.tag(ReBlockTags.SUPPORTS_VEGETATION).addTag(BlockTags.DIRT).addTag(ReBlockTags.FARMLAND);
+        this.tag(ReBlockTags.SUPPORTS_CROPS).addTag(ReBlockTags.FARMLAND);
+        this.tag(ReBlockTags.SUPPORTS_AZALEA).addTag(ReBlockTags.SUPPORTS_VEGETATION).add(Blocks.CLAY);
+        this.tag(ReBlockTags.SUPPORTS_MANGROVE_PROPAGULE).addTag(ReBlockTags.SUPPORTS_VEGETATION).add(Blocks.CLAY);
+        this.tag(ReBlockTags.SUPPORTS_LILY_PAD).add(Blocks.ICE, Blocks.FROSTED_ICE);
+        this.tag(ReBlockTags.SUPPORTS_NETHER_FUNGI).addTag(ReBlockTags.SUPPORTS_VEGETATION).addTag(BlockTags.NYLIUM).add(Blocks.MYCELIUM, Blocks.SOUL_SOIL);
+        this.tag(ReBlockTags.SUPPORTS_NETHER_ROOTS).addTag(ReBlockTags.SUPPORTS_VEGETATION).addTag(BlockTags.NYLIUM).add(Blocks.SOUL_SOIL);
+        this.tag(ReBlockTags.SUPPORTS_NETHER_SPROUTS).addTag(ReBlockTags.SUPPORTS_VEGETATION).addTag(BlockTags.NYLIUM).add(Blocks.SOUL_SOIL);
+        this.tag(ReBlockTags.SUPPORTS_WITHER_ROSE).addTag(ReBlockTags.SUPPORTS_VEGETATION).addTag(Tags.Blocks.NETHERRACKS).add(Blocks.SOUL_SAND, Blocks.SOUL_SOIL);
+        this.tag(ReBlockTags.SUPPORTS_NETHER_WART).add(Blocks.SOUL_SAND);
+        this.tag(ReBlockTags.CANNOT_SUPPORT_SEAGRASS).add(Blocks.MAGMA_BLOCK);
 
         // NeoForge's tags
         this.tag(Tags.Blocks.VILLAGER_FARMLANDS).addTag(ReBlockTags.FARMLAND);

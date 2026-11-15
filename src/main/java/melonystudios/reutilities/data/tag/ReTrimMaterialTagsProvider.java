@@ -13,7 +13,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.CompletableFuture;
 
-import static melonystudios.reutilities.util.tag.ReTrimMaterialTags.*;
+import static melonystudios.reutilities.tag.ReTrimMaterialTags.*;
 
 @ApiStatus.Internal
 public final class ReTrimMaterialTagsProvider extends TagsProvider<TrimMaterial> {

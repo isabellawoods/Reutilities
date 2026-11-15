@@ -1,8 +1,8 @@
 package melonystudios.reutilities.mixin.client;
 
 import com.llamalad7.mixinextras.sugar.Local;
-import melonystudios.reutilities.option.ReClientOptions;
-import melonystudios.reutilities.util.ReClientConstants;
+import melonystudios.reutilities.client.ReClientConstants;
+import melonystudios.reutilities.client.option.ReClientOptions;
 import net.minecraft.client.Screenshot;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;

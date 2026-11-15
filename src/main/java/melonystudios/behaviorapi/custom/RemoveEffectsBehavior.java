@@ -47,9 +47,9 @@ public class RemoveEffectsBehavior extends ItemBehavior {
     }
 
     @Override
-    public void runBehavior(ItemStack stack, Level world, LivingEntity livEntity) {
-        if (world.isClientSide()) return;
-        world.registryAccess().registry(Registries.MOB_EFFECT).ifPresent(registry -> {
+    public void runBehavior(ItemStack stack, Level level, LivingEntity livEntity) {
+        if (level.isClientSide()) return;
+        level.registryAccess().registry(Registries.MOB_EFFECT).ifPresent(registry -> {
             for (ResourceKey<MobEffect> effect : this.removeEffects.effects()) {
                 registry.getHolder(effect).ifPresent(livEntity::removeEffect);
             }

@@ -1,5 +1,6 @@
 package melonystudios.reutilities.data.model;
 
+import melonystudios.reutilities.util.ReCommonConstants;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
@@ -237,6 +238,21 @@ public abstract class ReBlockStateProvider extends BlockStateProvider {
     public void wildCrop(Block wildCrop) {
         String wildCropPath = BuiltInRegistries.BLOCK.getKey(wildCrop).getPath();
         this.simpleBlock(wildCrop, this.models().withExistingParent(wildCropPath, reutilities("block/template_wild_crop")).texture("crop", this.modLoc("block/" + wildCropPath)));
+    }
+
+    /// Makes the block states and models for a *Stancements* shelf block.
+    /// @param shelf The shelf block.
+    public void shelf(Block shelf) {
+        this.getVariantBuilder(shelf).forAllStatesExcept(state -> {
+            Direction facing = state.getValue(BlockStateProperties.HORIZONTAL_FACING);
+            ResourceLocation registry = BuiltInRegistries.BLOCK.getKey(shelf);
+
+            return ConfiguredModel.builder().modelFile(this.models().getBuilder(registry.getPath())
+                            .parent(this.models().getExistingFile(ResourceLocation.fromNamespaceAndPath(ReCommonConstants.STANCEMENTS_ID, "block/template_shelf")))
+                            .texture("shelf", registry.getNamespace() + ":block/" + registry.getPath())
+                            .texture("support", registry.getNamespace() + ":block/" + registry.getPath() + "_support"))
+                    .rotationY((int) facing.toYRot()).build();
+        }, BlockStateProperties.WATERLOGGED);
     }
 
     public static int wheatAgeIndex(int age) {

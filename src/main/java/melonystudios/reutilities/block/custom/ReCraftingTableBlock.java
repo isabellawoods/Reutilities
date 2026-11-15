@@ -36,7 +36,7 @@ public class ReCraftingTableBlock extends CraftingTableBlock {
 
     @Override
     @NotNull
-    protected MenuProvider getMenuProvider(BlockState state, Level world, BlockPos pos) {
-        return new SimpleMenuProvider((containerID, playerInventory, player) -> new ReCraftingMenu(containerID, playerInventory, ContainerLevelAccess.create(world, pos)), this.containerTitle);
+    protected MenuProvider getMenuProvider(BlockState state, Level level, BlockPos pos) {
+        return new SimpleMenuProvider((containerID, playerInventory, player) -> new ReCraftingMenu(containerID, playerInventory, ContainerLevelAccess.create(level, pos)), this.containerTitle);
     }
 }

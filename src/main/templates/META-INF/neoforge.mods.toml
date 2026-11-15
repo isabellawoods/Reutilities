@@ -51,18 +51,21 @@ issueTrackerURL="https://github.com/isabellawoods/Reutilities/issues" #optional
     ]
     # A file name (in the root of the mod JAR) containing a square logo to display in Forged Mod Menu's mods screen
     modMenuLogoFile="pack.png"
+    # Defines an accent color to be used in places where the mod name is used, such as configuration screens
+    "rendersliceapi:accent_color"="#ffa134"
 
 # The Behavior API sub-mod. It exists because I want it to
 [[mods]]
     modId = "behaviorapi"
     displayName = "Behavior API"
-    version = "1.5.1-beta"
+    version = "1.6.0-beta"
     authors="${mod_authors}"
     description = "Adds expandable item behaviors which run in different environments."
 
 [modproperties.behaviorapi]
     modMenuParent = "reutilities"
     modMenuBadges = ["library"]
+    "rendersliceapi:accent_color"="#ffa134"
 
 # The [[mixins]] block allows you to declare your mixin config to FML so that it gets loaded.
 [[mixins]]

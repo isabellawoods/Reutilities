@@ -1,7 +1,7 @@
 package melonystudios.reutilities.data.recipe;
 
 import com.mojang.datafixers.util.Pair;
-import melonystudios.reutilities.util.tag.ReItemTags;
+import melonystudios.reutilities.util.ReCommonConstants;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.advancements.Criterion;
 import net.minecraft.advancements.critereon.EnterBlockTrigger;
@@ -19,6 +19,7 @@ import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.neoforged.neoforge.common.Tags;
+import net.neoforged.neoforge.common.conditions.ModLoadedCondition;
 import net.neoforged.neoforge.common.crafting.DifferenceIngredient;
 
 import java.util.*;
@@ -246,35 +247,25 @@ public class RecipeFamilyProvider {
         );
 
         // Modded items
-        PROVIDERS.put("stancements/shelf", (item, ingredient, stonecuttingRecipes) ->
-                ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, item).define('#', this.material).define('S', this.rods)
+        PROVIDERS.put(ReCommonConstants.STANCEMENTS_ID + "/shelf", (item, ingredient, stonecuttingRecipes) ->
+                ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, item, 6).define('#', this.material).define('S', this.rods)
                         .pattern("###").pattern("S S").unlockedBy(hasItem(this.material), has(this.material))
-                        .save(this.output)
+                        .save(this.output.withConditions(new ModLoadedCondition(ReCommonConstants.STANCEMENTS_ID)), saveLocation(item, "compat/" + ReCommonConstants.STANCEMENTS_ID))
         );
-        PROVIDERS.put("stackedgoods/hammer", (item, ingredient, stonecuttingRecipes) ->
+        PROVIDERS.put(ReCommonConstants.STACKED_GOODS_ID + "/hammer", (item, ingredient, stonecuttingRecipes) ->
                 ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, item).define('#', this.material).define('S', this.rods)
                         .pattern(" ##").pattern(" S#").pattern("S  ").unlockedBy(hasItem(this.material), has(this.material))
-                        .save(this.output)
+                        .save(this.output.withConditions(new ModLoadedCondition(ReCommonConstants.STACKED_GOODS_ID)), saveLocation(item, "compat/" + ReCommonConstants.STACKED_GOODS_ID))
         );
-        PROVIDERS.put("stackedgoods/scraper", (item, ingredient, stonecuttingRecipes) ->
+        PROVIDERS.put(ReCommonConstants.STACKED_GOODS_ID + "/scraper", (item, ingredient, stonecuttingRecipes) ->
                 ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, item).define('#', this.material).define('S', this.rods)
                         .pattern("#").pattern("#").pattern("S").unlockedBy(hasItem(this.material), has(this.material))
-                        .save(this.output)
+                        .save(this.output.withConditions(new ModLoadedCondition(ReCommonConstants.STACKED_GOODS_ID)), saveLocation(item, "compat/" + ReCommonConstants.STACKED_GOODS_ID))
         );
-        PROVIDERS.put("stackedgoods/gem_cutter", (item, ingredient, stonecuttingRecipes) ->
+        PROVIDERS.put(ReCommonConstants.STACKED_GOODS_ID + "/gem_cutter", (item, ingredient, stonecuttingRecipes) ->
                 ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, item).define('#', this.material).define('S', this.rods)
                         .pattern("#").pattern("S").unlockedBy(hasItem(this.material), has(this.material))
-                        .save(this.output)
-        );
-        PROVIDERS.put("backmath/mortar_and_pestle", (item, ingredient, stonecuttingRecipes) ->
-                ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, item).define('#', this.material).define('S', this.rods).define('F', ReItemTags.FLINT)
-                        .pattern("  S").pattern("#F#").pattern(" # ").unlockedBy(hasItem(this.material), has(this.material))
-                        .save(this.output)
-        );
-        PROVIDERS.put("backmath/knife", (item, ingredient, stonecuttingRecipes) ->
-                ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, item).define('#', this.material).define('S', this.rods)
-                        .pattern("S ").pattern(" #").unlockedBy(hasItem(this.material), has(this.material))
-                        .save(this.output)
+                        .save(this.output.withConditions(new ModLoadedCondition(ReCommonConstants.STACKED_GOODS_ID)), saveLocation(item, "compat/" + ReCommonConstants.STACKED_GOODS_ID))
         );
 
         this.addProviders();
@@ -499,32 +490,22 @@ public class RecipeFamilyProvider {
 
         // Modded items
         public Builder shelf(ItemLike shelf) {
-            RECIPES.put("stancements/shelf", () -> Pair.of(shelf, Ingredient.of()));
+            RECIPES.put(ReCommonConstants.STANCEMENTS_ID + "/shelf", () -> Pair.of(shelf, Ingredient.of()));
             return this;
         }
 
         public Builder hammer(ItemLike hammer) {
-            RECIPES.put("stackedgoods/hammer", () -> Pair.of(hammer, Ingredient.of()));
+            RECIPES.put(ReCommonConstants.STACKED_GOODS_ID + "/hammer", () -> Pair.of(hammer, Ingredient.of()));
             return this;
         }
 
         public Builder scraper(ItemLike scraper) {
-            RECIPES.put("stackedgoods/scraper", () -> Pair.of(scraper, Ingredient.of()));
+            RECIPES.put(ReCommonConstants.STACKED_GOODS_ID + "/scraper", () -> Pair.of(scraper, Ingredient.of()));
             return this;
         }
 
         public Builder gemCutter(ItemLike gemCutter) {
-            RECIPES.put("stackedgoods/gem_cutter", () -> Pair.of(gemCutter, Ingredient.of()));
-            return this;
-        }
-
-        public Builder mortarAndPestle(ItemLike mortarAndPestle) {
-            RECIPES.put("backmath/mortar_and_pestle", () -> Pair.of(mortarAndPestle, Ingredient.of()));
-            return this;
-        }
-
-        public Builder knife(ItemLike knife) {
-            RECIPES.put("backmath/knife", () -> Pair.of(knife, Ingredient.of()));
+            RECIPES.put(ReCommonConstants.STACKED_GOODS_ID + "/gem_cutter", () -> Pair.of(gemCutter, Ingredient.of()));
             return this;
         }
 

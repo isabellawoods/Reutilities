@@ -14,7 +14,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.CompletableFuture;
 
-import static melonystudios.reutilities.util.tag.ReItemTags.*;
+import static melonystudios.reutilities.tag.ReItemTags.*;
 
 @ApiStatus.Internal
 public final class ReItemTagsProvider extends ItemTagsProvider {

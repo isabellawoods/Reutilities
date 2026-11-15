@@ -45,18 +45,19 @@ public class ApplyEffectsBehavior extends ItemBehavior {
     }
 
     @Override
-    public void runBehavior(ItemStack stack, Level world, LivingEntity livEntity) {
-        if (this.applyEffects().effect.isPresent()) {
-            if (!world.isClientSide() && world.getRandom().nextFloat() <= this.applyEffects().effect.get().chance()) {
+    public void runBehavior(ItemStack stack, Level level, LivingEntity livEntity) {
+        if (!level.isClientSide() && this.applyEffects().effect.isPresent()) {
+            if (level.getRandom().nextFloat() <= this.applyEffects().effect.get().chance()) {
                 livEntity.addEffect(this.applyEffects().effect.get().copyEffect());
             }
         }
     }
 
     public record ApplyEffects(Optional<ChanceEffectInstance> effect) implements IndividualSettings<ApplyEffects> {
-        public static final MapCodec<ApplyEffects> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-                ChanceEffectInstance.CODEC.optionalFieldOf("instance").forGetter(ApplyEffects::effect)
-        ).apply(instance, ApplyEffects::new));
+        public static final MapCodec<ApplyEffects> CODEC = ChanceEffectInstance.CODEC.xmap(
+                instance -> new ApplyEffects(Optional.ofNullable(instance)),
+                effects -> effects.effect().orElse(null)
+        );
 
         @Override
         public MapCodec<ApplyEffects> codec() {

@@ -13,7 +13,7 @@ public class BreastArmorCapabilities {
         }
     }
 
-    /// Transforms a `BreastArmorData` instance into an {@link IGenderArmor}.
+    /// Transforms a `BreastArmorData` instance into an [IGenderArmor].
     /// @param armorData The *Reutilities* armor data.
     public static IGenderArmor toGenderArmor(BreastArmorData armorData) {
         return new IGenderArmor() {

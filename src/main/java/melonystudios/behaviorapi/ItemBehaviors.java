@@ -17,5 +17,6 @@ public class ItemBehaviors {
     public static final DeferredHolder<ItemBehavior, ExplodeBehavior> EXPLODE = BEHAVIORS.register("explode", () -> new ExplodeBehavior());
     public static final DeferredHolder<ItemBehavior, PlaySoundBehavior> PLAY_SOUND = BEHAVIORS.register("play_sound", () -> new PlaySoundBehavior());
     public static final DeferredHolder<ItemBehavior, RemoveEffectsBehavior> REMOVE_EFFECTS = BEHAVIORS.register("remove_effects", () -> new RemoveEffectsBehavior());
+    public static final DeferredHolder<ItemBehavior, RunFunctionBehavior> RUN_FUNCTION = BEHAVIORS.register("run_function", () -> new RunFunctionBehavior());
     public static final DeferredHolder<ItemBehavior, TeleportEntityBehavior> TELEPORT_ENTITY = BEHAVIORS.register("teleport_entity", () -> new TeleportEntityBehavior());
 }

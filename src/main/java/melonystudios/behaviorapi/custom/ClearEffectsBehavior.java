@@ -46,8 +46,8 @@ public class ClearEffectsBehavior extends ItemBehavior {
     }
 
     @Override
-    public void runBehavior(ItemStack stack, Level world, LivingEntity livEntity) {
-        if (!world.isClientSide()) {
+    public void runBehavior(ItemStack stack, Level level, LivingEntity livEntity) {
+        if (!level.isClientSide()) {
             for (EffectCure cure : this.clearEffects.cures()) livEntity.removeEffectsCuredBy(cure);
         }
     }

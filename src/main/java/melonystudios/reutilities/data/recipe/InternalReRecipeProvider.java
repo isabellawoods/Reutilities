@@ -1,6 +1,6 @@
 package melonystudios.reutilities.data.recipe;
 
-import melonystudios.reutilities.util.tag.ReItemTags;
+import melonystudios.reutilities.tag.ReItemTags;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.RecipeCategory;

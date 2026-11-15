@@ -1,6 +1,6 @@
 package melonystudios.reutilities.item.custom;
 
-import melonystudios.reutilities.util.ReArmorMaterials;
+import melonystudios.reutilities.item.ReArmorMaterials;
 import net.minecraft.core.Holder;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;

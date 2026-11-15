@@ -12,7 +12,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.CompletableFuture;
 
-import static melonystudios.reutilities.util.tag.ReFluidTags.*;
+import static melonystudios.reutilities.tag.ReFluidTags.*;
 
 @ApiStatus.Internal
 public final class ReFluidTagsProvider extends FluidTagsProvider {

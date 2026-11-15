@@ -2,8 +2,8 @@ package melonystudios.reutilities.mixin.entity;
 
 import melonystudios.behaviorapi.settings.GlobalSettings;
 import melonystudios.reutilities.api.ReAPI;
-import melonystudios.reutilities.entity.cape.CapeOffsets;
-import melonystudios.reutilities.entity.cape.OffsetGetter;
+import melonystudios.reutilities.entity.layer.CapeOffsets;
+import melonystudios.reutilities.entity.layer.OffsetGetter;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -22,13 +22,13 @@ public abstract class ReLivingEntityMixin extends Entity implements ILivingEntit
     @Unique
     private CapeOffsets offsets;
 
-    public ReLivingEntityMixin(EntityType<?> type, Level world) {
-        super(type, world);
+    public ReLivingEntityMixin(EntityType<?> type, Level level) {
+        super(type, level);
     }
 
     @Inject(method = "eat(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/food/FoodProperties;)Lnet/minecraft/world/item/ItemStack;", at = @At("HEAD"))
-    public void runEatingBehavior(Level world, ItemStack stack, FoodProperties properties, CallbackInfoReturnable<ItemStack> callback) {
-        ReAPI.runItemBehavior(stack, world, this.self(), GlobalSettings.EATING);
+    public void runEatingBehavior(Level level, ItemStack stack, FoodProperties properties, CallbackInfoReturnable<ItemStack> callback) {
+        ReAPI.runItemBehavior(stack, level, this.self(), GlobalSettings.EATING);
     }
 
     @Override

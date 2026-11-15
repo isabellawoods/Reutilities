@@ -2,7 +2,7 @@ package melonystudios.reutilities.mixin.compat.femalegender;
 
 import com.wildfire.main.config.ClientConfiguration;
 import com.wildfire.main.config.FloatConfigKey;
-import melonystudios.reutilities.option.ReClientOptions;
+import melonystudios.reutilities.client.option.ReClientOptions;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;

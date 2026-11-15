@@ -25,7 +25,7 @@ public record StoredExperience(int amount, boolean levels) implements TooltipPro
     ).apply(instance, StoredExperience::new));
     public static final Codec<StoredExperience> CODEC = Codec.withAlternative(FULL_CODEC, Codec.INT, StoredExperience::new);
     public static final StreamCodec<ByteBuf, StoredExperience> STREAM_CODEC = StreamCodec.composite(
-            ByteBufCodecs.INT, StoredExperience::amount,
+            ByteBufCodecs.VAR_INT, StoredExperience::amount,
             ByteBufCodecs.BOOL, StoredExperience::levels,
             StoredExperience::new
     );

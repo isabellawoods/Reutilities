@@ -1,0 +1,34 @@
+{
+  "removed": [
+    "logger.reutilities.wildfire_gender_capabilities",
+    "logger.reutilities.wrong_holder_type.outfit",
+    "logger.reutilities.wrong_holder_type.cape",
+    "logger.reutilities.outfit_definition.wrong_equipment_slot"
+  ],
+  "renamed": {
+    "commands.reutilities.dump_locations.success": "commands.reutilities.dump_locations.success",
+    "commands.reutilities.dump_locations.fail": "commands.mstudios.dump_identifiers.fail",
+    "commands.reutilities.boat_types": "commands.mstudios.dump_identifiers.boat_types",
+    "commands.reutilities.recolors": "commands.mstudios.dump_identifiers.recolors",
+
+    "tag.block.reutilities.may_place_on.plants": "tag.block.reutilities.supports_vegetation",
+    "tag.block.reutilities.may_place_on.crops": "tag.block.reutilities.supports_crops",
+    "tag.block.reutilities.may_place_on.azalea": "tag.block.reutilities.supports_azalea",
+    "tag.block.reutilities.may_place_on.mangrove_propagule": "tag.block.reutilities.supports_mangrove_propagule",
+    "tag.block.reutilities.may_place_on.lily_pad": "tag.block.reutilities.supports_lily_pad",
+    "tag.block.reutilities.may_place_on.fungi": "tag.block.reutilities.supports_fungi",
+    "tag.block.reutilities.may_place_on.roots": "tag.block.reutilities.supports_roots",
+    "tag.block.reutilities.may_place_on.nether_sprouts": "tag.block.reutilities.supports_nether_sprouts",
+    "tag.block.reutilities.may_place_on.wither_rose": "tag.block.reutilities.supports_wither_rose",
+    "tag.block.reutilities.may_place_on.nether_wart": "tag.block.reutilities.supports_nether_wart",
+    "tag.block.reutilities.seagrass_cannot_place_on": "tag.block.reutilities.cannot_support_seagrass",
+
+    "item_behavior.behaviorapi.apply_mob_effects": "item_behavior.behaviorapi.apply_effects",
+    "item_behavior.behaviorapi.clear_mob_effects": "item_behavior.behaviorapi.clear_effects",
+
+    "item_behavior.behaviorapi.apply_mob_effects.desc": "item_behavior.behaviorapi.apply_effects.desc",
+    "item_behavior.behaviorapi.clear_mob_effects.desc": "item_behavior.behaviorapi.clear_effects.desc",
+
+    "tooltip.reutilities.hold_alt": "tooltip.reutilities.for_components"
+  }
+}

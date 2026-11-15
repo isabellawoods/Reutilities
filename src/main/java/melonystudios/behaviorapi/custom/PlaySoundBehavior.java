@@ -21,6 +21,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 
@@ -54,12 +55,12 @@ public class PlaySoundBehavior extends ItemBehavior {
     }
 
     @Override
-    public void runBehavior(ItemStack stack, Level world, LivingEntity livEntity) {
-        if (world.isClientSide()) return;
+    public void runBehavior(ItemStack stack, Level level, LivingEntity livEntity) {
+        if (level.isClientSide()) return;
 
         Holder<SoundEvent> sound = Holder.direct(SoundEvent.createVariableRangeEvent(this.playSound.sound()));
         double rangeSquared = Mth.square(sound.value().getRange(this.playSound.volume()));
-        long seed = world.getRandom().nextLong();
+        long seed = level.getRandom().nextLong();
 
         double x = this.playSound.position(livEntity).x - livEntity.getX();
         double y = this.playSound.position(livEntity).y - livEntity.getY();
@@ -80,7 +81,7 @@ public class PlaySoundBehavior extends ItemBehavior {
         if (livEntity instanceof ServerPlayer player) {
             player.connection.send(new ClientboundSoundPacket(sound, this.playSound.source(), truePos.x, truePos.y, truePos.z, trueVolume, this.playSound.pitch(), seed));
         } else {
-            world.playSound(null, truePos.x, truePos.y, truePos.z, sound.value(), this.playSound.source(), trueVolume, this.playSound.pitch());
+            level.playSound(null, truePos.x, truePos.y, truePos.z, sound.value(), this.playSound.source(), trueVolume, this.playSound.pitch());
         }
     }
 
@@ -94,8 +95,8 @@ public class PlaySoundBehavior extends ItemBehavior {
                 ReCodecs.floatRange(0, 1).optionalFieldOf("min_volume", 1F).forGetter(PlaySound::minVolume)
         ).apply(instance, PlaySound::new));
 
-        public PlaySound(ResourceLocation sound, SoundSource source, Vec3 position) {
-            this(sound, source, Optional.of(position), 1, 1, 1);
+        public PlaySound(ResourceLocation sound, SoundSource source, @Nullable Vec3 position) {
+            this(sound, source, Optional.ofNullable(position), 1, 1, 1);
         }
 
         public Vec3 position(LivingEntity target) {

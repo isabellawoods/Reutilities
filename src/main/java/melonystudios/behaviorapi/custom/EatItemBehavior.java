@@ -41,9 +41,9 @@ public class EatItemBehavior extends ItemBehavior {
     }
 
     @Override
-    public void runBehavior(ItemStack stack, Level world, LivingEntity livEntity) {
-        livEntity.eat(world, this.eatItem.item());
-        this.eatItem.item().finishUsingItem(world, livEntity);
+    public void runBehavior(ItemStack stack, Level level, LivingEntity livEntity) {
+        livEntity.eat(level, this.eatItem.item());
+        this.eatItem.item().finishUsingItem(level, livEntity);
     }
 
     public record EatItem(ItemStack item) implements IndividualSettings<EatItem> {

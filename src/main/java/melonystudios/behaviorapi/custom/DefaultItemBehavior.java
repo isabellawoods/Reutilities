@@ -29,7 +29,7 @@ public class DefaultItemBehavior extends ItemBehavior {
     }
 
     @Override
-    public void runBehavior(ItemStack stack, Level world, LivingEntity livEntity) {}
+    public void runBehavior(ItemStack stack, Level level, LivingEntity livEntity) {}
 
     public static class Default implements IndividualSettings<Default> {
         public static final Default INSTANCE = new Default();

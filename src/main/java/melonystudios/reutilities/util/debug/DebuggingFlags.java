@@ -11,7 +11,7 @@ public interface DebuggingFlags {
     /// @return The prefix used for this mod's debugging flags.
     String getPrefix();
 
-    /// Finds the {@link Boolean} debug flag under the name `<prefix>debug.<name>`.
+    /// Finds the [Boolean] debug flag under the name `<prefix>debug.<name>`.
     /// @param name The name of the flag.
     /// @param defaultValue The default value of this flag, used when the flag isn't found and for logging.
     default boolean locateBooleanFlag(String name, boolean defaultValue) {
@@ -22,7 +22,7 @@ public interface DebuggingFlags {
         return value;
     }
 
-    /// Finds the {@link Integer} debug flag under the name `<prefix>debug.<name>`.
+    /// Finds the [Integer] debug flag under the name `<prefix>debug.<name>`.
     /// @param name The name of the flag.
     /// @param defaultValue The default value of this flag, used when the flag isn't found and for logging.
     default int locateIntFlag(String name, int defaultValue) {
@@ -33,7 +33,7 @@ public interface DebuggingFlags {
         return value;
     }
 
-    /// Finds the {@link Float} debug flag under the name `<prefix>debug.<name>`.
+    /// Finds the [Float] debug flag under the name `<prefix>debug.<name>`.
     /// @param name The name of the flag.
     /// @param defaultValue The default value of this flag, used when the flag isn't found and for logging.
     default float locateFloatFlag(String name, float defaultValue) {

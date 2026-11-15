@@ -1,10 +1,12 @@
 package melonystudios.reutilities.mixin.item;
 
 import melonystudios.behaviorapi.BehaviorAPI;
+import melonystudios.behaviorapi.BehaviorDataComponents;
 import melonystudios.behaviorapi.ItemBehavior;
+import melonystudios.behaviorapi.configuration.ItemBehaviorConfig;
 import melonystudios.behaviorapi.custom.ApplyEffectsBehavior;
 import melonystudios.reutilities.api.ReAPI;
-import melonystudios.reutilities.component.ReDataComponents;
+import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.item.Item;
@@ -23,13 +25,13 @@ import java.util.List;
 public class ReItemMixin {
     @Inject(method = "appendHoverText", at = @At("HEAD"))
     public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flag, CallbackInfo callback) {
-        // Item Behaviors
-        if (!stack.has(ReDataComponents.BEHAVIORS)) return;
-        List<ItemBehavior> behaviors = stack.get(ReDataComponents.BEHAVIORS);
+        // Item behaviors
+        if (!stack.has(BehaviorDataComponents.BEHAVIORS)) return;
+        Holder<ItemBehaviorConfig> configuration = stack.get(BehaviorDataComponents.BEHAVIORS);
         List<MobEffectInstance> behaviorEffects = new ArrayList<>();
 
         // Regular behavior tooltips
-        for (ItemBehavior behavior : behaviors) {
+        for (ItemBehavior behavior : configuration.value().behaviors()) {
             if (behavior.settings().showInTooltip() && ReAPI.shouldDisplay(stack, BehaviorAPI.behaviorAPI("behaviors"))) {
                 behavior.addToTooltip(context, tooltip::add, flag);
                 if (behavior instanceof ApplyEffectsBehavior applyEffects && applyEffects.applyEffects().effect().isPresent()) {

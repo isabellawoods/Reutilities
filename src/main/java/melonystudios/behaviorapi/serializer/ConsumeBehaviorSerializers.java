@@ -20,5 +20,6 @@ public class ConsumeBehaviorSerializers {
     public static final DeferredHolder<MapCodec<? extends ItemBehavior>, MapCodec<ExplodeBehavior>> EXPLODE = SERIALIZERS.register("explode", () -> ExplodeBehavior.CODEC);
     public static final DeferredHolder<MapCodec<? extends ItemBehavior>, MapCodec<PlaySoundBehavior>> PLAY_SOUND = SERIALIZERS.register("play_sound", () -> PlaySoundBehavior.CODEC);
     public static final DeferredHolder<MapCodec<? extends ItemBehavior>, MapCodec<RemoveEffectsBehavior>> REMOVE_EFFECTS = SERIALIZERS.register("remove_effects", () -> RemoveEffectsBehavior.CODEC);
+    public static final DeferredHolder<MapCodec<? extends ItemBehavior>, MapCodec<RunFunctionBehavior>> RUN_FUNCTION = SERIALIZERS.register("run_function", () -> RunFunctionBehavior.CODEC);
     public static final DeferredHolder<MapCodec<? extends ItemBehavior>, MapCodec<TeleportEntityBehavior>> TELEPORT_ENTITY = SERIALIZERS.register("teleport_entity", () -> TeleportEntityBehavior.CODEC);
 }

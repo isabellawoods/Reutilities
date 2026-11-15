@@ -1,0 +1,148 @@
+package melonystudios.reutilities.client.event;
+
+import melonystudios.reutilities.Reutilities;
+import melonystudios.reutilities.api.boat.BoatType;
+import melonystudios.reutilities.blockentity.ReBlockEntities;
+import melonystudios.reutilities.client.ReClientConstants;
+import melonystudios.reutilities.client.command.StudiosHelpCommand;
+import melonystudios.reutilities.client.option.ReClientOptions;
+import melonystudios.reutilities.component.ReDataComponents;
+import melonystudios.reutilities.entity.ReEntities;
+import melonystudios.reutilities.entity.custom.ArmSize;
+import melonystudios.reutilities.entity.layer.OutfitLayer;
+import melonystudios.reutilities.entity.layer.RecapeLayer;
+import melonystudios.reutilities.entity.model.OutfitModel;
+import melonystudios.reutilities.entity.renderer.HandArmorRenderer;
+import melonystudios.reutilities.entity.renderer.ReBoatRenderer;
+import melonystudios.reutilities.event.custom.AddComponentTooltipsEvent;
+import melonystudios.reutilities.util.ReCommonConstants;
+import net.minecraft.ChatFormatting;
+import net.minecraft.Util;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.model.BoatModel;
+import net.minecraft.client.model.ChestBoatModel;
+import net.minecraft.client.model.geom.builders.CubeDeformation;
+import net.minecraft.client.model.geom.builders.LayerDefinition;
+import net.minecraft.client.renderer.blockentity.HangingSignRenderer;
+import net.minecraft.client.renderer.blockentity.SignRenderer;
+import net.minecraft.client.renderer.entity.LivingEntityRenderer;
+import net.minecraft.client.renderer.entity.PiglinRenderer;
+import net.minecraft.client.renderer.entity.player.PlayerRenderer;
+import net.minecraft.client.resources.PlayerSkin;
+import net.minecraft.network.chat.ClickEvent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.EntityType;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.ModList;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.client.event.EntityRenderersEvent;
+import net.neoforged.neoforge.client.event.RegisterClientCommandsEvent;
+import net.neoforged.neoforge.client.event.RenderArmEvent;
+import net.neoforged.neoforge.client.event.ScreenshotEvent;
+
+import java.io.File;
+
+@EventBusSubscriber(modid = Reutilities.MOD_ID, value = Dist.CLIENT)
+public class ReClientEvents {
+    @SubscribeEvent
+    public static void registerLayers(EntityRenderersEvent.AddLayers event) {
+        for (PlayerSkin.Model model : event.getSkins()) {
+            if (event.getSkin(model) instanceof PlayerRenderer renderer) {
+                boolean slimArms = ((ArmSize) renderer.getModel()).reutilities$slimArms();
+                renderer.addLayer(new OutfitLayer<>(renderer, new OutfitModel<>(event.getContext().bakeLayer(slimArms ? OutfitModel.SLIM : OutfitModel.CLASSIC), slimArms)));
+            }
+        }
+
+        if (event.getRenderer(EntityType.PIGLIN) instanceof LivingEntityRenderer livRenderer && livRenderer instanceof PiglinRenderer renderer) {
+            renderer.addLayer(new OutfitLayer<>(renderer, Util.make(new OutfitModel<>(event.getContext().bakeLayer(OutfitModel.CLASSIC), false), model -> model.head.visible = model.hat.visible = false)));
+        }
+        if (event.getRenderer(EntityType.PIGLIN_BRUTE) instanceof LivingEntityRenderer livRenderer && livRenderer instanceof PiglinRenderer renderer) {
+            renderer.addLayer(new OutfitLayer<>(renderer, Util.make(new OutfitModel<>(event.getContext().bakeLayer(OutfitModel.CLASSIC), false), model -> model.head.visible = model.hat.visible = false)));
+        }
+        if (event.getRenderer(EntityType.ZOMBIFIED_PIGLIN) instanceof LivingEntityRenderer livRenderer && livRenderer instanceof PiglinRenderer renderer) {
+            renderer.addLayer(new OutfitLayer<>(renderer, Util.make(new OutfitModel<>(event.getContext().bakeLayer(OutfitModel.CLASSIC), false), model -> model.head.visible = model.hat.visible = false)));
+        }
+    }
+
+    @SubscribeEvent
+    public static void registerModelLayers(EntityRenderersEvent.RegisterLayerDefinitions event) {
+        event.registerLayerDefinition(OutfitModel.CLASSIC, () -> LayerDefinition.create(OutfitModel.createBodyLayer(CubeDeformation.NONE, false), 64, 64));
+        event.registerLayerDefinition(OutfitModel.SLIM, () -> LayerDefinition.create(OutfitModel.createBodyLayer(CubeDeformation.NONE, true), 64, 64));
+        event.registerLayerDefinition(RecapeLayer.CAPE, () -> LayerDefinition.create(RecapeLayer.createMesh(CubeDeformation.NONE), 64, 32));
+
+        for (BoatType type : ReCommonConstants.BOATS.values()) {
+            event.registerLayerDefinition(ReBoatRenderer.createBoatModelName(type), BoatModel::createBodyModel);
+            event.registerLayerDefinition(ReBoatRenderer.createChestBoatModelName(type), ChestBoatModel::createBodyModel);
+        }
+    }
+
+    @SubscribeEvent
+    public static void registerEntityRenderers(EntityRenderersEvent.RegisterRenderers event) {
+        // Block entity renderers
+        event.registerBlockEntityRenderer(ReBlockEntities.SIGN.get(), SignRenderer::new);
+        event.registerBlockEntityRenderer(ReBlockEntities.HANGING_SIGN.get(), HangingSignRenderer::new);
+
+        // Entity renderers
+        event.registerEntityRenderer(ReEntities.BOAT.get(), context -> new ReBoatRenderer(context, false));
+        event.registerEntityRenderer(ReEntities.CHEST_BOAT.get(), context -> new ReBoatRenderer(context, true));
+    }
+
+    @SubscribeEvent
+    public static void registerClientCommands(RegisterClientCommandsEvent event) {
+        StudiosHelpCommand.register(event.getDispatcher());
+    }
+
+    @SubscribeEvent
+    public static void addComponentTooltips(AddComponentTooltipsEvent event) {
+        event.addComponent(2, ReDataComponents.OUTFIT.get());
+        event.addComponent(1, ReDataComponents.STORED_EXPERIENCE.get());
+    }
+
+    @SubscribeEvent
+    public static void renderArmorInArm(RenderArmEvent event) {
+        if (ReClientOptions.RENDER_OUTFITS.get()) HandArmorRenderer.renderOutfitInArm(event.getPlayer(), event.getArm(), event.getPoseStack(), event.getMultiBufferSource(), event.getPackedLight());
+        HandArmorRenderer.renderArmorInArm(event.getPlayer(), event.getArm(), event.getPoseStack(), event.getMultiBufferSource(), event.getPackedLight());
+    }
+
+    @SubscribeEvent
+    public static void takePanoramicScreenshot(ScreenshotEvent event) {
+        Minecraft minecraft = Minecraft.getInstance();
+        int size = ReClientOptions.PANORAMIC_SCREENSHOT_SIZE.get();
+        if (ReClientOptions.PANORAMIC_SCREENSHOTS.get() && Screen.hasControlDown() && minecraft.level != null && event.getImage().getWidth() != size && event.getImage().getHeight() != size) {
+            event.setCanceled(true);
+
+            // block the screenshot if Iris Shaders is loaded, because it breaks the screenshotting process
+            // (the panorama is also broken when using some other rendering mod (maybe Sodium?) since transparent stuff isn't captured, but at least the blocks exist in the panorama ~isa 09-11-26)
+            if (ModList.get().isLoaded("iris")) {
+                minecraft.gui.getChat().addMessage(Component.translatable("screenshot.fail.iris_loaded", size).withStyle(ChatFormatting.RED));
+                return;
+            }
+
+            // make the folder where the panorama will be saved
+            // ".minecraft/panorama/<date>"
+            ReClientConstants.CURRENT_PANORAMA_OUTPUT_FOLDER = Util.getFilenameFormattedDateTime();
+            String panoramaFolder = ReClientOptions.PANORAMA_SAVE_FOLDER.get();
+            String fileLocation = panoramaFolder + "/" + ReClientConstants.CURRENT_PANORAMA_OUTPUT_FOLDER;
+            File outputFolder = new File(minecraft.gameDirectory, fileLocation);
+
+            if (outputFolder.mkdirs()) {
+                // warning when making panoramas with higher (>1024) resolutions
+                if (size > 1536) { // 1.5x default resolution
+                    minecraft.gui.getChat().addMessage(Component.translatable("screenshot.high_resolution", size).withStyle(ChatFormatting.YELLOW));
+                }
+
+                // Saved panorama to "panorama/<date>" message
+                Component component = Component.literal(fileLocation)
+                        .withStyle(style -> style.withUnderlined(true).withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_FILE, outputFolder.getAbsolutePath())));
+                event.setResultMessage(Component.translatable("screenshot.success.panoramic", component));
+
+                // actually take the screenshots
+                minecraft.grabPanoramixScreenshot(minecraft.gameDirectory, size, size);
+            } else {
+                event.setResultMessage(Component.translatable("screenshot.fail").withStyle(ChatFormatting.RED));
+            }
+        }
+    }
+}

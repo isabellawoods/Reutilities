@@ -1,6 +1,6 @@
 package melonystudios.reutilities.mixin.block;
 
-import melonystudios.reutilities.util.tag.ReBlockTags;
+import melonystudios.reutilities.tag.ReBlockTags;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;

@@ -2,7 +2,7 @@ package melonystudios.reutilities.entity.renderer;
 
 import com.google.common.collect.ImmutableMap;
 import com.mojang.datafixers.util.Pair;
-import melonystudios.reutilities.api.BoatType;
+import melonystudios.reutilities.api.boat.BoatType;
 import melonystudios.reutilities.entity.custom.BoatVariant;
 import melonystudios.reutilities.util.ReCommonConstants;
 import net.minecraft.client.model.*;

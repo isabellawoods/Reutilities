@@ -7,14 +7,15 @@ import com.wildfire.render.GenderLayer;
 import com.wildfire.render.WildfireModelRenderer;
 import melonystudios.reutilities.Reutilities;
 import melonystudios.reutilities.api.ReAPI;
+import melonystudios.reutilities.api.outfit.OutfitDefinition;
+import melonystudios.reutilities.client.ReClientConstants;
+import melonystudios.reutilities.client.api.ReClientAPI;
+import melonystudios.reutilities.client.option.ReClientOptions;
 import melonystudios.reutilities.component.ReDataComponents;
+import melonystudios.reutilities.entity.attachment.FullBodyOutfit;
 import melonystudios.reutilities.entity.custom.ArmSize;
-import melonystudios.reutilities.entity.outfit.FullBodyOutfit;
-import melonystudios.reutilities.entity.outfit.OutfitDefinition;
-import melonystudios.reutilities.option.ReClientOptions;
 import melonystudios.reutilities.option.ReCommonOptions;
-import melonystudios.reutilities.util.ReClientConstants;
-import melonystudios.reutilities.util.tag.ReTrimMaterialTags;
+import melonystudios.reutilities.tag.ReTrimMaterialTags;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.player.AbstractClientPlayer;
@@ -41,7 +42,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import static melonystudios.reutilities.util.ReClientConstants.EMISSIVE_LIGHT_VALUE;
+import static melonystudios.reutilities.client.ReClientConstants.EMISSIVE_LIGHT_VALUE;
 
 @Pseudo
 @Mixin(value = GenderLayer.class, remap = false)
@@ -150,14 +151,14 @@ public abstract class ReGenderLayerMixin<ENTITY extends LivingEntity, MODEL exte
     }
 
     @Unique
-    private void renderComponentBoobOutfit(PoseStack stack, MultiBufferSource buffer, WildfireModelRenderer.ModelBox outfitBox, ItemStack chestStack, Level world, BlockPos pos, int packedLight, boolean slimArms) {
+    private void renderComponentBoobOutfit(PoseStack stack, MultiBufferSource buffer, WildfireModelRenderer.ModelBox outfitBox, ItemStack chestStack, Level level, BlockPos pos, int packedLight, boolean slimArms) {
         Minecraft minecraft = Minecraft.getInstance();
         minecraft.getProfiler().push(Reutilities.reutilities("component_boob_outfit").toString());
-        OutfitDefinition definition = OutfitDefinition.getDefinition(world, chestStack);
+        OutfitDefinition definition = OutfitDefinition.getDefinition(level, chestStack);
         int outfitColor = OutfitDefinition.getOutfitColors(definition, chestStack, EquipmentSlot.CHEST);
         int overlayCoordinates = ReClientConstants.getOverlayCoordinates(0);
 
-        packedLight = ReAPI.getItemBrightness(chestStack, packedLight, world, pos, true);
+        packedLight = ReClientAPI.getItemBrightness(chestStack, packedLight, level, pos, true);
 
         // Regular texture
         ResourceLocation outfitLocation = OutfitDefinition.getOutfitTexture(EquipmentSlot.CHEST, definition, slimArms);
@@ -186,19 +187,19 @@ public abstract class ReGenderLayerMixin<ENTITY extends LivingEntity, MODEL exte
 
     @ModifyArg(method = "renderBreast", at = @At(value = "INVOKE", target = "Lcom/wildfire/render/GenderLayer;renderBox(Lcom/wildfire/render/WildfireModelRenderer$ModelBox;Lcom/mojang/blaze3d/vertex/PoseStack;Lcom/mojang/blaze3d/vertex/VertexConsumer;III)V", ordinal = 2), index = 3)
     private int makeBoobArmorEmissive(int light, @Local(argsOnly = true) LivingEntity livEntity) {
-        return ReAPI.getItemBrightness(livEntity.getItemBySlot(EquipmentSlot.CHEST), light, livEntity.level(), livEntity.blockPosition(), true);
+        return ReClientAPI.getItemBrightness(livEntity.getItemBySlot(EquipmentSlot.CHEST), light, livEntity.level(), livEntity.blockPosition(), true);
     }
 
     @ModifyArg(method = "renderBreast", at = @At(value = "INVOKE", target = "Lcom/wildfire/render/GenderLayer;renderBox(Lcom/wildfire/render/WildfireModelRenderer$ModelBox;Lcom/mojang/blaze3d/vertex/PoseStack;Lcom/mojang/blaze3d/vertex/VertexConsumer;III)V", ordinal = 3), index = 3)
-    private int makeBoobTrimEmissive(int light, @Local(argsOnly = true) LivingEntity livEntity, @Local ArmorTrim material) {
+    private int makeBoobTrimEmissive(int light, @Local(argsOnly = true) LivingEntity livEntity, @Local(name = "trim") ArmorTrim material) {
         if (material.material().is(ReTrimMaterialTags.EMISSIVE_LIGHTING) && ReCommonOptions.LIGHT_EMITTING_EMISSIVES.get()) {
             return ReClientConstants.EMISSIVE_LIGHT_VALUE;
         }
-        return ReAPI.getItemBrightness(livEntity.getItemBySlot(EquipmentSlot.CHEST), light, livEntity.level(), livEntity.blockPosition(), true);
+        return ReClientAPI.getItemBrightness(livEntity.getItemBySlot(EquipmentSlot.CHEST), light, livEntity.level(), livEntity.blockPosition(), true);
     }
 
     /// @author ~isa 05-01-26
-    /// @reason allows any entity to have a correct breast texture, will be used for some of my mods later (like *Numinosity*)
+    /// @reason allows any entity to have a correct tit texture, will be used for some of my mods later (like *Numinosity*)
     @Overwrite
     @Nullable
     private ResourceLocation getBreastTexture(ENTITY livEntity) {

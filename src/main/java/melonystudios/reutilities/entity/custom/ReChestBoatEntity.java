@@ -1,6 +1,6 @@
 package melonystudios.reutilities.entity.custom;
 
-import melonystudios.reutilities.api.BoatType;
+import melonystudios.reutilities.api.boat.BoatType;
 import melonystudios.reutilities.component.ReDataComponents;
 import melonystudios.reutilities.entity.ReEntities;
 import melonystudios.reutilities.util.ReCommonConstants;
@@ -22,12 +22,12 @@ import org.jetbrains.annotations.Nullable;
 public class ReChestBoatEntity extends ChestBoat implements BoatVariant {
     private static final EntityDataAccessor<String> WOOD_TYPE = SynchedEntityData.defineId(ReChestBoatEntity.class, EntityDataSerializers.STRING);
 
-    public ReChestBoatEntity(EntityType<? extends ChestBoat> boat, Level world) {
-        super(boat, world);
+    public ReChestBoatEntity(EntityType<? extends ChestBoat> boat, Level level) {
+        super(boat, level);
     }
 
-    public ReChestBoatEntity(Level world, double x, double y, double z) {
-        this(ReEntities.CHEST_BOAT.get(), world);
+    public ReChestBoatEntity(Level level, double x, double y, double z) {
+        this(ReEntities.CHEST_BOAT.get(), level);
         this.setPos(x, y, z);
         this.xo = x;
         this.yo = y;

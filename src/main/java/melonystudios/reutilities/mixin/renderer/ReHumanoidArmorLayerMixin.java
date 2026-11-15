@@ -2,12 +2,12 @@ package melonystudios.reutilities.mixin.renderer;
 
 import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.blaze3d.vertex.PoseStack;
-import melonystudios.reutilities.api.ReAPI;
+import melonystudios.reutilities.client.ReClientConstants;
+import melonystudios.reutilities.client.api.ReClientAPI;
+import melonystudios.reutilities.client.option.ReClientOptions;
 import melonystudios.reutilities.component.ReDataComponents;
-import melonystudios.reutilities.option.ReClientOptions;
 import melonystudios.reutilities.option.ReCommonOptions;
-import melonystudios.reutilities.util.ReClientConstants;
-import melonystudios.reutilities.util.tag.ReTrimMaterialTags;
+import melonystudios.reutilities.tag.ReTrimMaterialTags;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.layers.HumanoidArmorLayer;
@@ -30,7 +30,7 @@ public class ReHumanoidArmorLayerMixin {
     @ModifyVariable(method = "renderArmorPiece(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/entity/EquipmentSlot;ILnet/minecraft/client/model/HumanoidModel;FFFFFF)V",
             at = @At("HEAD"), ordinal = 0, argsOnly = true)
     private int makeModelsEmissive(int packedLight, @Local(argsOnly = true) LivingEntity livEntity, @Local(argsOnly = true) EquipmentSlot slot) {
-        return ReAPI.getItemBrightness(livEntity.getItemBySlot(slot), packedLight, livEntity.level(), livEntity.blockPosition(), true);
+        return ReClientAPI.getItemBrightness(livEntity.getItemBySlot(slot), packedLight, livEntity.level(), livEntity.blockPosition(), true);
     }
 
     @ModifyArg(method = "renderArmorPiece(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/entity/EquipmentSlot;ILnet/minecraft/client/model/HumanoidModel;FFFFFF)V",
@@ -39,6 +39,6 @@ public class ReHumanoidArmorLayerMixin {
         if (material.material().is(ReTrimMaterialTags.EMISSIVE_LIGHTING) && ReCommonOptions.LIGHT_EMITTING_EMISSIVES.get()) {
             return ReClientConstants.EMISSIVE_LIGHT_VALUE;
         }
-        return ReAPI.getItemBrightness(livEntity.getItemBySlot(slot), packedLight, livEntity.level(), livEntity.blockPosition(), true);
+        return ReClientAPI.getItemBrightness(livEntity.getItemBySlot(slot), packedLight, livEntity.level(), livEntity.blockPosition(), true);
     }
 }

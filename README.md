@@ -1,12 +1,12 @@
 <div style="align: center;">
-  <img src="assets/banner_1170x500.png" alt="A banner with Reutilities' logo (wide version). (Mellomedley 1.21.1)"/>
+  <img src="assets/banner_1170x500.png" alt="A banner with Reutilities' logo (wide version). Taken in the Mellomedley [1.21.1] instance."/>
 </div>
 
 <sup>*For NeoForge 1.21.1*</sup>
 
 ***Reutilities*** is a library mod for all of Melony Studios' mods beginning in 1.21.1. It unifies most of the code that was used across my mods,
 and ports various useful and extensible features, such as [**outfit definitions**](https://github.com/isabellawoods/Informational-Mod-Features/blob/main/Reutilities/Docs/Outfit%20Definition.md), from *Back Math*,
-and **item behaviors**, from *Revaried*.
+**item behaviors**, from *Revaried*, and **color pickers**, originally intended for *Numinosity*.
 
 This mod also provides some functionality by itself, be it a small feature from another mod of mine, or something new altogether:
 - **Component Display**: Displays the data components of an item stack in its tooltips. Works for every item (from *Revaried*);
@@ -14,7 +14,10 @@ This mod also provides some functionality by itself, be it a small feature from 
   - ***This does not work with Iris Shaders!***
 - **Custom Boats and Signs**: New boats and signs can be created using a single method and a `BoatType` or `WoodType`, excluding the items/blocks, of course;
 - **Emissive Lighting**: Items, armors, trims and outfits can define their luminosity via the `reutilities:light_emission` component, or any of the `#c:emissive_lighting` tags;
-- **Glowing Light Sources**: Blocks that emit light will always have with at least that light level when rendered in the world.
+- **Glowing Light Sources**: Blocks that emit light will always have with at least that light level when rendered in the world;
+- **Color Pickers**: Sample colors from a fully customizable, data-driven color picker instead of relying on picking and mixing colors from `DyeColor`;
+- **Behavior API**: A library made for running custom **item behaviors** when using or consuming items, but can be expanded for using it in any way. *Still in development!* (from *Revaried*);
+- **Custom Outfits**: A custom outfit definition system that renders armor on top of the player's skin. Has full support for *emissive lighting* (listed above) and *Female Gender Mod*.
 
 *Reutilities* also provides compatibility between other mods. Currently, this only includes [*Female Gender Mod*](https://modrinth.com/mod/female-gender):
 - Item emissiveness and outfits render properly on the wearer's breasts;
@@ -37,6 +40,8 @@ this.blockFamily(this.modLoc("block/avondale_planks"), "avondale").stairs(NumiBl
 
 ## The API
 *Reutilities*' API, known as **ReAPI**, allows you to easily register new boats, signs, colors, breast armor definitions and more, as well as give items their properties and create armor material layers.
+
+There is also a client-side version of the API called **ReClientAPI**, being located in `client.api`. It is used to register client-only content for this mod, like descriptions for the `/mstudios help` command.
 
 The `api` package also includes `ReCodecs`, which provides codec utilities.
 
@@ -61,7 +66,7 @@ The dependency should always target the version being used, as I tend to make ma
 [[dependencies.examplemod]]
     modId = "reutilities"
     type = "required"
-    versionRange = "[1.4.0,),(,1.6.0)"
+    versionRange = "[1.6.0,)"
     ordering = "NONE"
     side = "BOTH"
 ```
@@ -78,3 +83,13 @@ Inside the `dataRunProgramArgsCopy.txt` file, you'll need to add the line below.
 --existing-mod
 reutilities
 ```
+
+### Using debugging flags
+*Reutilities* adds **debugging flags** for testing new content during development. These flags can be enabled by adding them to the "VM options" field on the default "Application" run configurations.
+
+This mod currently adds **2** flags:
+- `-Dredebug.lightEmissionDisplay`:
+  - Displays information about the emitted block light and the provided light from the item being held on the player's action bar:
+  - > emitted light: `emittedBlockLight` // light emission (sky/block): `skylight`/`ambientBlockLight`
+- `-Dredebug.dumpCommands`:
+  - Enables the `/mstudios develop/dump_<identifiers> <alphabetical_sort>` commands.

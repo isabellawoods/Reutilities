@@ -186,6 +186,11 @@ public class BlockFamilyModelProvider {
         return this;
     }
 
+    public BlockFamilyModelProvider stancementsShelf(Block shelf) {
+        BLOCK_TYPES.put("stancements/shelf", shelf);
+        return this;
+    }
+
     public BlockFamilyModelProvider concrete(Block concretePowder, Block concrete) {
         BLOCK_TYPES.put("concrete_powder", concretePowder);
         BLOCK_TYPES.put("concrete", concrete);
@@ -262,6 +267,7 @@ public class BlockFamilyModelProvider {
         PROVIDERS.put("wall_sign", sign);
         PROVIDERS.put("hanging_sign", sign);
         PROVIDERS.put("wall_hanging_sign", sign);
+        PROVIDERS.put("stancements/shelf", (block, identifier) -> this.stateProvider.shelf(block));
 
         // Colored blocks
         FamilyModelEntry fromTexture = (block, identifier) -> this.fromTexture(block);

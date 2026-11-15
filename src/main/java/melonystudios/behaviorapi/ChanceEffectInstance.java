@@ -1,6 +1,6 @@
 package melonystudios.behaviorapi;
 
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import melonystudios.reutilities.api.ReCodecs;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -8,13 +8,13 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.effect.MobEffectInstance;
 
-/// A custom {@link MobEffectInstance} that can have a chance to apply the effect.
+/// A custom [MobEffectInstance] that can have a chance to apply the effect.
 ///
-/// This class' {@link #CODEC} has the following fields:
-/// - `effect`: A {@linkplain MobEffectInstance#CODEC mob effect instance codec}, defining the effect that should be applied;
+/// This class' [#CODEC] has the following fields:
+/// - `effect`: A [mob effect instance codec][MobEffectInstance#CODEC], defining the effect that should be applied;
 /// - `chance`: A float codec with a range of `0` to `1`, defining the chance of this effect being applied.
 public class ChanceEffectInstance {
-    public static final Codec<ChanceEffectInstance> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+    public static final MapCodec<ChanceEffectInstance> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             MobEffectInstance.CODEC.fieldOf("effect").forGetter(ChanceEffectInstance::copyEffect),
             ReCodecs.floatRange(0, 1).optionalFieldOf("chance", 1F).forGetter(ChanceEffectInstance::chance)
     ).apply(instance, ChanceEffectInstance::new));
@@ -28,7 +28,7 @@ public class ChanceEffectInstance {
     private final MobEffectInstance instance;
     private float chance;
 
-    /// A custom {@link MobEffectInstance} that can have a chance to apply the effect.
+    /// A custom [MobEffectInstance] that can have a chance to apply the effect.
     /// @param instance The defined effect instance.
     /// @param chance The chance of this effect being applied. Defaults to `1`.
     public ChanceEffectInstance(MobEffectInstance instance, float chance) {
@@ -36,7 +36,7 @@ public class ChanceEffectInstance {
         this.chance = chance;
     }
 
-    /// A custom {@link MobEffectInstance} that can have a chance to apply the effect.
+    /// A custom [MobEffectInstance] that can have a chance to apply the effect.
     /// @param instance The defined effect instance.
     public ChanceEffectInstance(MobEffectInstance instance) {
         this(instance, 1);

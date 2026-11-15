@@ -1,9 +1,9 @@
 package melonystudios.reutilities.mixin.renderer;
 
 import melonystudios.reutilities.api.ReAPI;
+import melonystudios.reutilities.client.option.ReClientOptions;
 import melonystudios.reutilities.component.custom.CapePositioning;
 import melonystudios.reutilities.entity.custom.ArmSize;
-import melonystudios.reutilities.option.ReClientOptions;
 import net.minecraft.client.model.PlayerModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.world.entity.EquipmentSlot;

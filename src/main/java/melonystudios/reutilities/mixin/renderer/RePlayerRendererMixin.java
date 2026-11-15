@@ -1,12 +1,12 @@
 package melonystudios.reutilities.mixin.renderer;
 
 import melonystudios.reutilities.api.ReAPI;
+import melonystudios.reutilities.api.outfit.OutfitDefinition;
+import melonystudios.reutilities.client.option.ReClientOptions;
 import melonystudios.reutilities.component.ReDataComponents;
+import melonystudios.reutilities.entity.attachment.FullBodyOutfit;
 import melonystudios.reutilities.entity.custom.ArmSize;
-import melonystudios.reutilities.entity.outfit.FullBodyOutfit;
-import melonystudios.reutilities.entity.outfit.OutfitDefinition;
-import melonystudios.reutilities.option.ReClientOptions;
-import melonystudios.reutilities.util.tag.ReItemTags;
+import melonystudios.reutilities.tag.ReItemTags;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.PlayerModel;
 import net.minecraft.client.player.AbstractClientPlayer;

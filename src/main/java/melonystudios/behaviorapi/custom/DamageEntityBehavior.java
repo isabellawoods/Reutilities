@@ -55,19 +55,19 @@ public class DamageEntityBehavior extends ItemBehavior {
     }
 
     @Override
-    public void runBehavior(ItemStack stack, Level world, LivingEntity livEntity) {
-        if (world.isClientSide()) return;
-        DamageSource source = world.damageSources().source(this.damageEntity.type(), livEntity);
+    public void runBehavior(ItemStack stack, Level level, LivingEntity livEntity) {
+        if (level.isClientSide()) return;
+        DamageSource source = level.damageSources().source(this.damageEntity.type(), livEntity);
         if (!livEntity.isInvulnerableTo(source)) livEntity.hurt(source, this.damageEntity.amount());
     }
 
     @Override
     public void addToTooltip(Item.TooltipContext context, Consumer<Component> adder, TooltipFlag flag) {
         super.addToTooltip(context, adder, flag);
-        Level world = context.level();
-        if (world == null) return;
+        Level level = context.level();
+        if (level == null) return;
 
-        DamageSource source = world.damageSources().source(this.damageEntity.type());
+        DamageSource source = level.damageSources().source(this.damageEntity.type());
         String translationKey = this.damageEntity.type().location().toLanguageKey("damage_type");
         Component translation;
 

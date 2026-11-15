@@ -1,7 +1,7 @@
 package melonystudios.reutilities.mixin.renderer;
 
 import com.llamalad7.mixinextras.sugar.Local;
-import melonystudios.reutilities.api.ReAPI;
+import melonystudios.reutilities.client.api.ReClientAPI;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.core.BlockPos;
@@ -18,6 +18,6 @@ public class ReItemRendererMixin {
         if (context == ItemDisplayContext.GUI || context == ItemDisplayContext.FIXED) return packedLight;
         Minecraft minecraft = Minecraft.getInstance();
         BlockPos pos = minecraft.cameraEntity != null ? minecraft.cameraEntity.blockPosition() : null;
-        return ReAPI.getItemBrightness(stack, packedLight, minecraft.level, pos, true);
+        return ReClientAPI.getItemBrightness(stack, packedLight, minecraft.level, pos, true);
     }
 }

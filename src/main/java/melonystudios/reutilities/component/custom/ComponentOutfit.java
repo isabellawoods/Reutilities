@@ -2,7 +2,7 @@ package melonystudios.reutilities.component.custom;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import melonystudios.reutilities.entity.outfit.OutfitDefinition;
+import melonystudios.reutilities.api.outfit.OutfitDefinition;
 import melonystudios.reutilities.util.ReRegistries;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.HolderLookup;
@@ -18,11 +18,11 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
 
-/// Represents an outfit definition as a data component. This class' {@link #CODEC} has the following fields:
+/// Represents an outfit definition as a data component. This class' [#CODEC] has the following fields:
 /// - `definition`: A resource key of an outfit definition;
-/// - `tooltip`: *(optional)* The {@linkplain TooltipStyle tooltip style} to use for this component outfit.
-/// @param definition An {@linkplain EitherHolder either holder} for the definition.
-/// @param tooltip The tooltip style to use for the item's tooltip. Defaults to {@link TooltipStyle#OUTFIT OUTFIT}.
+/// - `tooltip`: *(optional)* The [tooltip style][TooltipStyle] to use for this component outfit.
+/// @param definition An [EitherHolder] for the definition.
+/// @param tooltip The tooltip style to use for the item's tooltip. Defaults to "[Outfit][TooltipStyle#OUTFIT]".
 public record ComponentOutfit(EitherHolder<OutfitDefinition> definition, TooltipStyle tooltip) implements TooltipProvider {
     public static final Codec<ComponentOutfit> FULL_CODEC = RecordCodecBuilder.create(instance -> instance.group(
             EitherHolder.codec(ReRegistries.OUTFIT_DEFINITION, OutfitDefinition.CODEC).fieldOf("definition").forGetter(ComponentOutfit::definition),

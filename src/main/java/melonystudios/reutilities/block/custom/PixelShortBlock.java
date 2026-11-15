@@ -1,6 +1,6 @@
 package melonystudios.reutilities.block.custom;
 
-import melonystudios.reutilities.util.tag.ReFluidTags;
+import melonystudios.reutilities.tag.ReFluidTags;
 import net.minecraft.core.BlockPos;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.Entity;
@@ -23,8 +23,8 @@ public interface PixelShortBlock {
     BlockState getBaseBlock();
 
     /// Represents the fluid that this farmland requires to stay hydrated. Defaults to:
-    /// - **Water** ({@link ReFluidTags#HYDRATES_WATER_BASED_FARMLAND #reutilities:hydrates_water_based_farmland}) for vanilla and *Numinosity*'s farmland; or
-    /// - **Lava** ({@link ReFluidTags#HYDRATES_LAVA_BASED_FARMLAND #reutilities:hydrates_lava_based_farmland}) for *Revaried*'s Nether farmland.
+    /// - **Water** ([`#reutilities:hydrates_water_based_farmland`][ReFluidTags#HYDRATES_WATER_BASED_FARMLAND]) for vanilla and *Numinosity*'s farmland; or
+    /// - **Lava** ([`#reutilities:hydrates_lava_based_farmland`][ReFluidTags#HYDRATES_LAVA_BASED_FARMLAND]) for *Revaried*'s Nether farmland.
     default TagKey<Fluid> getHydratingFluid() {
         return ReFluidTags.HYDRATES_WATER_BASED_FARMLAND;
     }
@@ -32,11 +32,11 @@ public interface PixelShortBlock {
     /// Turns this farmland block back to its base block, sending a "block change" game event.
     /// @param entity *(optional)* the entity trampling this farmland.
     /// @param state The block state being checked.
-    /// @param world The world.
+    /// @param level The world.
     /// @param pos This block's position in the world.
-    default void returnToBaseBlock(@Nullable Entity entity, BlockState state, Level world, BlockPos pos) {
-        BlockState baseState = Block.pushEntitiesUp(state, this.getBaseBlock(), world, pos);
-        world.setBlockAndUpdate(pos, baseState);
-        world.gameEvent(GameEvent.BLOCK_CHANGE, pos, GameEvent.Context.of(entity, baseState));
+    default void returnToBaseBlock(@Nullable Entity entity, BlockState state, Level level, BlockPos pos) {
+        BlockState baseState = Block.pushEntitiesUp(state, this.getBaseBlock(), level, pos);
+        level.setBlockAndUpdate(pos, baseState);
+        level.gameEvent(GameEvent.BLOCK_CHANGE, pos, GameEvent.Context.of(entity, baseState));
     }
 }

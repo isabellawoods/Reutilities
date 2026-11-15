@@ -1,11 +1,11 @@
 package melonystudios.reutilities.mixin.item;
 
+import melonystudios.reutilities.api.boat.ReBoats;
 import melonystudios.reutilities.component.ReDataComponents;
 import melonystudios.reutilities.entity.custom.BoatVariant;
 import melonystudios.reutilities.entity.custom.ReBoatEntity;
 import melonystudios.reutilities.entity.custom.ReChestBoatEntity;
 import melonystudios.reutilities.item.custom.ReBoatItem;
-import melonystudios.reutilities.util.ReBoats;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
@@ -34,13 +34,13 @@ public class ReBoatItemMixin extends Item {
     }
 
     @Inject(method = "getBoat", at = @At("HEAD"), cancellable = true)
-    private void getBoat(Level world, HitResult result, ItemStack stack, Player player, CallbackInfoReturnable<Boat> callback) {
+    private void getBoat(Level level, HitResult result, ItemStack stack, Player player, CallbackInfoReturnable<Boat> callback) {
         if (stack.has(ReDataComponents.WOOD_TYPE)) {
             callback.cancel();
             Vec3 location = result.getLocation();
-            Boat boat = this.hasChest ? new ReChestBoatEntity(world, location.x, location.y, location.z) : new ReBoatEntity(world, location.x, location.y, location.z);
+            Boat boat = this.hasChest ? new ReChestBoatEntity(level, location.x, location.y, location.z) : new ReBoatEntity(level, location.x, location.y, location.z);
             ((BoatVariant) boat).setBoatType(ReBoatItem.getBoatType(stack, ReBoats.OAK));
-            if (world instanceof ServerLevel serverWorld) EntityType.<Boat>createDefaultStackConfig(serverWorld, stack, player).accept(boat);
+            if (level instanceof ServerLevel serverWorld) EntityType.<Boat>createDefaultStackConfig(serverWorld, stack, player).accept(boat);
             callback.setReturnValue(boat);
         }
     }

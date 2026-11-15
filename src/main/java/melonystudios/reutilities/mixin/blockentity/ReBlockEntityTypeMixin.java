@@ -13,7 +13,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.Set;
 
+/// @deprecated Use *NeoForge*'s [`BlockEntityTypeAddBlocksEvent`][net.neoforged.neoforge.event.BlockEntityTypeAddBlocksEvent] instead.
 @Mixin(BlockEntityType.class)
+@Deprecated(since = "1.6.0", forRemoval = true)
 public abstract class ReBlockEntityTypeMixin {
     @Shadow
     public abstract Set<Block> getValidBlocks();

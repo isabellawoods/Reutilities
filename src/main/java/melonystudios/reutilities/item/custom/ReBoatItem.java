@@ -1,6 +1,6 @@
 package melonystudios.reutilities.item.custom;
 
-import melonystudios.reutilities.api.BoatType;
+import melonystudios.reutilities.api.boat.BoatType;
 import melonystudios.reutilities.component.ReDataComponents;
 import melonystudios.reutilities.entity.custom.BoatVariant;
 import melonystudios.reutilities.entity.custom.ReBoatEntity;
@@ -45,15 +45,15 @@ public class ReBoatItem extends BoatItem {
 
     @Override
     @NotNull
-    public InteractionResultHolder<ItemStack> use(Level world, Player player, InteractionHand hand) {
+    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack handStack = player.getItemInHand(hand);
-        HitResult result = getPlayerPOVHitResult(world, player, ClipContext.Fluid.ANY);
+        HitResult result = getPlayerPOVHitResult(level, player, ClipContext.Fluid.ANY);
 
         if (result.getType() == HitResult.Type.MISS) {
             return InteractionResultHolder.pass(handStack);
         } else {
             Vec3 viewVector = player.getViewVector(1);
-            List<Entity> entitiesList = world.getEntities(player, player.getBoundingBox().expandTowards(viewVector.scale(5)).inflate(1), SPECTATORS_PREDICATE);
+            List<Entity> entitiesList = level.getEntities(player, player.getBoundingBox().expandTowards(viewVector.scale(5)).inflate(1), SPECTATORS_PREDICATE);
             if (!entitiesList.isEmpty()) {
                 Vec3 eyePosition = player.getEyePosition();
 
@@ -64,20 +64,20 @@ public class ReBoatItem extends BoatItem {
             }
 
             if (result.getType() == HitResult.Type.BLOCK) {
-                Boat boat = this.getBoat(world, result, handStack, player);
+                Boat boat = this.getBoat(level, result, handStack, player);
                 if (boat instanceof BoatVariant variant) variant.setBoatType(getBoatType(handStack, this.type));
                 boat.setYRot(player.getYRot());
-                if (!world.noCollision(boat, boat.getBoundingBox())) {
+                if (!level.noCollision(boat, boat.getBoundingBox())) {
                     return InteractionResultHolder.fail(handStack);
                 } else {
-                    if (!world.isClientSide()) {
-                        world.addFreshEntity(boat);
-                        world.gameEvent(player, GameEvent.ENTITY_PLACE, result.getLocation());
+                    if (!level.isClientSide()) {
+                        level.addFreshEntity(boat);
+                        level.gameEvent(player, GameEvent.ENTITY_PLACE, result.getLocation());
                         handStack.consume(1, player);
                     }
 
                     player.awardStat(Stats.ITEM_USED.get(this));
-                    return InteractionResultHolder.sidedSuccess(handStack, world.isClientSide());
+                    return InteractionResultHolder.sidedSuccess(handStack, level.isClientSide());
                 }
             } else {
                 return InteractionResultHolder.pass(handStack);
@@ -85,22 +85,22 @@ public class ReBoatItem extends BoatItem {
         }
     }
 
-    /// Gets the {@linkplain BoatType boat type} for placing down the boat.
-    /// @param boatStack The boat item stack, used for getting the {@link ReDataComponents#WOOD_TYPE reutilities:wood_type} component.
+    /// Gets the [boat type][BoatType] for placing down the boat.
+    /// @param boatStack The boat item stack, used for getting the [`reutilities:wood_type`][ReDataComponents#WOOD_TYPE] component.
     /// @param fallback A fallback wood type, in case the boat doesn't have component.
     public static BoatType getBoatType(ItemStack boatStack, BoatType fallback) {
         return boatStack.has(ReDataComponents.WOOD_TYPE) ? ReCommonConstants.byWoodType(boatStack.get(ReDataComponents.WOOD_TYPE).toString(), fallback) : fallback;
     }
 
     /// Gets the boat entity for placing down the boat.
-    /// @param world The world.
+    /// @param level The world.
     /// @param result Where the boat is going to be placed.
-    /// @param stack The boat item stack, used to get the {@link net.minecraft.core.component.DataComponents#ENTITY_DATA minecraft:entity_data} component.
+    /// @param stack The boat item stack, used to get the [`minecraft:entity_data`][net.minecraft.core.component.DataComponents#ENTITY_DATA] component.
     /// @param player The player placing the boat.
-    public Boat getBoat(Level world, HitResult result, ItemStack stack, Player player) {
+    public Boat getBoat(Level level, HitResult result, ItemStack stack, Player player) {
         Vec3 location = result.getLocation();
-        Boat boat = this.hasChest ? new ReChestBoatEntity(world, location.x, location.y, location.z) : new ReBoatEntity(world, location.x, location.y, location.z);
-        if (world instanceof ServerLevel serverWorld) EntityType.<Boat>createDefaultStackConfig(serverWorld, stack, player).accept(boat);
+        Boat boat = this.hasChest ? new ReChestBoatEntity(level, location.x, location.y, location.z) : new ReBoatEntity(level, location.x, location.y, location.z);
+        if (level instanceof ServerLevel serverWorld) EntityType.<Boat>createDefaultStackConfig(serverWorld, stack, player).accept(boat);
         return boat;
     }
 }

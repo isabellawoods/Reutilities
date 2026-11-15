@@ -4,6 +4,7 @@ import com.mojang.serialization.MapCodec;
 import melonystudios.reutilities.Reutilities;
 import melonystudios.reutilities.block.custom.ReBookshelfBlock;
 import melonystudios.reutilities.block.custom.ReCraftingTableBlock;
+import melonystudios.reutilities.block.custom.TwoByTwoSaplingBlock;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -14,4 +15,5 @@ public class ReBlockTypes {
 
     public static final DeferredHolder<MapCodec<? extends Block>, MapCodec<ReBookshelfBlock>> BOOKSHELF = TYPES.register("bookshelf", () -> ReBookshelfBlock.CODEC);
     public static final DeferredHolder<MapCodec<? extends Block>, MapCodec<? extends ReCraftingTableBlock>> CRAFTING_TABLE = TYPES.register("crafting_table", () -> ReCraftingTableBlock.CODEC);
+    public static final DeferredHolder<MapCodec<? extends Block>, MapCodec<? extends TwoByTwoSaplingBlock>> TWO_BY_TWO_SAPLING = TYPES.register("two_by_two_sapling", () -> TwoByTwoSaplingBlock.CODEC);
 }

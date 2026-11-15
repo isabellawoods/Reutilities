@@ -6,8 +6,9 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import com.mojang.serialization.DataResult;
 import melonystudios.behaviorapi.BehaviorAPI;
+import melonystudios.behaviorapi.BehaviorDataComponents;
 import melonystudios.behaviorapi.ItemBehavior;
-import melonystudios.reutilities.component.ReDataComponents;
+import melonystudios.behaviorapi.configuration.ItemBehaviorConfig;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -50,7 +51,7 @@ public class SetBehaviorCommand {
             ResourceKey<ItemBehavior> behaviorKey = behaviorRef.key();
 
             if (!stack.isEmpty()) {
-                List<ItemBehavior> existing = stack.getOrDefault(ReDataComponents.BEHAVIORS, new ArrayList<>());
+                List<ItemBehavior> existing = stack.getOrDefault(BehaviorDataComponents.BEHAVIORS, Holder.direct(new ItemBehaviorConfig(new ArrayList<>()))).value().behaviors();
                 List<ItemBehavior> behaviors = new ArrayList<>(existing);
 
                 // add "id" field if it doesn't exist
@@ -70,7 +71,7 @@ public class SetBehaviorCommand {
 
                 // add the newly parsed behavior to the item's behavior component
                 behaviors.add(parsed);
-                stack.set(ReDataComponents.BEHAVIORS, behaviors);
+                stack.set(BehaviorDataComponents.BEHAVIORS, Holder.direct(new ItemBehaviorConfig(behaviors)));
 
                 if (players.size() == 1) {
                     source.sendSuccess(() -> Component.translatable("commands.itembehavior.set.success.single", behaviorRef.value().getCommandDisplayName(), player.getDisplayName()), true);

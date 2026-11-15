@@ -33,13 +33,13 @@ public class ReDirtPathBlock extends DirtPathBlock implements PixelShortBlock {
     }
 
     @Override
-    protected void tick(BlockState state, ServerLevel world, BlockPos pos, RandomSource rand) {
-        this.returnToBaseBlock(null, state, world, pos);
+    protected void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource rand) {
+        this.returnToBaseBlock(null, state, level, pos);
     }
 
     @Override
     @NotNull
-    protected VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
+    protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return PIXEL_SHORT_SHAPE;
     }
 }

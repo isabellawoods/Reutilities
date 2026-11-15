@@ -51,8 +51,8 @@ public class AddExperienceBehavior extends ItemBehavior {
     }
 
     @Override
-    public void runBehavior(ItemStack stack, Level world, LivingEntity livEntity) {
-        if (!world.isClientSide() && livEntity instanceof Player player) {
+    public void runBehavior(ItemStack stack, Level level, LivingEntity livEntity) {
+        if (!level.isClientSide() && livEntity instanceof Player player) {
             if (this.addExperience().levels()) {
                 player.giveExperienceLevels(this.addExperience().amount());
             } else {
@@ -83,7 +83,7 @@ public class AddExperienceBehavior extends ItemBehavior {
         @Override
         public StreamCodec<RegistryFriendlyByteBuf, AddExperience> streamCodec() {
             return StreamCodec.composite(
-                    ByteBufCodecs.INT, AddExperience::amount,
+                    ByteBufCodecs.VAR_INT, AddExperience::amount,
                     ByteBufCodecs.BOOL, AddExperience::levels,
                     AddExperience::new
             );

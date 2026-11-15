@@ -4,13 +4,14 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import melonystudios.reutilities.Reutilities;
 import melonystudios.reutilities.api.ReAPI;
+import melonystudios.reutilities.api.outfit.OutfitDefinition;
+import melonystudios.reutilities.client.ReClientConstants;
+import melonystudios.reutilities.client.api.ReClientAPI;
+import melonystudios.reutilities.client.option.ReClientOptions;
 import melonystudios.reutilities.component.ReDataComponents;
-import melonystudios.reutilities.entity.outfit.OutfitDefinition;
-import melonystudios.reutilities.entity.outfit.OutfitModel;
-import melonystudios.reutilities.option.ReClientOptions;
+import melonystudios.reutilities.entity.model.OutfitModel;
 import melonystudios.reutilities.option.ReCommonOptions;
-import melonystudios.reutilities.util.ReClientConstants;
-import melonystudios.reutilities.util.tag.ReTrimMaterialTags;
+import melonystudios.reutilities.tag.ReTrimMaterialTags;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.PlayerModel;
@@ -72,12 +73,12 @@ public class HandArmorRenderer {
         minecraft.getProfiler().push(Reutilities.reutilities("hand_outfit_rendering").toString());
 
         OutfitDefinition definition = null;
-        Level world = player.level();
+        Level level = player.level();
         ItemStack chestStack = player.getItemBySlot(EquipmentSlot.CHEST);
         boolean fullBody = false;
 
         if (chestStack.has(ReDataComponents.OUTFIT)) {
-            definition = OutfitDefinition.getDefinition(world, chestStack);
+            definition = OutfitDefinition.getDefinition(level, chestStack);
         } else if (player.getCapability(ReAPI.OUTFIT_CAPABILITY) != null) {
             definition = player.getCapability(ReAPI.OUTFIT_CAPABILITY).definition().value();
             fullBody = true;
@@ -100,7 +101,7 @@ public class HandArmorRenderer {
         EquipmentSlot slot = side == HumanoidArm.LEFT ? EquipmentSlot.OFFHAND : EquipmentSlot.MAINHAND;
         int color = FastColor.ARGB32.opaque(OutfitDefinition.getOutfitColors(definition, chestStack, slot));
 
-        if (!fullBody) packedLight = ReAPI.getItemBrightness(chestStack, packedLight, player.level(), player.blockPosition(), true);
+        if (!fullBody) packedLight = ReClientAPI.getItemBrightness(chestStack, packedLight, player.level(), player.blockPosition(), true);
 
         stack.pushPose();
         stack.scale(1.002F, 1.002F, 1.002F);
@@ -160,7 +161,7 @@ public class HandArmorRenderer {
             armorModel.setupAnim(player, 0, 0, 0, 0, 0);
             arm.xRot = 0;
 
-            packedLight = ReAPI.getItemBrightness(chestStack, packedLight, player.level(), player.blockPosition(), true);
+            packedLight = ReClientAPI.getItemBrightness(chestStack, packedLight, player.level(), player.blockPosition(), true);
 
             // make layers render using a for() loop, which actually fixes 2 issues at once ~isa 09-06-26
             for (ArmorMaterial.Layer layer : layers) {

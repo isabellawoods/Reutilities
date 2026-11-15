@@ -1,8 +1,8 @@
 package melonystudios.reutilities.compat.femalegender;
 
-/// Stand-in for {@link com.wildfire.render.armor.SimpleGenderArmor SimpleGenderArmor} from *Female Gender Mod*, since most of my mods wouldn't have it installed during development.
+/// Stand-in for [`SimpleGenderArmor`][com.wildfire.render.armor.SimpleGenderArmor] from [*Female Gender Mod*](https://modrinth.com/mod/female-gender), since most of my mods wouldn't have it installed during development.
 ///
-/// Parameter descriptions were taken directly from {@link com.wildfire.api.IGenderArmor IGenderArmor}.
+/// Parameter descriptions were taken directly from [`IGenderArmor`][com.wildfire.api.IGenderArmor].
 /// @param physicsResistance The percent of physical resistance this armor provides to the wearer's breasts when calculating the corresponding physics.
 /// `0` has no resistance and full physics, whereas `1` has total resistance and no physics.
 /// @param tightness Represents how "tight" this armor is. Tightness "compresses" the breasts against the wearer, causing the breasts to appear up to **15% smaller**.

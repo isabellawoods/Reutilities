@@ -2,7 +2,7 @@ package melonystudios.reutilities.block.custom;
 
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import melonystudios.reutilities.api.Recolor;
+import melonystudios.reutilities.api.color.Recolor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.TransparentBlock;

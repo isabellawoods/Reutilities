@@ -10,20 +10,20 @@ import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
 
 public class ReBlocks {
-    /// Creates a new leaf block using a {@linkplain MapColor map color}.
+    /// Creates a new leaf block using a [map color][MapColor].
     /// @param color The map color to use.
     /// @param sound The sound to use for this block.
     public static LeavesBlock leaves(MapColor color, SoundType sound) {
         return new LeavesBlock(BlockBehaviour.Properties.of().mapColor(color).strength(0.2F).ignitedByLava().randomTicks().noOcclusion().sound(sound).pushReaction(PushReaction.DESTROY).isSuffocating(ReBlocks::never).isViewBlocking(ReBlocks::never).isRedstoneConductor(ReBlocks::never));
     }
 
-    /// Helper method for using {@link BlockBehaviour.StatePredicate StatePredicate}.
-    public static boolean never(BlockState state, BlockGetter world, BlockPos pos) {
+    /// Helper method for using [`StatePredicate`][BlockBehaviour.StatePredicate].
+    public static boolean never(BlockState state, BlockGetter level, BlockPos pos) {
         return false;
     }
 
-    /// Helper method for using {@link BlockBehaviour.StatePredicate StatePredicate}.
-    public static boolean always(BlockState state, BlockGetter world, BlockPos pos) {
+    /// Helper method for using [`StatePredicate`][BlockBehaviour.StatePredicate].
+    public static boolean always(BlockState state, BlockGetter level, BlockPos pos) {
         return true;
     }
 }
