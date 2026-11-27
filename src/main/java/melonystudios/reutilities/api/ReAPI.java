@@ -247,10 +247,9 @@ public class ReAPI {
     /// @see ItemBehavior#runBehavior ItemBehavior.runBehavior()
     public static void runItemBehavior(ItemStack stack, Level level, Entity entity, ResourceLocation environment) {
         Holder<ItemBehaviorConfig> configuration = stack.get(BehaviorDataComponents.BEHAVIORS);
-        List<ItemBehavior> behaviors = configuration.value().behaviors();
 
-        if (!behaviors.isEmpty() && entity instanceof LivingEntity livEntity) {
-            behaviors.forEach(behavior -> {
+        if (configuration != null && entity instanceof LivingEntity livEntity) {
+            configuration.value().behaviors().forEach(behavior -> {
                 if (behavior.settings().environment().equals(environment)) behavior.runBehavior(stack, level, livEntity);
             });
         }

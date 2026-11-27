@@ -1,5 +1,5 @@
-<div style="align: center;">
-  <img src="assets/banner_1170x500.png" alt="A banner with Reutilities' logo (wide version). Taken in the Mellomedley [1.21.1] instance."/>
+<div style="align-content: center;">
+  <img src="assets/banner_1170x500.png" alt="A banner with the wide version of Reutilities' logo. Taken in the Mellomedley [1.21.1] instance."/>
 </div>
 
 <sup>*For NeoForge 1.21.1*</sup>

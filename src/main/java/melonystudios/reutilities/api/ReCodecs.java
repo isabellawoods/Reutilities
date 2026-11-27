@@ -27,7 +27,7 @@ public class ReCodecs {
         } catch (IllegalArgumentException exception) {
             return null;
         }
-    }).validate(ReCodecs::validadeSoundSource);
+    }).validate(ReCodecs::validateSoundSource);
     public static final StreamCodec<ByteBuf, SoundSource> SOUND_SOURCE_STREAM_CODEC = ByteBufCodecs.idMapper(ByIdMap.continuous(Enum::ordinal, SoundSource.values(), ByIdMap.OutOfBoundsStrategy.ZERO), Enum::ordinal);
     public static final StreamCodec<ByteBuf, EquipmentSlot> EQUIPMENT_SLOT_STREAM_CODEC = ByteBufCodecs.idMapper(ByIdMap.continuous(Enum::ordinal, EquipmentSlot.values(), ByIdMap.OutOfBoundsStrategy.ZERO), Enum::ordinal);
     public static final StreamCodec<ByteBuf, Vec3> VEC3_STREAM_CODEC = StreamCodec.composite(ByteBufCodecs.DOUBLE, Vec3::x, ByteBufCodecs.DOUBLE, Vec3::y, ByteBufCodecs.DOUBLE, Vec3::z, Vec3::new);
@@ -72,7 +72,7 @@ public class ReCodecs {
         }, value -> "#" + HexFormat.of().toHexDigits(value, expectedDigits));
     }
 
-    private static DataResult<SoundSource> validadeSoundSource(SoundSource source) {
+    private static DataResult<SoundSource> validateSoundSource(SoundSource source) {
         return source == null ? DataResult.error(() -> "The provided sound source does not exist") : DataResult.success(source);
     }
 }

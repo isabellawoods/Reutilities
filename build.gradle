@@ -46,7 +46,7 @@ neoForge {
         minecraftVersion = project.parchment_minecraft_version
     }
 
-    // This line is optional. Access Transformers are automatically detected
+    // This line is optional. Access Transformers are automatically detected.
     accessTransformers = project.files('src/main/resources/META-INF/accesstransformer.cfg')
 
     // Default run configurations.
@@ -57,7 +57,8 @@ neoForge {
             // programArguments.addAll '--quickPlaySingleplayer', 'New World (2)'
             devLogin = true
 
-            // Comma-separated list of namespaces to load gametests from. Empty = all namespaces.
+            // Comma-separated list of namespaces to load GameTests from.
+            // Empty = all namespaces.
             systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
         }
 
@@ -67,9 +68,9 @@ neoForge {
             systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
         }
 
-        // This run config launches GameTestServer and runs all registered gametests, then exits.
-        // By default, the server will crash when no gametests are provided.
-        // The gametest system is also enabled by default for other run configs under the /test command.
+        // This run config launches GameTestServer and runs all registered GameTests, then exits.
+        // By default, the server will crash when no GameTests are provided.
+        // The GameTest system is also enabled by default for other run configs under the /test command.
         gameTestServer {
             type = "gameTestServer"
             systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
@@ -78,23 +79,23 @@ neoForge {
         data {
             data()
 
-            // example of overriding the workingDirectory set in configureEach above, uncomment if you want to use it
+            // Example of overriding the workingDirectory set in configureEach above, uncomment if you want to use it.
             // gameDirectory = project.file('run-data')
 
-            // Specify the modid for data generation, where to output the resulting resource, and where to look for existing resources.
+            // Specify the mod ID for data generation, where to output the resulting resource, and where to look for existing resources.
             programArguments.addAll '--mod', project.mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
         }
 
-        // applies to all the run configs above
+        // Applies to all the run configs above.
         configureEach {
-            // Recommended logging data for a userdev environment
+            // Recommended logging data for a user dev environment.
             // The markers can be added/remove as needed separated by commas.
             // "SCAN": For mods scan.
             // "REGISTRIES": For firing of registry events.
             // "REGISTRYDUMP": For getting the contents of all registries.
             systemProperty 'forge.logging.markers', 'REGISTRIES'
 
-            // Recommended logging level for the console
+            // Recommended logging level for the console.
             // You can set various levels here.
             // Please read: https://stackoverflow.com/questions/2031163/when-to-use-the-different-log-levels
             logLevel = org.slf4j.event.Level.DEBUG
@@ -102,17 +103,18 @@ neoForge {
     }
 
     mods {
-        // define mod <-> source bindings
-        // these are used to tell the game which sources are for which mod
-        // multi mod projects should define one per mod
+        // Define mod <-> source bindings
+        // These are used to tell the game which sources are for which mod.
+        // Multi-mod projects should define one per mod.
         "${mod_id}" {
             sourceSet(sourceSets.main)
         }
     }
 
     unitTest {
-        // Enable JUnit support in the ModDev plugin
+        // Enable JUnit support in the ModDev plugin.
         enable()
+
         // Configure which mod is being tested.
         // This allows NeoForge to load the test/ classes and resources as belonging to the mod.
         testedMod = mods.reutilities // <mod name> must match the name in the mods { } block.
@@ -137,6 +139,11 @@ dependencies {
     // Forged Mod Menu
     implementation files("build/libs/forgedmodmenu-neoforge-${forged_mod_menu_version}+${minecraft_version}.jar")
 
+    // JUnit
+    testImplementation "net.neoforged:testframework:${neo_version}"
+    testImplementation "org.junit.jupiter:junit-jupiter:${junit_jupiter_version}"
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
     // Just Enough Items
     // The JEI API is declared for compile time use, while the full JEI artifact is used at runtime.
     compileOnly("mezz.jei:jei-${minecraft_version}-neoforge-api:${jei_version}")
@@ -146,10 +153,6 @@ dependencies {
     // Renderslice API
     implementation files("build/libs/rendersliceapi-neoforge-${renderslice_api_version}+${minecraft_version}.jar")
     jarJar files("build/libs/rendersliceapi-neoforge-${renderslice_api_version}+${minecraft_version}.jar")
-
-    testImplementation "net.neoforged:testframework:${neo_version}"
-    testImplementation 'org.junit.jupiter:junit-jupiter:5.7.1'
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
     // Example mod dependency using a mod jar from ./libs with a flat directory repository:
     // This maps to ./libs/coolmod-${mc_version}-${coolmod_version}.jar
